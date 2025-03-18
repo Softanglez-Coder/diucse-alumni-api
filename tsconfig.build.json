@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "diucse-alumni-api/node_modules",
+    "test", "dist", "**/*spec.ts"]
+}
