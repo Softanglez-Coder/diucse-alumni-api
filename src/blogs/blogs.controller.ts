@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { Blog } from './entities/blog.entity';
 
-@Controller('api/blogs')
+@Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
   @Post()
-  create(@Body() createBlogDto: CreateBlogDto) {
+  async create(@Body() createBlogDto: CreateBlogDto): Promise<Blog> {
     return this.blogsService.create(createBlogDto);
   }
 
   @Get()
-  findAll() {
+  async findAll(): Promise<Blog[]> {
     return this.blogsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Blog | null> {
     return this.blogsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateBlogDto: UpdateBlogDto,
+  ): Promise<Blog | null> {
     return this.blogsService.update(id, updateBlogDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<Blog | null> {
     return this.blogsService.remove(id);
+  }
+
+  @Put(':id/restore')
+  async restore(@Param('id') id: string): Promise<Blog | null> {
+    return this.blogsService.restore(id);
+  }
+
+  @Delete(':id/confirm')
+  async deletePermanently(@Param('id') id: string): Promise<boolean> {
+    return this.blogsService.deletePermanently(id);
   }
 }
