@@ -6,9 +6,11 @@ export type BlogDocument = Blog & Document;
 
 @Schema()
 export class Blog {
-  // Unique identifier for the blog, required field
+
+  // Unique identifier for the blog
   @Prop({ required: true })
   id: string;
+
 
   // Title of the blog, required field
   @Prop({ required: true })
