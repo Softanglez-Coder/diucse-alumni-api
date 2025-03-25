@@ -1,0 +1,26 @@
+### get all blogs
+GET {{ baseUrl}}/api/blogs
+
+### get blog by Id
+GET {{ baseUrl}}/api/blogs/some-id
+
+### create new blog
+POST {{ baseUrl}}/api/blogs/
+Content-Type: application/json
+
+{
+    "title": "My first blog",
+    "content": "This is my first blog"
+}
+
+### update blog
+PATCH {{ baseUrl}}/api/blogs/some-id
+Content-Type: application/json
+
+{
+    "title": "My first blog",
+    "content": "This is my first blog"
+}
+
+### delete blog
+DELETE {{ baseUrl}}/api/blogs/some-id
