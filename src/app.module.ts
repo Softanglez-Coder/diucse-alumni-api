@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CoreModule } from './core';
+<<<<<<< HEAD
 import { MembershipModule } from './membership/membership.module';
 import { ConfigModule } from '@nestjs/config';
 
@@ -12,6 +13,14 @@ import { ConfigModule } from '@nestjs/config';
     ),
     CoreModule,
     MembershipModule,
+=======
+import { UploadModule } from './upload/upload.module';
+
+@Module({
+  imports: [
+      CoreModule,
+      UploadModule
+>>>>>>> origin/dev
   ],
 })
 export class AppModule {}
