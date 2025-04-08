@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CoreModule } from './core';
 import { MembershipModule } from './membership/membership.module';
 import { ConfigModule } from '@nestjs/config';
-import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { UploadModule } from './upload/upload.module';
     ),//mongodb connect 
     CoreModule,
     MembershipModule,
-    UploadModule, 
   ],
 })
-export class AppModule {}
+export class AppModule { }

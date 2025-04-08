@@ -3,12 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { Membership } from './schemas/membership.schema';
+import { MembershipStatus } from './enums/membership-status.enum';
 
 @Injectable()
 export class MembershipService {
   constructor(
     @InjectModel(Membership.name) private membershipModel: Model<Membership>,
-  ) {}
+  ) { }
 
   async createMembership(
     createMembershipDto: CreateMembershipDto,
@@ -24,7 +25,7 @@ export class MembershipService {
   async deleteMembership(id: string): Promise<{ message: string }> {
     const result = await this.membershipModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new Error('Membership not found');
+      throw new NotFoundException('Membership not found');
     }
     return { message: 'Membership deleted successfully' };
   }
@@ -52,8 +53,8 @@ export class MembershipService {
   async approveMembership(id: string): Promise<any> {
     const updatedMembership = await this.membershipModel.findByIdAndUpdate(
       id,
-      { status: 'approved' }, 
-      { new: true }, 
+      { status: MembershipStatus.Approved },
+      { new: true },
     );
 
     if (!updatedMembership) {
@@ -66,12 +67,11 @@ export class MembershipService {
     };
   }
 
-
   async rejectMembership(id: string): Promise<any> {
     const updatedMembership = await this.membershipModel.findByIdAndUpdate(
       id,
-      { status: 'rejected' },
-      { new: true }, 
+      { status: MembershipStatus.Rejected },
+      { new: true },
     );
 
     if (!updatedMembership) {
