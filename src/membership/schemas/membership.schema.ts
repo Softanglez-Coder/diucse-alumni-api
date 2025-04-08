@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { MembershipStatus } from '../enums/membership-status.enum';
+import { IsEnum } from 'class-validator';
 
 @Schema({ collection: 'memberships' })
 export class Membership extends Document {
@@ -37,11 +39,12 @@ export class Membership extends Document {
   paymentTransactionId: string;
 
   @Prop({
-    required: true,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending',
+    type: String,
+    enum: MembershipStatus,
+    default: MembershipStatus.Pending,
   })
-  status: string; 
+  @IsEnum(MembershipStatus)
+  status: MembershipStatus;
 }
 
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
