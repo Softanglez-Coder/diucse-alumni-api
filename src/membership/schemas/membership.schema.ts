@@ -21,7 +21,7 @@ export class Membership extends Document {
   profession: string;
 
   @Prop()
-  professionalInstitute: string;
+  institute: string;
 
   @Prop()
   designation: string;

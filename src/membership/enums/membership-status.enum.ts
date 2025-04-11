@@ -1,4 +1,4 @@
-export enum MembershipStatus {     //This file is new added after review
+export enum MembershipStatus {
     Pending = 'pending',
     Approved = 'approved',
     Rejected = 'rejected',
