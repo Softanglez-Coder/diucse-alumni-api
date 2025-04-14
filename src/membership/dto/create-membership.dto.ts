@@ -4,8 +4,7 @@ import {
   IsString,
   Length,
   Matches,
-  ValidateNested,
-  IsNumber,
+  ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EntityRefDto } from './entity-ref.dto';
