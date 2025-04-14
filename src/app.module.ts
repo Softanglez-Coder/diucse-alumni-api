@@ -3,6 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CoreModule } from './core';
 import { MembershipModule } from './membership/membership.module';
 import { ConfigModule } from '@nestjs/config';
+import { CountryModule } from './admin/country/country.module';
+import { ProfessionModule } from './admin/profession/profession.module';
+import { InstituteModule } from './admin/institute/institute.module';
 
 @Module({
   imports: [
@@ -12,6 +15,9 @@ import { ConfigModule } from '@nestjs/config';
     ),//mongodb connect 
     CoreModule,
     MembershipModule,
+    CountryModule,
+    ProfessionModule,
+    InstituteModule,
   ],
 })
 export class AppModule { }
