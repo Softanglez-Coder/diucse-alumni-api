@@ -10,10 +10,11 @@ import {
 } from '@nestjs/common';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
+import { UpdateMembershipDto } from './dto/update-membership.dto';
 
 @Controller('membership')
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) {}
+  constructor(private readonly membershipService: MembershipService) { }
 
   @Post('register')
   async register(@Body() createMembershipDto: CreateMembershipDto) {
@@ -28,7 +29,7 @@ export class MembershipController {
   @Put(':id')
   async updateMembership(
     @Param('id') id: string,
-    @Body() updateData: Partial<CreateMembershipDto>,
+    @Body() updateData: UpdateMembershipDto,
   ) {
     return this.membershipService.updateMembership(id, updateData);
   }
@@ -38,14 +39,13 @@ export class MembershipController {
     return this.membershipService.deleteMembership(id);
   }
 
-  @Patch('approve/:id') 
+  @Patch('approve/:id')
   async approveMembership(@Param('id') id: string) {
     return this.membershipService.approveMembership(id);
   }
 
-  @Patch('reject/:id') 
+  @Patch('reject/:id')
   async rejectMembership(@Param('id') id: string) {
     return this.membershipService.rejectMembership(id);
   }
-
 }

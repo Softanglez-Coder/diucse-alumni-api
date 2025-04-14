@@ -4,7 +4,10 @@ import {
   IsString,
   Length,
   Matches,
+  ValidateNested
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { EntityRefDto } from './entity-ref.dto';
 
 export class CreateMembershipDto {
   @IsString()
@@ -18,28 +21,36 @@ export class CreateMembershipDto {
   @IsEmail()
   email: string;
 
-  @IsString()
-  currentCountry: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  currentCountry: EntityRefDto;
 
-  @IsString()
-  profession: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  profession: EntityRefDto;
 
-  @IsString()
-  professionalInstitute: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  institute: EntityRefDto;
 
-  @IsString()
-  designation: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  designation: EntityRefDto;
 
-  @IsString()
-  lastAcademicLevel: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  lastAcademicLevel: EntityRefDto;
 
-  @IsNotEmpty()
-  lastPassingYear: number;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  lastPassingYear: EntityRefDto;
 
-  @IsString()
-  lastBatch: string;
+  @ValidateNested()
+  @Type(() => EntityRefDto)
+  lastBatch: EntityRefDto;
 
   @IsString()
   @IsNotEmpty()
   paymentTransactionId: string;
 }
+
