@@ -49,4 +49,3 @@ export class MembershipController {
     return this.membershipService.rejectMembership(id);
   }
 }
-
