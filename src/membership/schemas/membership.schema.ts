@@ -14,26 +14,75 @@ export class Membership extends Document {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
-  currentCountry: string;
+  @Prop({
+    type: {
+      id: String,
+      name: String,
+    },
+    required: true,
+  })
+  currentCountry: {
+    id: string;
+    name: string;
+  };
 
-  @Prop()
-  profession: string;
+  @Prop({
+    type: {
+      id: String,
+      name: String,
+    },
+  })
+  profession: {
+    id: string;
+    name: string;
+  };
 
-  @Prop()
-  institute: string;
+  @Prop({
+    type: {
+      id: String,
+      name: String,
+    },
+  })
+  institute: {
+    id: string;
+    name: string;
+  };
 
-  @Prop()
-  designation: string;
+  @Prop({
+    type: {
+      id: String,
+      name: String,
+    },
+  })
+  designation: {
+    id: string;
+    name: string;
+  };
 
-  @Prop()
-  lastAcademicLevel: string;
+  @Prop({
+    type: {
+      id: String,
+      name: String,
+    },
+  })
+  lastAcademicLevel: {
+    id: string;
+    name: string;
+  };
+
+  @Prop({
+    type: {
+      id: String,
+      year: Number,
+    },
+  })
+  lastBatch: {
+    id: string;
+    year: number;
+  };
 
   @Prop()
   lastPassingYear: number;
-
-  @Prop()
-  lastBatch: string;
 
   @Prop({ required: true })
   paymentTransactionId: string;

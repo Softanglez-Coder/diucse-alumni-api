@@ -4,10 +4,12 @@ import {
   IsString,
   Length,
   Matches,
-  ValidateNested
+  ValidateNested,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EntityRefDto } from './entity-ref.dto';
+import { MembershipStatus } from '../enums/membership-status.enum';
 
 export class CreateMembershipDto {
   @IsString()
@@ -52,5 +54,7 @@ export class CreateMembershipDto {
   @IsString()
   @IsNotEmpty()
   paymentTransactionId: string;
-}
 
+  @IsEnum(MembershipStatus)
+  status: MembershipStatus;
+}

@@ -1,9 +1,10 @@
-import { IsString } from 'class-validator';
-
+import { IsString, IsNotEmpty } from 'class-validator';
 export class EntityRefDto {
-    @IsString()
-    id: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-    @IsString()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }
