@@ -17,7 +17,7 @@ import { CommitteeModule } from './admin/committee/committee.module';
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y15rh.mongodb.net/diucseapi?retryWrites=true&w=majority`,
-    ), //mongodb connect
+    ),
     CoreModule,
     MembershipModule,
     CountryModule,
@@ -30,4 +30,4 @@ import { CommitteeModule } from './admin/committee/committee.module';
     CommitteeModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
