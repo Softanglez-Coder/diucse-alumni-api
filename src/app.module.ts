@@ -11,6 +11,7 @@ import { PassingYearModule } from './admin/passing-year/passing-year.module';
 import { AcademicLevelModule } from './admin/academic-level/academic-level.module';
 import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
+import { NoticeModule } from './admin/notice/notice.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CommitteeModule } from './admin/committee/committee.module';
     AcademicLevelModule,
     BatchModule,
     CommitteeModule,
+    NoticeModule,
   ],
 })
 export class AppModule {}
