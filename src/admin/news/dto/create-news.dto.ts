@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
 
-export class CreateCommitteeDto {
+export class CreateNewsDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  content: string;
 
   @IsNotEmpty()
   @IsDateString()
-  officeStartDate: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  officeEndDate: string;
+  author: string;
 }

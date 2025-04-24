@@ -23,7 +23,7 @@ export class CommitteeService {
 
   async findOne(id: string): Promise<Committee> {
     const doc = await this.committeeModel.findById(id).exec();
-    if (!doc) throw new NotFoundException('Committee member not found');
+    if (!doc) throw new NotFoundException('Committee not found');
     return doc;
   }
 
