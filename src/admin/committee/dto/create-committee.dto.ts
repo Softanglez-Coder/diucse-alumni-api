@@ -1,27 +1,15 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
 
 export class CreateCommitteeDto {
   @IsNotEmpty()
   @IsString()
-  fullName: string;
+  name: string;
 
   @IsNotEmpty()
-  @IsString()
-  position: string;
+  @IsDateString()
+  officeStartDate: string;
 
   @IsNotEmpty()
-  @IsString()
-  session: string;
-
-  @IsNotEmpty()
-  @IsString()
-  contactNumber: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  currentProfession: string;
+  @IsDateString()
+  officeEndDate: string;
 }

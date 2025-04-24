@@ -13,7 +13,7 @@ import { CommitteeService } from './committee.service';
 import { CreateCommitteeDto } from './dto/create-committee.dto';
 import { UpdateCommitteeDto } from './dto/update-committee.dto';
 
-@Controller('committee')
+@Controller('committees')
 export class CommitteeController {
   constructor(private readonly svc: CommitteeService) {}
 

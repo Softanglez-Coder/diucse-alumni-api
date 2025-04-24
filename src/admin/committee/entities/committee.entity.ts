@@ -6,20 +6,11 @@ export class Committee {
   id: number;
 
   @Column()
-  fullName: string;
+  name: string;
 
   @Column()
-  position: string;
+  officeStartDate: string;
 
   @Column()
-  session: string;
-
-  @Column('bigint')
-  contactNumber: number;
-
-  @Column()
-  email: string;
-
-  @Column()
-  currentProfession: string;
+  officeEndDate: string;
 }
