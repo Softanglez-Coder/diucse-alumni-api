@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, UseGuards, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Patch, Param, UseGuards, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
@@ -27,7 +27,6 @@ export class AdminController {
     @Roles(Role.Admin)
     async createUserByAdmin(
         @Body() dto: CreateUserByAdminDto,
-        @Req() req
     ) {
         return this.authService.createUserByAdmin(dto);
     }
