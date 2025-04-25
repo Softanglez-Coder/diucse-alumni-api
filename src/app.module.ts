@@ -12,6 +12,7 @@ import { AcademicLevelModule } from './admin/academic-level/academic-level.modul
 import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
+import { NewsModule } from './admin/news/news.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NoticeModule } from './admin/notice/notice.module';
     BatchModule,
     CommitteeModule,
     NoticeModule,
+    NewsModule,
   ],
 })
 export class AppModule {}
