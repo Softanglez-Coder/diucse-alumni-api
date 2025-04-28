@@ -11,7 +11,7 @@ import { MembershipEntity } from './entities/membership.entity';
 export class MembershipService {
   constructor(
     @InjectModel(Membership.name) private membershipModel: Model<Membership>,
-  ) { }
+  ) {}
 
   private toEntity(doc: Membership): MembershipEntity {
     return doc.toObject() as MembershipEntity;
@@ -83,4 +83,3 @@ export class MembershipService {
     return;
   }
 }
-

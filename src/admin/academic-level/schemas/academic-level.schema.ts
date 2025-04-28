@@ -4,7 +4,6 @@ import { Document } from 'mongoose';
 export class AcademicLevel {
   @Prop()
   name: string;
-
 }
 export type AcademicLevelDocument = AcademicLevel & Document;
 export const AcademicLevelSchema = SchemaFactory.createForClass(AcademicLevel);

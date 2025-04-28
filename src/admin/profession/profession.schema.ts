@@ -5,8 +5,8 @@ export type ProfessionDocument = Profession & Document;
 
 @Schema()
 export class Profession {
-    @Prop({ required: true, unique: true })
-    name: string;
+  @Prop({ required: true, unique: true })
+  name: string;
 }
 
 export const ProfessionSchema = SchemaFactory.createForClass(Profession);
