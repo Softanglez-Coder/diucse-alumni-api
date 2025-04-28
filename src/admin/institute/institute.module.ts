@@ -5,8 +5,12 @@ import { InstituteService } from './institute.service';
 import { InstituteController } from './institute.controller';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Institute.name, schema: InstituteSchema }])],
-    providers: [InstituteService],
-    controllers: [InstituteController],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Institute.name, schema: InstituteSchema },
+    ]),
+  ],
+  providers: [InstituteService],
+  controllers: [InstituteController],
 })
-export class InstituteModule { }
+export class InstituteModule {}

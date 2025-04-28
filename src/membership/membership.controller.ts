@@ -14,7 +14,7 @@ import { UpdateMembershipDto } from './dto/update-membership.dto';
 
 @Controller('membership')
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) { }
+  constructor(private readonly membershipService: MembershipService) {}
 
   @Post('register')
   async register(@Body() createMembershipDto: CreateMembershipDto) {

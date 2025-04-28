@@ -6,20 +6,21 @@ import { CreateProfessionDto } from './profession.dto';
 
 @Injectable()
 export class ProfessionService {
-    constructor(
-        @InjectModel(Profession.name) private professionModel: Model<ProfessionDocument>,
-    ) { }
+  constructor(
+    @InjectModel(Profession.name)
+    private professionModel: Model<ProfessionDocument>,
+  ) {}
 
-    async create(dto: CreateProfessionDto): Promise<Profession> {
-        const created = new this.professionModel(dto);
-        return created.save();
-    }
+  async create(dto: CreateProfessionDto): Promise<Profession> {
+    const created = new this.professionModel(dto);
+    return created.save();
+  }
 
-    async findAll(): Promise<Profession[]> {
-        return this.professionModel.find().exec();
-    }
+  async findAll(): Promise<Profession[]> {
+    return this.professionModel.find().exec();
+  }
 
-    async delete(id: string) {
-        return this.professionModel.findByIdAndDelete(id);
-    }
+  async delete(id: string) {
+    return this.professionModel.findByIdAndDelete(id);
+  }
 }
