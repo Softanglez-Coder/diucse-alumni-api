@@ -1,4 +1,12 @@
-import { Controller, Get, Patch, Param, UseGuards, Post, Body, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  UseGuards,
+  Post,
+  Body,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
@@ -10,26 +18,22 @@ import { CreateUserByAdminDto } from 'src/auth/dto/create-user-by-admin.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin)
 export class AdminController {
-    constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
-    @Get('pending-users')
-    async getPendingUsers() {
-        return this.authService.getPendingUsers();
-    }
+  @Get('pending-users')
+  async getPendingUsers() {
+    return this.authService.getPendingUsers();
+  }
 
-    @Patch('approve/:id')
-    async approveUser(@Param('id') id: string) {
-        return this.authService.approveUser(id);
-    }
+  @Patch('approve/:id')
+  async approveUser(@Param('id') id: string) {
+    return this.authService.approveUser(id);
+  }
 
-    @Post('create-user')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.Admin)
-    async createUserByAdmin(
-        @Body() dto: CreateUserByAdminDto,
-        @Req() req
-    ) {
-        return this.authService.createUserByAdmin(dto);
-    }
-
+  @Post('create-user')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  async createUserByAdmin(@Body() dto: CreateUserByAdminDto) {
+    return this.authService.createUserByAdmin(dto);
+  }
 }

@@ -10,6 +10,10 @@ import { DesignationsModule } from './admin/designations/designations.module';
 import { PassingYearModule } from './admin/passing-year/passing-year.module';
 import { AcademicLevelModule } from './admin/academic-level/academic-level.module';
 import { BatchModule } from './admin/batch/batch.module';
+import { CommitteeModule } from './admin/committee/committee.module';
+import { NoticeModule } from './admin/notice/notice.module';
+import { NewsModule } from './admin/news/news.module';
+import { EventsModule } from './admin/events/events.module';
 
 @Module({
   imports: [
@@ -26,6 +30,10 @@ import { BatchModule } from './admin/batch/batch.module';
     PassingYearModule,
     AcademicLevelModule,
     BatchModule,
+    CommitteeModule,
+    NoticeModule,
+    NewsModule,
+    EventsModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
