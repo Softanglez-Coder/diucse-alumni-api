@@ -13,6 +13,7 @@ import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
+import { EventsModule } from './admin/events/events.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { NewsModule } from './admin/news/news.module';
     CommitteeModule,
     NoticeModule,
     NewsModule,
+    EventsModule,
   ],
 })
 export class AppModule {}
