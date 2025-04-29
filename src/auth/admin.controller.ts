@@ -6,7 +6,6 @@ import {
   UseGuards,
   Post,
   Body,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
