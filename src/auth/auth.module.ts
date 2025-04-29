@@ -13,12 +13,16 @@ import { RolesGuard } from './guards/roles.guard';
 import { AdminController } from './admin.controller';
 import { ForgotPasswordController } from './forgot-password.controller';
 
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not defined');
+}
+
 @Module({
     imports: [
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         PassportModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET || 'defaultSecret',
+            secret: process.env.JWT_SECRET,
             signOptions: { expiresIn: '1d' },
         }),
         EmailModule,
@@ -28,4 +32,3 @@ import { ForgotPasswordController } from './forgot-password.controller';
     exports: [AuthService],
 })
 export class AuthModule { }
-
