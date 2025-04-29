@@ -34,7 +34,7 @@ export class AdminController {
   @Post('create-user')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  async createUserByAdmin(@Body() dto: CreateUserByAdminDto, @Req() req) {
+  async createUserByAdmin(@Body() dto: CreateUserByAdminDto) {
     return this.authService.createUserByAdmin(dto);
   }
 }
