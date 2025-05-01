@@ -13,6 +13,8 @@ import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
+import { AlbumModule } from './admin/gallery/album/album.module';
+import { MediaModule } from './admin/gallery/media/media.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { NewsModule } from './admin/news/news.module';
     CommitteeModule,
     NoticeModule,
     NewsModule,
+    AlbumModule,
+    MediaModule,
   ],
 })
 export class AppModule {}
