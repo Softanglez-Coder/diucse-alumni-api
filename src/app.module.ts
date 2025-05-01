@@ -13,9 +13,12 @@ import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
-import { AlbumModule } from './admin/gallery/album/album.module';
-import { MediaModule } from './admin/gallery/media/media.module';
+import { CacheModule } from '@nestjs/cache-manager';
 import { EventsModule } from './admin/events/events.module';
+import { MediaModule } from './admin/gallery/media/media.module';
+import { AlbumModule } from './admin/gallery/album/album.module';
+import { redisStore } from 'cache-manager-ioredis-yet';
+
 
 @Module({
   imports: [
@@ -23,6 +26,17 @@ import { EventsModule } from './admin/events/events.module';
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y15rh.mongodb.net/diucseapi?retryWrites=true&w=majority`,
     ),
+
+    CacheModule.registerAsync({
+      useFactory: () => ({
+        store: redisStore as any,
+        host: 'localhost',
+        port: 6379,
+        ttl: parseInt(process.env.CACHE_TTL || '60'),
+      }),
+      isGlobal: true,
+    }),
+
     CoreModule,
     MembershipModule,
     CountryModule,
@@ -40,4 +54,6 @@ import { EventsModule } from './admin/events/events.module';
     EventsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
+
+
