@@ -15,6 +15,7 @@ import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
 import { AlbumModule } from './admin/gallery/album/album.module';
 import { MediaModule } from './admin/gallery/media/media.module';
+import { EventsModule } from './admin/events/events.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { MediaModule } from './admin/gallery/media/media.module';
     NewsModule,
     AlbumModule,
     MediaModule,
+    EventsModule,
   ],
 })
 export class AppModule {}
