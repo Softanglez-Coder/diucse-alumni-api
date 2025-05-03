@@ -13,10 +13,9 @@ import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
+import { EventsModule } from './admin/events/events.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
-
-
+import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -47,6 +46,7 @@ import * as redisStore from 'cache-manager-redis-store';
     CommitteeModule,
     NoticeModule,
     NewsModule,
+    EventsModule,
   ],
 })
 export class AppModule { }
