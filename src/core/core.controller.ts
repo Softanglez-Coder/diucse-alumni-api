@@ -4,13 +4,11 @@ import { APIHealth } from './models';
 
 @Controller()
 export class CoreController {
-    constructor(
-        private readonly coreService: CoreService
-    ) {}
+  constructor(private readonly coreService: CoreService) {}
 
-    @Get('health')
-    getHealth(): APIHealth {
-        const result = this.coreService.getHealth();
-        return result;
-    }
+  @Get('health')
+  getHealth(): APIHealth {
+    const result = this.coreService.getHealth();
+    return result;
+  }
 }

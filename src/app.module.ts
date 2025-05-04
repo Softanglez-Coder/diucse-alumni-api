@@ -10,8 +10,9 @@ import { DesignationsModule } from './admin/designations/designations.module';
 import { PassingYearModule } from './admin/passing-year/passing-year.module';
 import { AcademicLevelModule } from './admin/academic-level/academic-level.module';
 import { BatchModule } from './admin/batch/batch.module';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
+import { CommitteeModule } from './admin/committee/committee.module';
+import { NoticeModule } from './admin/notice/notice.module';
+import { NewsModule } from './admin/news/news.module';
 
 @Module({
   imports: [
@@ -28,8 +29,9 @@ import { AuthModule } from './auth/auth.module';
     PassingYearModule,
     AcademicLevelModule,
     BatchModule,
-    UsersModule,
-    AuthModule,
+    CommitteeModule,
+    NoticeModule,
+    NewsModule,
   ],
 })
 export class AppModule { }

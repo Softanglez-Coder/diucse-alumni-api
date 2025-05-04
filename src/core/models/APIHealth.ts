@@ -1,7 +1,7 @@
 export class APIHealth {
-    statue!: string;
+  statue!: string;
 
-    constructor(statue: string) {
-        this.statue = statue;
-    }
+  constructor(statue: string) {
+    this.statue = statue;
+  }
 }

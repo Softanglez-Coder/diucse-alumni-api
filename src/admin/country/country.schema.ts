@@ -5,8 +5,8 @@ export type CountryDocument = Country & Document;
 
 @Schema({ timestamps: true })
 export class Country {
-    @Prop({ required: true, unique: true, trim: true })
-    name: string;
+  @Prop({ required: true, unique: true, trim: true })
+  name: string;
 }
 
 export const CountrySchema = SchemaFactory.createForClass(Country);

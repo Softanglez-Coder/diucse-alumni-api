@@ -6,7 +6,6 @@ import {
   DesignationDocument,
 } from './schemas/designations.schema';
 
-
 @Injectable()
 export class DesignationsService {
   constructor(
@@ -14,7 +13,6 @@ export class DesignationsService {
     private designationModel: Model<DesignationDocument>,
   ) {}
 
-  
   async create(createDesignationDto: any): Promise<Designation> {
     const createdDesignation = new this.designationModel(createDesignationDto);
     return createdDesignation.save();
@@ -33,7 +31,6 @@ export class DesignationsService {
       .findByIdAndUpdate(id, updateDesignationDto, { new: true })
       .exec();
   }
-
 
   async remove(id: string): Promise<any> {
     return this.designationModel.findByIdAndDelete(id).exec();

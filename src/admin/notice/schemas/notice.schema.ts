@@ -7,6 +7,6 @@ export type NoticeDocument = Notice & Document;
 export class Notice {
   @Prop({ required: true }) title: string;
   @Prop() description: string;
-  @Prop() link: string; 
+  @Prop() link: string;
 }
 export const NoticeSchema = SchemaFactory.createForClass(Notice);

@@ -4,20 +4,20 @@ import { CreateInstituteDto } from './institute.dto';
 
 @Controller('admin/institutes')
 export class InstituteController {
-    constructor(private readonly service: InstituteService) { }
+  constructor(private readonly service: InstituteService) {}
 
-    @Post()
-    create(@Body() dto: CreateInstituteDto) {
-        return this.service.create(dto);
-    }
+  @Post()
+  create(@Body() dto: CreateInstituteDto) {
+    return this.service.create(dto);
+  }
 
-    @Get()
-    findAll() {
-        return this.service.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.service.findAll();
+  }
 
-    @Delete(':id')
-    delete(@Param('id') id: string) {
-        return this.service.delete(id);
-    }
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.service.delete(id);
+  }
 }

@@ -5,8 +5,12 @@ import { ProfessionService } from './profession.service';
 import { ProfessionController } from './profession.controller';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Profession.name, schema: ProfessionSchema }])],
-    providers: [ProfessionService],
-    controllers: [ProfessionController],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Profession.name, schema: ProfessionSchema },
+    ]),
+  ],
+  providers: [ProfessionService],
+  controllers: [ProfessionController],
 })
-export class ProfessionModule { }
+export class ProfessionModule {}
