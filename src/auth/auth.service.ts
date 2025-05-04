@@ -16,7 +16,6 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { User, UserDocument } from './schema/user.schema';
 import { EmailService } from '../email/email.service';
-import { CreateUserByAdminDto } from './dto/create-user-by-admin.dto';
 
 @Injectable()
 export class AuthService {
@@ -121,21 +120,6 @@ export class AuthService {
             { status: 'approved' },
             { new: true }
         );
-    }
-
-    async createUserByAdmin(dto: CreateUserByAdminDto): Promise<any> {
-        const existing = await this.userModel.findOne({ username: dto.username });
-        if (existing) throw new ConflictException('Username already taken');
-
-        const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-        const user = new this.userModel({
-            username: dto.username,
-            password: hashedPassword,
-            status: dto.status || 'pending',
-        });
-
-        return user.save();
     }
 
 }
