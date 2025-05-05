@@ -13,11 +13,10 @@ import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { NewsModule } from './admin/news/news.module';
-import { EventsModule } from './admin/events/events.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y15rh.mongodb.net/diucseapi?retryWrites=true&w=majority`,
     ),
@@ -33,7 +32,6 @@ import { EventsModule } from './admin/events/events.module';
     CommitteeModule,
     NoticeModule,
     NewsModule,
-    EventsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
