@@ -7,14 +7,17 @@ import {
   Param,
   Put,
   Patch,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('membership')
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) {}
+  constructor(private readonly membershipService: MembershipService) { }
 
   @Post('register')
   async register(@Body() createMembershipDto: CreateMembershipDto) {
@@ -22,6 +25,7 @@ export class MembershipController {
   }
 
   @Get()
+  @CacheTTL(120)
   async getAllMemberships() {
     return this.membershipService.getAllMemberships();
   }

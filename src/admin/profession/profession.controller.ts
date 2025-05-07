@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ProfessionService } from './profession.service';
 import { CreateProfessionDto } from './profession.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('admin/professions')
 export class ProfessionController {
-  constructor(private readonly service: ProfessionService) {}
+  constructor(private readonly service: ProfessionService) { }
 
   @Post()
   create(@Body() dto: CreateProfessionDto) {
@@ -12,6 +14,7 @@ export class ProfessionController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.service.findAll();
   }

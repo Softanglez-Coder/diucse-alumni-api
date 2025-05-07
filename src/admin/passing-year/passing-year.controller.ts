@@ -6,13 +6,16 @@ import {
   Param,
   Patch,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PassingYearService } from './passing-year.service';
 import { CreatePassingYearDto } from './dto/create-passing-year.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('passing-years')
 export class PassingYearController {
-  constructor(private readonly service: PassingYearService) {}
+  constructor(private readonly service: PassingYearService) { }
 
   @Post()
   create(@Body() dto: CreatePassingYearDto) {
@@ -20,6 +23,7 @@ export class PassingYearController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.service.findAll();
   }

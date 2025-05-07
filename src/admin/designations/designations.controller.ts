@@ -6,12 +6,15 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DesignationsService } from './designations.service';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('designations')
 export class DesignationsController {
-  constructor(private readonly designationsService: DesignationsService) {}
+  constructor(private readonly designationsService: DesignationsService) { }
 
   // Create a new designation
   @Post()
@@ -20,6 +23,7 @@ export class DesignationsController {
   }
 
   @Get()
+  @CacheTTL(120)
   async findAll() {
     return this.designationsService.findAll();
   }

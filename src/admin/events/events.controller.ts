@@ -6,14 +6,17 @@ import {
   Param,
   Delete,
   Patch,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(private readonly eventsService: EventsService) { }
 
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
@@ -21,6 +24,7 @@ export class EventsController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.eventsService.findAll();
   }

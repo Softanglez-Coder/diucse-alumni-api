@@ -6,13 +6,16 @@ import {
   Param,
   Patch,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BatchService } from './batch.service';
 import { CreateBatchDto } from './dto/create-batch.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('batches')
 export class BatchController {
-  constructor(private readonly service: BatchService) {}
+  constructor(private readonly service: BatchService) { }
 
   @Post()
   create(@Body() dto: CreateBatchDto) {
@@ -20,6 +23,7 @@ export class BatchController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.service.findAll();
   }

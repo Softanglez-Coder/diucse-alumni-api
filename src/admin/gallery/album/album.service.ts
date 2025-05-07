@@ -1,31 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './schemas/album.schema';
 
 @Injectable()
 export class AlbumService {
-  constructor(@InjectModel(Album.name) private albumModel: Model<Album>) {}
+  constructor(
+    @InjectModel(Album.name) private albumModel: Model<Album>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) { }
 
-  create(dto: CreateAlbumDto) {
-    return this.albumModel.create(dto);
+  async create(dto: CreateAlbumDto) {
+    const created = await this.albumModel.create(dto);
+    await this.cacheManager.del('albums:all'); // Invalidate cache
+    return created;
   }
 
-  findAll() {
-    return this.albumModel.find();
+  async findAll() {
+    const cacheKey = 'albums:all';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached as Album[];
+
+    const result = await this.albumModel.find();
+    await this.cacheManager.set(cacheKey, result, 120); // TTL 2 min
+    return result;
   }
 
   findOne(id: string) {
     return this.albumModel.findById(id);
   }
 
-  update(id: string, dto: UpdateAlbumDto) {
-    return this.albumModel.findByIdAndUpdate(id, dto, { new: true });
+  async update(id: string, dto: UpdateAlbumDto) {
+    const updated = await this.albumModel.findByIdAndUpdate(id, dto, { new: true });
+    await this.cacheManager.del('albums:all'); // Invalidate cache
+    return updated;
   }
 
-  remove(id: string) {
-    return this.albumModel.findByIdAndDelete(id);
+  async remove(id: string) {
+    const deleted = await this.albumModel.findByIdAndDelete(id);
+    await this.cacheManager.del('albums:all'); // Invalidate cache
+    return deleted;
   }
 }

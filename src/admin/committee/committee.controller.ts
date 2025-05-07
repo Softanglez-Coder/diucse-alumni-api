@@ -8,14 +8,17 @@ import {
   Param,
   UsePipes,
   ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CommitteeService } from './committee.service';
 import { CreateCommitteeDto } from './dto/create-committee.dto';
 import { UpdateCommitteeDto } from './dto/update-committee.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('committees')
 export class CommitteeController {
-  constructor(private readonly svc: CommitteeService) {}
+  constructor(private readonly svc: CommitteeService) { }
 
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -24,6 +27,7 @@ export class CommitteeController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.svc.findAll();
   }
