@@ -14,8 +14,10 @@ import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
 import { EventsModule } from './admin/events/events.module';
 import { NewsModule } from './admin/news/news.module';
+import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { AlbumModule } from './admin/gallery/album/album.module';
+import { MediaModule } from './admin/gallery/media/media.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import * as redisStore from 'cache-manager-redis-store';
     CommitteeModule,
     NoticeModule,
     NewsModule,
+    AlbumModule,
+    MediaModule,
     EventsModule,
   ],
 })
