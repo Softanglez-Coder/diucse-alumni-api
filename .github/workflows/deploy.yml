@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
@@ -33,13 +33,17 @@ jobs:
         run: npm run build
 
       - name: Build Docker image
-        run: docker build -t yourusername/nestapp:${{ github.ref_name }} .
+        run: docker build -t diucsealumni/api:${{ github.ref_name }} .
 
       - name: Docker Login
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Push Docker image
-        run: docker push yourusername/nestapp:${{ github.ref_name }}
+        run: docker push diucsealumni/api:${{ github.ref_name }}
+
+      # Optional: Clean up dangling docker images
+      - name: Prune old Docker images
+        run: docker image prune -f
 
       # Upload .env to Dev server
       - name: Upload .env to Dev server
@@ -50,10 +54,9 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         run: |
           ssh ${{ secrets.DEV_SERVER }} "
-            docker pull yourusername/nestapp:dev &&
-            docker stop devapp || true &&
-            docker rm devapp || true &&
-            docker run -d --name devapp -p 3000:3000 --env-file /home/ubuntu/app/.env yourusername/nestapp:dev
+            docker pull diucsealumni/api:dev &&
+            docker rm -f devapp || true &&
+            docker run -d --restart=always --name devapp -p 3000:3000 --env-file /home/ubuntu/app/.env diucsealumni/api:dev
           "
 
       # Upload .env to Test server
@@ -65,10 +68,9 @@ jobs:
         if: github.ref == 'refs/heads/test'
         run: |
           ssh ${{ secrets.TEST_SERVER }} "
-            docker pull yourusername/nestapp:test &&
-            docker stop testapp || true &&
-            docker rm testapp || true &&
-            docker run -d --name testapp -p 3000:3000 --env-file /home/ubuntu/app/.env yourusername/nestapp:test
+            docker pull diucsealumni/api:test &&
+            docker rm -f testapp || true &&
+            docker run -d --restart=always --name testapp -p 3000:3000 --env-file /home/ubuntu/app/.env diucsealumni/api:test
           "
 
       # Upload .env to Production server
@@ -80,8 +82,9 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           ssh ${{ secrets.PROD_SERVER }} "
-            docker pull yourusername/nestapp:main &&
-            docker stop prodapp || true &&
-            docker rm prodapp || true &&
-            docker run -d --name prodapp -p 3000:3000 --env-file /home/ubuntu/app/.env yourusername/nestapp:main
+            docker pull diucsealumni/api:main &&
+            docker rm -f prodapp || true &&
+            docker run -d --restart=always --name prodapp -p 3000:3000 --env-file /home/ubuntu/app/.env diucsealumni/api:main
           "
+
+
