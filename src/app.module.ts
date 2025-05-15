@@ -12,14 +12,30 @@ import { AcademicLevelModule } from './admin/academic-level/academic-level.modul
 import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
+import { EventsModule } from './admin/events/events.module';
 import { NewsModule } from './admin/news/news.module';
+import { redisStore } from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
+import { AlbumModule } from './admin/gallery/album/album.module';
+import { MediaModule } from './admin/gallery/media/media.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y15rh.mongodb.net/diucseapi?retryWrites=true&w=majority`,
     ),
+
+    CacheModule.registerAsync({
+      useFactory: () => ({
+        store: redisStore as any,
+        host: 'localhost',
+        port: 6379,
+        ttl: parseInt(process.env.CACHE_TTL || '60'),
+      }),
+      isGlobal: true,
+    }),
+
     CoreModule,
     MembershipModule,
     CountryModule,
@@ -32,6 +48,9 @@ import { NewsModule } from './admin/news/news.module';
     CommitteeModule,
     NoticeModule,
     NewsModule,
+    AlbumModule,
+    MediaModule,
+    EventsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
