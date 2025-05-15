@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { SchemaNames } from 'src/common/schema-names.enum';
+
 
 @Schema()
 export class Media extends Document {
@@ -12,7 +14,7 @@ export class Media extends Document {
   @Prop({ required: true })
   url: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Album', required: false })
+  @Prop({ type: Types.ObjectId, ref: SchemaNames.Album, required: false })
   album?: Types.ObjectId;
 }
 

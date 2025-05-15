@@ -7,14 +7,17 @@ import {
   Patch,
   Delete,
   NotFoundException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(private readonly albumService: AlbumService) { }
 
   @Post()
   create(@Body() dto: CreateAlbumDto) {
@@ -22,6 +25,7 @@ export class AlbumController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.albumService.findAll();
   }

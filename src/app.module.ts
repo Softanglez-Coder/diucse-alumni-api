@@ -12,13 +12,12 @@ import { AcademicLevelModule } from './admin/academic-level/academic-level.modul
 import { BatchModule } from './admin/batch/batch.module';
 import { CommitteeModule } from './admin/committee/committee.module';
 import { NoticeModule } from './admin/notice/notice.module';
-import { NewsModule } from './admin/news/news.module';
-import { CacheModule } from '@nestjs/cache-manager';
 import { EventsModule } from './admin/events/events.module';
-import { MediaModule } from './admin/gallery/media/media.module';
+import { NewsModule } from './admin/news/news.module';
+import { redisStore } from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AlbumModule } from './admin/gallery/album/album.module';
-import { redisStore } from 'cache-manager-ioredis-yet';
-
+import { MediaModule } from './admin/gallery/media/media.module';
 
 @Module({
   imports: [
