@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { SchemaNames } from 'src/common/schema-names.enum';
 
-
 @Schema()
 export class Media extends Document {
   @Prop({ required: true })

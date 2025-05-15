@@ -13,7 +13,7 @@ export class MediaService {
   constructor(
     @InjectModel(Media.name) private mediaModel: Model<Media>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateMediaDto) {
     const created = await this.mediaModel.create(dto);
@@ -36,7 +36,9 @@ export class MediaService {
   }
 
   async update(id: string, dto: UpdateMediaDto) {
-    const updated = await this.mediaModel.findByIdAndUpdate(id, dto, { new: true });
+    const updated = await this.mediaModel.findByIdAndUpdate(id, dto, {
+      new: true,
+    });
     await this.cacheManager.del('media:all');
     return updated;
   }

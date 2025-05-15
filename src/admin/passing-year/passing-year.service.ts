@@ -18,7 +18,7 @@ export class PassingYearService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache, // Redis cache inject
-  ) { }
+  ) {}
 
   async create(dto: CreatePassingYearDto) {
     const created = new this.passingYearModel(dto);

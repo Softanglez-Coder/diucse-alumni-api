@@ -13,7 +13,7 @@ export class AlbumService {
   constructor(
     @InjectModel(Album.name) private albumModel: Model<Album>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateAlbumDto) {
     const created = await this.albumModel.create(dto);
@@ -36,7 +36,9 @@ export class AlbumService {
   }
 
   async update(id: string, dto: UpdateAlbumDto) {
-    const updated = await this.albumModel.findByIdAndUpdate(id, dto, { new: true });
+    const updated = await this.albumModel.findByIdAndUpdate(id, dto, {
+      new: true,
+    });
     await this.cacheManager.del('albums:all'); // Invalidate cache
     return updated;
   }

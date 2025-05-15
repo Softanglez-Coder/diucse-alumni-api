@@ -14,7 +14,7 @@ export class BatchService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateBatchDto) {
     const created = new this.batchModel(dto);

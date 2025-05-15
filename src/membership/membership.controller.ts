@@ -17,7 +17,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('membership')
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) { }
+  constructor(private readonly membershipService: MembershipService) {}
 
   @Post('register')
   async register(@Body() createMembershipDto: CreateMembershipDto) {

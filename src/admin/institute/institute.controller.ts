@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { InstituteService } from './institute.service';
 import { CreateInstituteDto } from './institute.dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
@@ -6,7 +14,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('admin/institutes')
 export class InstituteController {
-  constructor(private readonly service: InstituteService) { }
+  constructor(private readonly service: InstituteService) {}
 
   @Post()
   create(@Body() dto: CreateInstituteDto) {

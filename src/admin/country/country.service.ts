@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cache } from 'cache-manager';
@@ -16,7 +12,7 @@ export class CountryService {
   constructor(
     @InjectModel(Country.name) private countryModel: Model<CountryDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateCountryDto): Promise<Country> {
     const exists = await this.countryModel.findOne({ name: dto.name });

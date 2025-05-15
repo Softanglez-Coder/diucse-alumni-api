@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, HttpCode, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpCode,
+  Inject,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateMembershipDto } from './dto/create-membership.dto';
@@ -14,7 +19,7 @@ export class MembershipService {
   constructor(
     @InjectModel(Membership.name) private membershipModel: Model<Membership>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   private toEntity(doc: Membership): MembershipEntity {
     return doc.toObject() as MembershipEntity;
@@ -119,4 +124,3 @@ export class MembershipService {
     return;
   }
 }
-

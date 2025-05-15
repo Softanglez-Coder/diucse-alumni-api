@@ -14,7 +14,7 @@ export class EventsService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache, // Redis cache inject
-  ) { }
+  ) {}
 
   async create(createEventDto: CreateEventDto): Promise<Event> {
     const createdEvent = new this.eventModel(createEventDto);

@@ -15,7 +15,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('batches')
 export class BatchController {
-  constructor(private readonly service: BatchService) { }
+  constructor(private readonly service: BatchService) {}
 
   @Post()
   create(@Body() dto: CreateBatchDto) {

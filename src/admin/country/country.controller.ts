@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CountryService } from './country.service';
 import { CreateCountryDto } from './country.dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
@@ -6,7 +14,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('admin/countries')
 export class CountryController {
-  constructor(private readonly countryService: CountryService) { }
+  constructor(private readonly countryService: CountryService) {}
 
   @Post()
   create(@Body() dto: CreateCountryDto) {

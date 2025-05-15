@@ -15,7 +15,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('passing-years')
 export class PassingYearController {
-  constructor(private readonly service: PassingYearService) { }
+  constructor(private readonly service: PassingYearService) {}
 
   @Post()
   create(@Body() dto: CreatePassingYearDto) {

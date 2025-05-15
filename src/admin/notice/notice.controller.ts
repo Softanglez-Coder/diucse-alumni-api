@@ -16,7 +16,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('notice')
 export class NoticeController {
-  constructor(private readonly noticeService: NoticeService) { }
+  constructor(private readonly noticeService: NoticeService) {}
 
   @Post()
   create(@Body() createNoticeDto: CreateNoticeDto) {

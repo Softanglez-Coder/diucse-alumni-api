@@ -15,7 +15,7 @@ export class ProfessionService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateProfessionDto): Promise<Profession> {
     const created = new this.professionModel(dto);

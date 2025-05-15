@@ -17,7 +17,7 @@ export class DesignationsService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(createDesignationDto: any): Promise<Designation> {
     const createdDesignation = new this.designationModel(createDesignationDto);

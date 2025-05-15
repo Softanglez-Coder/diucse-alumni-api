@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { MediaRefSchema, MediaRef } from 'src/common/schemas/media-ref.schema';
 
-
 @Schema({ timestamps: true })
 export class Event extends Document {
   @Prop({ required: true })

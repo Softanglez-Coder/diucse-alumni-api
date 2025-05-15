@@ -1,8 +1,8 @@
 import {
-    Injectable,
-    ConflictException,
-    UnauthorizedException,
-    NotFoundException,
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,107 +19,106 @@ import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectModel(User.name) private userModel: Model<UserDocument>,
-        private jwtService: JwtService,
-        private emailService: EmailService,
-    ) { }
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
+    private emailService: EmailService,
+  ) {}
 
-    async registerUser(dto: RegisterUserDto): Promise<any> {
-        const existing = await this.userModel.findOne({ username: dto.username });
-        if (existing) throw new ConflictException('Username already taken');
+  async registerUser(dto: RegisterUserDto): Promise<any> {
+    const existing = await this.userModel.findOne({ username: dto.username });
+    if (existing) throw new ConflictException('Username already taken');
 
-        const hashed = await bcrypt.hash(dto.password, 10);
-        const user = new this.userModel({
-            username: dto.username,
-            password: hashed,
-        });
-        return user.save();
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const user = new this.userModel({
+      username: dto.username,
+      password: hashed,
+    });
+    return user.save();
+  }
+
+  async loginUser(dto: LoginUserDto): Promise<any> {
+    const user = await this.userModel.findOne({ username: dto.username });
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    const isMatch = await bcrypt.compare(dto.password, user.password);
+    if (!isMatch) throw new UnauthorizedException('Invalid credentials');
+
+    if (user.status !== 'approved') {
+      throw new UnauthorizedException(
+        'Your account is not yet approved by admin',
+      );
     }
 
-    async loginUser(dto: LoginUserDto): Promise<any> {
-        const user = await this.userModel.findOne({ username: dto.username });
-        if (!user) throw new UnauthorizedException('Invalid credentials');
+    const payload = { sub: user._id, username: user.username };
+    const token = await this.jwtService.signAsync(payload);
 
-        const isMatch = await bcrypt.compare(dto.password, user.password);
-        if (!isMatch) throw new UnauthorizedException('Invalid credentials');
+    return {
+      access_token: token,
+      user: {
+        id: user._id,
+        username: user.username,
+      },
+    };
+  }
 
-        if (user.status !== 'approved') {
-            throw new UnauthorizedException('Your account is not yet approved by admin');
-        }
+  async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string }> {
+    const user = await this.userModel.findOne({ username: dto.username });
+    if (!user) throw new NotFoundException('User not found');
 
-        const payload = { sub: user._id, username: user.username };
-        const token = await this.jwtService.signAsync(payload);
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
+    await user.save();
 
-        return {
-            access_token: token,
-            user: {
-                id: user._id,
-                username: user.username,
-            },
-        };
+    await this.emailService.sendResetPasswordEmail(user.username, token);
+
+    return { message: 'Password reset link sent to your email' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
+    const user = await this.userModel.findOne({ resetToken: dto.token });
+    if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
+      throw new UnauthorizedException('Invalid or expired reset token');
     }
 
-    async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string }> {
-        const user = await this.userModel.findOne({ username: dto.username });
-        if (!user) throw new NotFoundException('User not found');
+    user.password = await bcrypt.hash(dto.newPassword, 10);
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
 
-        const token = crypto.randomBytes(32).toString('hex');
-        user.resetToken = token;
-        user.resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
-        await user.save();
+    return { message: 'Password has been reset successfully' };
+  }
 
-        await this.emailService.sendResetPasswordEmail(user.username, token);
+  async findByResetToken(token: string): Promise<UserDocument | null> {
+    const user = await this.userModel.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+    return user;
+  }
 
-        return { message: 'Password reset link sent to your email' };
-    }
+  async getMe(userId: string): Promise<any> {
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password -resetToken -resetTokenExpiry');
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
-    async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
-        const user = await this.userModel.findOne({ resetToken: dto.token });
-        if (
-            !user ||
-            !user.resetTokenExpiry ||
-            user.resetTokenExpiry < new Date()
-        ) {
-            throw new UnauthorizedException('Invalid or expired reset token');
-        }
+  async findPendingUsers(): Promise<User[]> {
+    return this.userModel.find({ isApproved: false });
+  }
 
-        user.password = await bcrypt.hash(dto.newPassword, 10);
-        user.resetToken = undefined;
-        user.resetTokenExpiry = undefined;
-        await user.save();
+  async getPendingUsers(): Promise<User[]> {
+    return this.userModel.find({ status: 'pending' }).exec();
+  }
 
-        return { message: 'Password has been reset successfully' };
-    }
-
-    async findByResetToken(token: string): Promise<UserDocument | null> {
-        const user = await this.userModel.findOne({
-            resetToken: token,
-            resetTokenExpiry: { $gt: Date.now() },
-        });
-        return user;
-    }
-
-    async getMe(userId: string): Promise<any> {
-        const user = await this.userModel.findById(userId).select('-password -resetToken -resetTokenExpiry');
-        if (!user) throw new NotFoundException('User not found');
-        return user;
-    }
-
-    async findPendingUsers(): Promise<User[]> {
-        return this.userModel.find({ isApproved: false });
-    }
-
-    async getPendingUsers(): Promise<User[]> {
-        return this.userModel.find({ status: 'pending' }).exec();
-    }
-
-    async approveUser(id: string): Promise<User> {
-        return this.userModel.findByIdAndUpdate(
-            id,
-            { status: 'approved' },
-            { new: true }
-        );
-    }
-
+  async approveUser(id: string): Promise<User> {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      { status: 'approved' },
+      { new: true },
+    );
+  }
 }

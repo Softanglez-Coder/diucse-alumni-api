@@ -14,7 +14,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('designations')
 export class DesignationsController {
-  constructor(private readonly designationsService: DesignationsService) { }
+  constructor(private readonly designationsService: DesignationsService) {}
 
   // Create a new designation
   @Post()

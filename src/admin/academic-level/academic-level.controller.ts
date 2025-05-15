@@ -15,7 +15,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('academic-levels')
 export class AcademicLevelController {
-  constructor(private readonly service: AcademicLevelService) { }
+  constructor(private readonly service: AcademicLevelService) {}
 
   @Post()
   create(@Body() dto: CreateAcademicLevelDto) {

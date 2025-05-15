@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cache } from 'cache-manager';
@@ -17,7 +13,7 @@ export class NoticeService {
   constructor(
     @InjectModel(Notice.name) private noticeModel: Model<NoticeDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(createNoticeDto: CreateNoticeDto): Promise<Notice> {
     const result = await this.noticeModel.create(createNoticeDto);

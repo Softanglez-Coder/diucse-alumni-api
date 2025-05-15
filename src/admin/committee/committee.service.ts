@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cache } from 'cache-manager';
@@ -18,7 +14,7 @@ export class CommitteeService {
     @InjectModel(Committee.name)
     private readonly committeeModel: Model<CommitteeDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateCommitteeDto): Promise<Committee> {
     const created = new this.committeeModel(dto);

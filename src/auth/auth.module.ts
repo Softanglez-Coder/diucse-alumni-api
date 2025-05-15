@@ -14,23 +14,22 @@ import { RolesGuard } from './guards/roles.guard';
 import { ForgotPasswordController } from './forgot-password.controller';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        PassportModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '1d' },
-            }),
-        }),
-        EmailModule,
-    ],
-    controllers: [AuthController, ForgotPasswordController],
-    providers: [AuthService, EmailService, JwtStrategy, RolesGuard],
-    exports: [AuthService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
+    EmailModule,
+  ],
+  controllers: [AuthController, ForgotPasswordController],
+  providers: [AuthService, EmailService, JwtStrategy, RolesGuard],
+  exports: [AuthService],
 })
-export class AuthModule { }
-
+export class AuthModule {}

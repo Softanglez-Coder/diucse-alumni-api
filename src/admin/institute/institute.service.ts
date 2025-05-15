@@ -15,7 +15,7 @@ export class InstituteService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateInstituteDto): Promise<Institute> {
     const created = new this.instituteModel(dto);

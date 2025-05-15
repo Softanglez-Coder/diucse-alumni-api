@@ -18,7 +18,7 @@ export class AcademicLevelService {
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-  ) { }
+  ) {}
 
   async create(dto: CreateAcademicLevelDto) {
     const created = new this.academicModel(dto);

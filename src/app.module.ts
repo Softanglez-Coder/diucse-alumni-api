@@ -53,4 +53,4 @@ import { MediaModule } from './admin/gallery/media/media.module';
     EventsModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

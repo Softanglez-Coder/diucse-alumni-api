@@ -18,7 +18,7 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @UseInterceptors(CacheInterceptor)
 @Controller('committees')
 export class CommitteeController {
-  constructor(private readonly svc: CommitteeService) { }
+  constructor(private readonly svc: CommitteeService) {}
 
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true }))
