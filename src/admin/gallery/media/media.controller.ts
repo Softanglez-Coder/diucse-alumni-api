@@ -17,10 +17,12 @@ import { UpdateMediaDto } from './dto/update-media.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(private readonly mediaService: MediaService) { }
 
   @Post()
   create(@Body() dto: CreateMediaDto) {
@@ -28,6 +30,7 @@ export class MediaController {
   }
 
   @Get()
+  @CacheTTL(120)
   findAll() {
     return this.mediaService.findAll();
   }
