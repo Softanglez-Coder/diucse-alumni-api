@@ -73,7 +73,9 @@ export class AuthService {
   }
 
   async resetPassword(newPassword: string, token: string) {
-    const payload = this.jwtService.verify(token);
+    const payload = this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET,
+    });
     if (!payload || !payload.email) {
       throw new UnauthorizedException('Invalid token');
     }

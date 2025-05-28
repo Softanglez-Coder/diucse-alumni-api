@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { UserService } from '@user';
 import { IS_PUBLIC_KEY } from '../decorators';
+import * as process from 'node:process';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -40,7 +41,9 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET
+      });
       const user = await this.userService.findByEmail(payload.email);
       request.user = user;
       return true;
