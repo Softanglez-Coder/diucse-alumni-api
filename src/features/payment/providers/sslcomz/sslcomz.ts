@@ -18,8 +18,6 @@ export class SSLComz {
       const url = response.GatewayPageURL;
       return url;
     } catch (error) {
-      this.logger.error('SSL Commerce payment initiation error:', error);
-
       throw new HttpException(
         'SSL Commerce payment initiation failed',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -38,7 +36,6 @@ export class SSLComz {
       const response = await sslcz.validateIPN(ipnData);
       return response;
     } catch (error) {
-      this.logger.error('SSL Commerce IPN validation error:', error);
       throw new HttpException(
         'SSL Commerce IPN validation failed',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -57,7 +54,6 @@ export class SSLComz {
       const response = await sslcz.initiateRefund(trxId);
       return response;
     } catch (error) {
-      this.logger.error('SSL Commerce refund error:', error);
       throw new HttpException(
         'SSL Commerce refund failed',
         HttpStatus.INTERNAL_SERVER_ERROR,

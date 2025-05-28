@@ -16,7 +16,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly memberService: MemberService,
     private readonly mailerService: MailerService,
-  ) {}
+  ) {
+  }
 
   async login(email: string, password: string) {
     const valid = await this.userService.validateUser(email, password);

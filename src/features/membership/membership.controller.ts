@@ -63,7 +63,6 @@ export class MembershipController {
   @Roles(Role.ADMIN, Role.REVIEWER)
   @Get(':id')
   async findById(@Param('id') id: string) {
-    console.log(`Finding membership by ID: ${id}`);
     return await this.membershipService.findById(id);
   }
 

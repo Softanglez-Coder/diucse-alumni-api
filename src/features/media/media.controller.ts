@@ -7,11 +7,13 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Public } from '@core';
 
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
+  @Public()
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {

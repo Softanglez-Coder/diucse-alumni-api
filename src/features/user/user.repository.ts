@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
+import { Role } from '@core';
 
 @Injectable()
 export class UserRepository {
@@ -9,8 +10,12 @@ export class UserRepository {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async create(email: string, hash: string) {
-    const user = new this.userModel({ email, hash });
+  async create(email: string, hash: string, roles: Role[] = [Role.MEMBER]) {
+    const user = new this.userModel({
+      email,
+      hash,
+      roles
+    });
     return await user.save();
   }
 

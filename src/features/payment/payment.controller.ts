@@ -3,6 +3,7 @@ import { CreatePaymentDto, IPNDto } from './dtos';
 import { PaymentService } from './payment.service';
 import { Request, Response } from 'express';
 import { Public, Role, Roles } from '@core';
+import * as process from 'node:process';
 
 @Controller('payment')
 export class PaymentController {
@@ -43,7 +44,7 @@ export class PaymentController {
       };
     }
 
-    const url: string = `${process.env.PAYMENT_SUCCESS_REDIRECT_URL}?paymentId=${handled.id}`;
+    const url: string = `${process.env.FRONTEND_URL}${process.env.PAYMENT_SUCCESS_REDIRECT_URL}?paymentId=${handled.id}`;
     return res.redirect(url);
   }
 
@@ -58,7 +59,7 @@ export class PaymentController {
       };
     }
 
-    const url: string = `${process.env.PAYMENT_FAIL_REDIRECT_URL}?paymentId=${handled.id}`;
+    const url: string = `${process.env.FRONTEND_URL}${process.env.PAYMENT_FAIL_REDIRECT_URL}?paymentId=${handled.id}`;
     return res.redirect(url);
   }
 
@@ -73,7 +74,7 @@ export class PaymentController {
       };
     }
 
-    const url: string = `${process.env.PAYMENT_CANCEL_REDIRECT_URL}?paymentId=${handled.id}`;
+    const url: string = `${process.env.FRONTEND_URL}${process.env.PAYMENT_CANCEL_REDIRECT_URL}?paymentId=${handled.id}`;
     return res.redirect(url);
   }
 

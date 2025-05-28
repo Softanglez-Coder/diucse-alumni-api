@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
+import { Role } from '@core';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async create(email: string, password: string) {
+  async create(email: string, password: string, roles: Role[] = [Role.MEMBER]) {
     const hashedPassword = await this.hashPassword(password);
-    return await this.userRepository.create(email, hashedPassword);
+    return await this.userRepository.create(email, hashedPassword, roles);
   }
 
   async findByEmail(email: string) {
@@ -55,5 +56,19 @@ export class UserService {
     hashedPassword: string,
   ): Promise<boolean> {
     return await bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  async createBotAccount(email: string, password: string) {
+    return await this.create(email, password, [
+      Role.ADMIN,
+      Role.REVIEWER,
+      Role.ACCOUNTANT,
+      Role.EVENT_MANAGER,
+      Role.CUSTOMER_SUPPORT,
+      Role.MARKETING_MANAGER,
+      Role.PUBLISHER,
+      Role.SALES_MANAGER,
+      Role.MEMBER
+    ]);
   }
 }

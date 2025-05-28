@@ -56,23 +56,23 @@ export class Payment {
     enum: Object.values(PaymentStatus),
     default: PaymentStatus.PENDING,
   })
-  status: string;
+  status: PaymentStatus;
 
   @Prop({
     type: String,
-    required: true,
+    default: null
   })
   cardNo: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: null
   })
   cardIssuer: string;
 
   @Prop({
     type: String,
-    required: true,
+    default: null
   })
   cardBrand: string;
 
@@ -93,7 +93,6 @@ export class Payment {
   @Prop({
     type: String,
     default: null,
-    unique: true,
     trim: true,
   })
   validationId?: string;

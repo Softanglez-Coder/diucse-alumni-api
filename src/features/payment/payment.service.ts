@@ -39,8 +39,6 @@ export class PaymentService {
       dto.customer.phone,
     );
 
-    this.logger.log('Creating payment with payload:', JSON.stringify(payload));
-
     const url = await this.provider.init(payload);
     if (!url) {
       throw new HttpException(
