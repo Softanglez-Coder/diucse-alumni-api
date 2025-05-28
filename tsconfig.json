@@ -16,6 +16,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@core": ["./src/core/index"],
+      "@media": ["./src/features/media/index"],
+      "@payment": ["./src/features/payment/index"],
+      "@batch": ["./src/features/batch/index"],
+      "@shift": ["./src/features/shift/index"],
+      "@membership": ["./src/features/membership/index"],
+      "@user": ["./src/features/user/index"],
+      "@member": ["./src/features/member/index"],
+    }
   }
 }

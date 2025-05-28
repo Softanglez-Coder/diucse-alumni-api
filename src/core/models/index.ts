@@ -1,1 +1,1 @@
-export * from './APIHealth';
+export * from './query';

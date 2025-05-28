@@ -1,56 +1,73 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CoreModule } from './core';
-import { MembershipModule } from './membership/membership.module';
+import { Module, Logger } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CountryModule } from './admin/country/country.module';
-import { ProfessionModule } from './admin/profession/profession.module';
-import { InstituteModule } from './admin/institute/institute.module';
-import { DesignationsModule } from './admin/designations/designations.module';
-import { PassingYearModule } from './admin/passing-year/passing-year.module';
-import { AcademicLevelModule } from './admin/academic-level/academic-level.module';
-import { BatchModule } from './admin/batch/batch.module';
-import { CommitteeModule } from './admin/committee/committee.module';
-import { NoticeModule } from './admin/notice/notice.module';
-import { EventsModule } from './admin/events/events.module';
-import { NewsModule } from './admin/news/news.module';
-import { redisStore } from 'cache-manager-redis-store';
-import { CacheModule } from '@nestjs/cache-manager';
-import { AlbumModule } from './admin/gallery/album/album.module';
-import { MediaModule } from './admin/gallery/media/media.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+
+import { AppController } from './app.controller';
+
+import {
+  AuthGuard,
+  DatabaseModule,
+  LoggingInterceptor,
+  RolesGuard,
+  StorageModule,
+} from '@core';
+
+import { PaymentModule } from '@payment';
+import { MembershipModule } from '@membership';
+import { BatchModule } from '@batch';
+import { ShiftModule } from '@shift';
+import { MediaModule } from '@media';
+import { UserModule } from '@user';
+import { MemberModule } from '@member';
+import { AuthModule } from './features/auth';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.y15rh.mongodb.net/diucseapi?retryWrites=true&w=majority`,
-    ),
-
-    CacheModule.registerAsync({
-      useFactory: () => ({
-        store: redisStore as any,
-        host: 'localhost',
-        port: 6379,
-        ttl: parseInt(process.env.CACHE_TTL || '60'),
-      }),
+    ConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
       isGlobal: true,
     }),
-
-    CoreModule,
-    MembershipModule,
-    CountryModule,
-    ProfessionModule,
-    InstituteModule,
-    DesignationsModule,
-    PassingYearModule,
-    AcademicLevelModule,
-    BatchModule,
-    CommitteeModule,
-    NoticeModule,
-    NewsModule,
-    AlbumModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60_000,
+          limit: 10,
+        },
+      ],
+    }),
+    DatabaseModule,
+    StorageModule,
     MediaModule,
-    EventsModule,
+    PaymentModule,
+    MembershipModule,
+    BatchModule,
+    ShiftModule,
+    UserModule,
+    MemberModule,
+    AuthModule,
+    JwtModule,
+  ],
+  controllers: [AppController],
+  providers: [
+    Logger,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
