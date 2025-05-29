@@ -10,6 +10,7 @@ import { ShiftModule } from '@shift';
 import { UserModule } from '@user';
 import { MemberModule } from '../member/member.module';
 import { MailerModule } from '@core';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MailerModule } from '@core';
     UserModule,
     MemberModule,
     MailerModule,
+    SettingsModule
   ],
   controllers: [MembershipController],
   providers: [MembershipRepository, MembershipService],

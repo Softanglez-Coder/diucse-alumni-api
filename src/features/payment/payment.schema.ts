@@ -90,6 +90,12 @@ export class Payment {
     default: null
   })
   sender?: string;
+
+  @Prop({
+    type: String,
+    default: null
+  })
+  justification?: string;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

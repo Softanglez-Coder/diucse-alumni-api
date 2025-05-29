@@ -1,16 +1,15 @@
 import {
-  Injectable,
-  NotFoundException,
   BadRequestException,
+  ConflictException,
   HttpException,
   HttpStatus,
-  ConflictException,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { PaymentService } from '@payment';
 import { PaymentRemarks, PaymentStatus } from '../payment/enums';
 import { MembershipRequestDto, MembershipRequestUpdateDto } from './dto';
-import { MembershipRequestStatus } from './enums/membership-request-status';
-import { MEMBERSHIP_FEE } from './const/membership.config';
+import { MembershipRequestStatus } from './enums';
 import { MembershipRepository } from './membership.repository';
 import { isEmail, isMongoId } from 'class-validator';
 import { MembershipDocument } from './membership.schema';
@@ -19,6 +18,8 @@ import { ShiftService } from '@shift';
 import { UserService } from '@user';
 import { MemberService } from '@member';
 import { MailerService } from '@core';
+import { SettingsService } from '../settings/settings.service';
+import { SettingsGroup, SettingsKey } from '../settings/enums';
 
 @Injectable()
 export class MembershipService {
@@ -30,6 +31,7 @@ export class MembershipService {
     private readonly userService: UserService,
     private readonly memberService: MemberService,
     private readonly mailerService: MailerService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   async request(dto: MembershipRequestDto) {
@@ -368,11 +370,13 @@ export class MembershipService {
       );
     }
 
-    const paid = payment.amount >= MEMBERSHIP_FEE;
+    const settings = await this.settingsService.findByGroup(SettingsGroup.MEMBERSHIP);
+    const fee = settings?.settings?.[SettingsKey.MEMBERSHIP_FEE];
+    const paid = payment.amount >= +fee;
 
     if (!paid) {
       throw new BadRequestException(
-        `Payment for membership with id ${id} is not sufficient. Required: ${MEMBERSHIP_FEE}, Provided: ${payment.amount}`,
+        `Payment for membership with id ${id} is not sufficient. Required: ${fee}, Provided: ${payment.amount}`,
       );
     }
 
@@ -539,8 +543,21 @@ export class MembershipService {
       );
     }
 
+    const settings = await this.settingsService.findByGroup(
+      SettingsGroup.MEMBERSHIP,
+    );
+
+
+    const fee = settings?.settings?.[SettingsKey.MEMBERSHIP_FEE];
+
+    console.log(JSON.stringify(settings.settings));
+
+    if (!fee) {
+      throw new HttpException('Membership fee is not set', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     const payment = await this.paymentService.create(host, {
-      amount: MEMBERSHIP_FEE,
+      amount: +fee,
       product: {
         id: null,
         name: 'Membership Fee',

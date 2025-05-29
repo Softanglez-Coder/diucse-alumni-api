@@ -23,6 +23,7 @@ import { MemberModule } from '@member';
 import { AuthModule } from './features/auth';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpModule } from '@nestjs/axios';
+import { SettingsModule } from './features/settings/settings.module';
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { HttpModule } from '@nestjs/axios';
     MemberModule,
     AuthModule,
     JwtModule,
-    HttpModule
+    HttpModule,
+    SettingsModule
   ],
   controllers: [AppController],
   providers: [

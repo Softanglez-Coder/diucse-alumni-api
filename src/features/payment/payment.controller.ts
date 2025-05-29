@@ -22,9 +22,21 @@ export class PaymentController {
   }
 
   @Roles(Role.ADMIN, Role.ACCOUNTANT)
-  @Get()
-  async findAll() {
-    return await this.service.findAll();
+  @Get('pending')
+  async findPending() {
+    return await this.service.findPending();
+  }
+
+  @Roles(Role.ADMIN, Role.ACCOUNTANT)
+  @Get('completed')
+  async findCompleted() {
+    return await this.service.findCompleted();
+  }
+
+  @Roles(Role.ADMIN, Role.ACCOUNTANT)
+  @Get('refunded')
+  async findRefunded() {
+    return await this.service.findRefunded();
   }
 
   @Public()
@@ -98,7 +110,7 @@ export class PaymentController {
 
   @Roles(Role.ADMIN, Role.ACCOUNTANT)
   @Post(':id/refund')
-  async refund(@Param('id') id: string) {
-    return await this.service.refund(id);
+  async refund(@Param('id') id: string, @Body() body: { justification: string }) {
+    return await this.service.refund(id, body.justification);
   }
 }

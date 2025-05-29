@@ -7,6 +7,7 @@ import { PaymentController } from './payment.controller';
 import { MailerModule } from '@core';
 import { ZinipayService } from './providers/zinipay';
 import { HttpModule, HttpService } from '@nestjs/axios';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { HttpModule, HttpService } from '@nestjs/axios';
       },
     ]),
     MailerModule,
-    HttpModule
+    HttpModule,
+    SettingsModule
   ],
   exports: [PaymentService],
   controllers: [PaymentController],
