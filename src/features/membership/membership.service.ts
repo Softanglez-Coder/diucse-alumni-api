@@ -550,8 +550,6 @@ export class MembershipService {
 
     const fee = settings?.settings?.[SettingsKey.MEMBERSHIP_FEE];
 
-    console.log(JSON.stringify(settings.settings));
-
     if (!fee) {
       throw new HttpException('Membership fee is not set', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -649,5 +647,42 @@ export class MembershipService {
     }
 
     return member;
+  }
+
+  async payDirectly(id: string, justification: string) {
+    if (!justification) {
+      throw new BadRequestException('Justification is required for direct payment');
+    }
+
+    const membership = await this.membershipRepository.findById(id);
+
+    if (!membership) {
+      throw new NotFoundException(`Membership with id ${id} not found`);
+    }
+
+    if (membership.payment?.status === PaymentStatus.COMPLETED) {
+      throw new ConflictException(
+        `Payment for membership with id ${id} is already completed.`,
+      );
+    }
+
+    const payment = await this.paymentService.getById(membership.payment.id);
+    if (!payment) {
+      throw new NotFoundException(`Payment with id ${membership.payment.id} not found`);
+    }
+
+    payment.status = PaymentStatus.COMPLETED;
+    payment.justification = justification;
+    payment.depositAmount = payment.amount;
+
+    const updated = await this.paymentService.update(payment.id, payment);
+    if (!updated) {
+      throw new HttpException(
+        `Failed to update payment for membership with id ${id}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return payment;
   }
 }

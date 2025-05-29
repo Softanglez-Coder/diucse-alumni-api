@@ -40,7 +40,7 @@ export class UserService {
   async validateUser(email: string, password: string): Promise<boolean> {
     const user = await this.userRepository.findByUsername(email);
 
-    if (!user) {
+    if (!user || !user?.hash || user?.blocked) {
       return false;
     }
 

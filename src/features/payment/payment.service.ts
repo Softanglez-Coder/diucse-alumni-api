@@ -198,4 +198,31 @@ export class PaymentService {
 
     return updated;
   }
+
+  async update(id: any, payment: PaymentDocument) {
+    if (!id) {
+      throw new BadRequestException('Payment ID is required for update');
+    }
+
+    const existingPayment: PaymentDocument = await this.repository.findById(id);
+    if (!existingPayment) {
+      throw new NotFoundException('Payment record not found');
+    }
+
+    // Update only the fields that are allowed to be updated
+    const updatedPayment: Partial<PaymentDocument> = {
+      ...existingPayment,
+      ...payment,
+    };
+
+    const updated = await this.repository.update(id, updatedPayment);
+    if (!updated) {
+      throw new HttpException(
+        'Failed to update payment record',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return updated;
+  }
 }

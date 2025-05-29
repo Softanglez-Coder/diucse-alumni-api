@@ -116,4 +116,10 @@ export class MembershipController {
 
     return await this.membershipService.pay(host, id);
   }
+
+  @Roles(Role.ACCOUNTANT)
+  @Post(':id/direct-pay')
+  async payDirectly(@Param('id') id: string, @Body() body: { justification: string }) {
+    return await this.membershipService.payDirectly(id, body.justification);
+  }
 }

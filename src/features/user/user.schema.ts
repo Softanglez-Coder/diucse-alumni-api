@@ -21,6 +21,12 @@ export class User {
   hash: string;
 
   @Prop({
+    type: Boolean,
+    default: false,
+  })
+  blocked: boolean;
+
+  @Prop({
     type: [String],
     required: true,
     enum: Object.values(Role),
