@@ -7,14 +7,9 @@ import { PaymentRemarks, PaymentStatus } from './enums';
 })
 export class Payment {
   @Prop({
-    required: true,
     type: String,
-    unique: true,
-    index: true,
-    trim: true,
-    immutable: true,
   })
-  trxId: string;
+  trxId?: string;
 
   @Prop({
     required: true,
@@ -60,42 +55,41 @@ export class Payment {
 
   @Prop({
     type: String,
+    trim: true,
+    default: null,
+  })
+  method?: string;
+
+  @Prop({
+    type: String,
+    trim: true,
+    default: null,
+  })
+  invoiceId?: string;
+
+  @Prop({
+    type: String,
     default: null
   })
-  cardNo: string;
+  currency?: string;
 
   @Prop({
     type: String,
     default: null
   })
-  cardIssuer: string;
+  bankTransactionId?: string;
 
   @Prop({
     type: String,
     default: null
   })
-  cardBrand: string;
+  productId?: string;
 
   @Prop({
     type: String,
-    default: null,
-    trim: true,
+    default: null
   })
-  bankTrxId?: string;
-
-  @Prop({
-    type: String,
-    default: null,
-    trim: true,
-  })
-  cardType?: string;
-
-  @Prop({
-    type: String,
-    default: null,
-    trim: true,
-  })
-  validationId?: string;
+  sender?: string;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

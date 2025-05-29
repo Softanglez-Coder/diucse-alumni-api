@@ -12,7 +12,7 @@ export class PaymentRepository extends BaseRepository<PaymentDocument> {
     super(model);
   }
 
-  async findByTrxId(trxId: string): Promise<PaymentDocument | null> {
-    return this.findByProperty('trxId', trxId);
+  async findByInvoiceId(invoiceId: string): Promise<PaymentDocument | null> {
+    return this.findByProperty('invoiceId', invoiceId);
   }
 }

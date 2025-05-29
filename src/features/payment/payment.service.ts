@@ -13,11 +13,13 @@ import { PaymentRepository } from './payment.repository';
 import { Payment, PaymentDocument } from './payment.schema';
 import { IPNStatus, PaymentRemarks, PaymentStatus } from './enums';
 import { MailerService } from '@core';
+import { CreateZinipayPayment, ZinipayService } from './providers/zinipay';
+import { MEMBERSHIP_FEE } from '../membership/const';
 
 @Injectable()
 export class PaymentService {
   constructor(
-    private readonly provider: SSLComz,
+    private readonly provider: ZinipayService,
     private readonly repository: PaymentRepository,
     private readonly logger: Logger,
 
@@ -29,17 +31,17 @@ export class PaymentService {
       dto.product.name = 'Membership Fee';
     }
 
-    const payload = new SSLComzInit(
+    const payload: CreateZinipayPayment = {
+      amount: MEMBERSHIP_FEE,
       host,
-      dto.amount,
-      dto.product.name,
-      dto.product.category,
-      dto.customer.name,
-      dto.customer.email,
-      dto.customer.phone,
-    );
+      customer: {
+        email: dto.customer.email,
+        name: dto.customer.name,
+        phone: dto.customer.phone
+      }
+    };
 
-    const url = await this.provider.init(payload);
+    const { payment_url: url } = await this.provider.create(payload);
     if (!url) {
       throw new HttpException(
         'Failed to initialize payment',
@@ -47,22 +49,15 @@ export class PaymentService {
       );
     }
 
-    const { tran_id: trxId } = payload;
-
     // Save the transaction to the database
     const payment: Payment = {
-      trxId,
+      invoiceId: url.split('/').pop(), // Assuming the URL ends with the transaction ID
       remarks: dto.product.category,
       amount: dto.amount,
       depositAmount: 0,
       email: dto.customer.email,
       referenceId: dto.product?.id,
       status: PaymentStatus.PENDING,
-      cardNo: null,
-      cardType: null,
-      bankTrxId: null,
-      cardIssuer: null,
-      cardBrand: null,
     };
 
     const created = await this.repository.create(payment);
@@ -98,88 +93,50 @@ export class PaymentService {
     return payments;
   }
 
-  async handleIPN(payload: IPNDto) {
-    const {
-      status,
-      tran_id: trxId,
-      store_amount,
-      val_id,
-      card_type,
-      card_no,
-      bank_tran_id,
-      card_issuer,
-      card_brand,
-    } = payload;
-
-    // Validate the transaction ID
-    if (!trxId) {
+  async handleIPN(invoiceId: string, trxId: string) {
+    const verified = await this.provider.verify(trxId, invoiceId);
+    if (!verified) {
       throw new HttpException(
-        'Transaction ID is required',
+        'Payment verification failed',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    // Find the payment record
-    const payment: PaymentDocument = await this.repository.findByTrxId(trxId);
+    const payment: PaymentDocument = await this.repository.findByInvoiceId(invoiceId);
 
     if (!payment) {
       throw new NotFoundException('Payment record not found');
     }
 
-    // Update the payment status and amount
-    const parseStatus = () => {
-      switch (status) {
-        case IPNStatus.VALID:
-          return PaymentStatus.COMPLETED;
-
-        case IPNStatus.FAILED:
-        case IPNStatus.CANCELLED:
-        case IPNStatus.EXPIRED:
-          return PaymentStatus.FAILED;
-
-        case IPNStatus.UNATTEMPTED:
-          return PaymentStatus.PENDING;
-      }
-    };
-
-    payment.status = parseStatus();
-    payment.depositAmount = store_amount;
-    payment.validationId = val_id;
-    payment.cardNo = card_no;
-    payment.cardType = card_type;
-    payment.bankTrxId = bank_tran_id;
-    payment.cardIssuer = card_issuer;
-    payment.cardBrand = card_brand;
+    if (verified.status === 'COMPLETED') {
+      payment.status = PaymentStatus.COMPLETED;
+      payment.trxId = verified.val_id;
+      payment.bankTransactionId = verified.transaction_id;
+      payment.depositAmount = verified.amount;
+      payment.method = verified.payment_method;
+      payment.sender = verified.senderNumber;
+    }
 
     const updated = await this.repository.update(payment.id, payment);
-
     if (!updated) {
       throw new HttpException(
-        'Failed to update payment record',
+        'Failed to update payment record after verification',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
-    if (payment.status === PaymentStatus.COMPLETED) {
-      const body = `
-      <p>Hello,</p>
-      <p>Your payment of ${payment.amount} BDT via ${payment.cardBrand} for ${payment.remarks} has been successfully completed.</p>
-      <p>Transaction ID: ${payment.trxId}</p>
-      <p>Bank Transaction ID: ${payment.bankTrxId}</p>
-      <p>Thank you for your payment!</p>
-      `;
-
-      try {
-        await this.mailerService.sendMail(
-          payment.email,
-          'Payment Confirmation',
-          body,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to send payment confirmation email: ${error.message}`,
-        );
-      }
+    // Send email notification
+    try {
+      await this.mailerService.sendMail(
+        payment.email,
+        'Payment Notification',
+        `Your payment of ${payment.depositAmount} has been processed successfully. Transaction ID: ${payment.bankTransactionId || payment.trxId}. For: ${payment.remarks}.`,
+      )
+    } catch (error) {
+      throw new HttpException(
+        'Failed to send payment notification email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return updated;

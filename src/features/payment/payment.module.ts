@@ -6,6 +6,8 @@ import { PaymentRepository } from './payment.repository';
 import { PaymentController } from './payment.controller';
 import { SSLComz } from './providers';
 import { MailerModule } from '@core';
+import { ZinipayService } from './providers/zinipay';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -16,9 +18,16 @@ import { MailerModule } from '@core';
       },
     ]),
     MailerModule,
+    HttpModule
   ],
   exports: [PaymentService],
   controllers: [PaymentController],
-  providers: [PaymentService, PaymentRepository, SSLComz, Logger],
+  providers: [
+    PaymentService,
+    PaymentRepository,
+    SSLComz,
+    Logger,
+    ZinipayService
+  ],
 })
 export class PaymentModule {}

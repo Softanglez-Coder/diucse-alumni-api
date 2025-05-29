@@ -1,1 +1,1 @@
-export const MEMBERSHIP_FEE: number = 1_000;
+export const MEMBERSHIP_FEE: number = 1;
