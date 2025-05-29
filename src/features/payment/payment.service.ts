@@ -6,12 +6,10 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePaymentDto, IPNDto } from './dtos';
-import { SSLComz } from './providers';
-import { SSLComzInit } from './providers/sslcomz/sslcomz-init';
+import { CreatePaymentDto } from './dtos';
 import { PaymentRepository } from './payment.repository';
 import { Payment, PaymentDocument } from './payment.schema';
-import { IPNStatus, PaymentRemarks, PaymentStatus } from './enums';
+import { PaymentRemarks, PaymentStatus } from './enums';
 import { MailerService } from '@core';
 import { CreateZinipayPayment, ZinipayService } from './providers/zinipay';
 import { MEMBERSHIP_FEE } from '../membership/const';

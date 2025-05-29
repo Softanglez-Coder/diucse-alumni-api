@@ -4,7 +4,6 @@ import { Payment, PaymentSchema } from './payment.schema';
 import { PaymentService } from './payment.service';
 import { PaymentRepository } from './payment.repository';
 import { PaymentController } from './payment.controller';
-import { SSLComz } from './providers';
 import { MailerModule } from '@core';
 import { ZinipayService } from './providers/zinipay';
 import { HttpModule, HttpService } from '@nestjs/axios';
@@ -25,7 +24,6 @@ import { HttpModule, HttpService } from '@nestjs/axios';
   providers: [
     PaymentService,
     PaymentRepository,
-    SSLComz,
     Logger,
     ZinipayService
   ],
