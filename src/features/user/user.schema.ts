@@ -27,6 +27,18 @@ export class User {
   blocked: boolean;
 
   @Prop({
+    type: String,
+    default: null
+  })
+  blockedJustification: string;
+
+  @Prop({
+    type: String,
+    default: null
+  })
+  unblockedJustification: string;
+
+  @Prop({
     type: [String],
     required: true,
     enum: Object.values(Role),

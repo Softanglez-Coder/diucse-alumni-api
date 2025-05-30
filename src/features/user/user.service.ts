@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import { Role } from '@core';
@@ -59,16 +59,60 @@ export class UserService {
   }
 
   async createBotAccount(email: string, password: string) {
-    return await this.create(email, password, [
-      Role.ADMIN,
-      Role.REVIEWER,
-      Role.ACCOUNTANT,
-      Role.EVENT_MANAGER,
-      Role.CUSTOMER_SUPPORT,
-      Role.MARKETING_MANAGER,
-      Role.PUBLISHER,
-      Role.SALES_MANAGER,
-      Role.MEMBER
-    ]);
+    return await this.create(email, password, Object.values(Role));
+  }
+
+  async block(email: string, justification: string) {
+    const user = await this.userRepository.findByUsername(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.blocked) {
+      throw new ConflictException('User is already blocked');
+    }
+
+    user.blocked = true;
+    user.blockedJustification = justification || null;
+    return await user.save();
+  }
+
+  async unblock(email: string, justification: string) {
+    const user = await this.userRepository.findByUsername(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!user.blocked) {
+      throw new ConflictException('User is not blocked');
+    }
+
+    user.blocked = false;
+    user.unblockedJustification = justification || null;
+    return await user.save();
+  }
+
+  async assignRoles(email: string, roles: Role[]) {
+    const user = await this.userRepository.findByUsername(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.roles = Array.from(new Set([...user.roles, ...roles]));
+    return await user.save();
+  }
+
+  async removeRoles(email: string, roles: Role[]) {
+    const user = await this.userRepository.findByUsername(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.roles = user.roles.filter((role) => !roles.includes(role));
+    return await user.save();
   }
 }
