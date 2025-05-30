@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Event Registration Cancelled</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Registration for {{ event_name }} Has Been Cancelled</h2>
+    <p>Dear {{ recipient_name }},</p>
+    <p>
+      We wanted to let you know that your registration for <strong>{{ event_name }}</strong> scheduled on {{ event_date }} has been cancelled.
+    </p>
+    <p>
+      If this was a mistake or you have any questions, please contact us at {{ support_email }}.
+    </p>
+    <p>
+      We hope to see you at our future events!
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>

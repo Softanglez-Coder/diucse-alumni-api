@@ -70,11 +70,11 @@ export class MemberService {
         </p>
       `;
 
-      await this.mailerService.sendMail(
-        member.email,
-        'Sorry, you have been blocked',
-        body,
-      );
+      await this.mailerService.send({
+        to: member.email,
+        subject: 'You have been blocked from DIU CSE Alumni',
+        html: body,
+      });
     } catch (e) {
       throw new HttpException(
         'Failed to send email notification due to: ' + e.message,
@@ -110,11 +110,11 @@ export class MemberService {
         </p>
       `;
 
-      await this.mailerService.sendMail(
-        member.email,
-        'Your account has been unblocked',
-        body,
-      );
+      await this.mailerService.send({
+        to: member.email,
+        subject: 'Your account has been unblocked',
+        html: body,
+      });
     } catch (e) {
       throw new HttpException(
         'Failed to send email notification due to: ' + e.message,
@@ -151,11 +151,11 @@ export class MemberService {
         </p>
       `;
 
-      await this.mailerService.sendMail(
-        member.email,
-        'Roles assigned to your account',
-        body,
-      );
+      await this.mailerService.send({
+        to: member.email,
+        subject: 'Roles assigned to your account',
+        html: body,
+      });
     } catch (e) {
       throw new HttpException(
         'Failed to send email notification due to: ' + e.message,
@@ -198,11 +198,11 @@ export class MemberService {
         </p>
       `;
 
-      await this.mailerService.sendMail(
-        member.email,
-        'Roles removed from your account',
-        body,
-      );
+      await this.mailerService.send({
+        to: member.email,
+        subject: 'Roles removed from your account',
+        html: body,
+      });
     } catch (e) {
       throw new HttpException(
         'Failed to send email notification due to: ' + e.message,

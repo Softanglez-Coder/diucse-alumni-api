@@ -149,11 +149,13 @@ export class PaymentService {
 
     // Send email notification
     try {
-      await this.mailerService.sendMail(
-        payment.email,
-        'Payment Notification',
-        `Your payment of ${payment.depositAmount} has been processed successfully. Transaction ID: ${payment.bankTransactionId || payment.trxId}. For: ${payment.remarks}.`,
-      );
+      await this.mailerService.send({
+        to: payment.email,
+        subject: 'Payment Notification',
+        html: `<p>Your payment of <strong>${payment.depositAmount}</strong> has been processed successfully.</p>
+               <p>Transaction ID: <strong>${payment.bankTransactionId || payment.trxId}</strong></p>
+               <p>For: <strong>${payment.remarks}</strong></p>`,
+      });
     } catch (error) {
       throw new HttpException(
         'Failed to send payment notification email',

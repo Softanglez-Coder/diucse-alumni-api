@@ -20,6 +20,7 @@ import { MemberService } from '@member';
 import { MailerService } from '@core';
 import { SettingsService } from '../settings/settings.service';
 import { SettingsGroup, SettingsKey } from '../settings/enums';
+import { Template } from 'src/core/mailer/template';
 
 @Injectable()
 export class MembershipService {
@@ -65,20 +66,14 @@ export class MembershipService {
     }
 
     try {
-      const body = `
-      <h1>Membership Request</h1>
-      <p>Dear ${dto.name},</p>
-      <p>Thank you for your interest in becoming a member. Your membership request has been received and is currently under review.</p>
-      <p>We will notify you via email once your request has been processed.</p>
-      <p>Best regards,</p>
-      <p>The Membership Team</p>
-      `;
-
-      await this.mailerService.sendMail(
-        dto.email,
-        'Membership Request Received',
-        body,
-      );
+      await this.mailerService.send({
+        to: dto.email,
+        subject: 'Membership Requested',
+        template: Template.MEMBERSHIP_REQUESTED,
+        variables: {
+          member_name: dto.name,
+        },
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership request email: ${error.message}`,
@@ -174,11 +169,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        updatedMembership.email,
-        'Membership Request Updated',
-        body,
-      );
+      await this.mailerService.send({
+        to: updatedMembership.email,
+        subject: 'Membership Request Updated',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership update email: ${error.message}`,
@@ -262,11 +257,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        membership.email,
-        'Membership Request In Progress',
-        body,
-      );
+      await this.mailerService.send({
+        to: membership.email,
+        subject: 'Membership Request In Progress',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership in progress email: ${error.message}`,
@@ -323,11 +318,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        membership.email,
-        'Membership Request Validated',
-        body,
-      );
+      await this.mailerService.send({
+        to: membership.email,
+        subject: 'Membership Request Validated',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership validation email: ${error.message}`,
@@ -437,11 +432,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        updatedMembership.email,
-        'Membership Request Approved',
-        body,
-      );
+      await this.mailerService.send({
+        to: updatedMembership.email,
+        subject: 'Membership Request Approved',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership approval email: ${error.message}`,
@@ -503,11 +498,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        membership.email,
-        'Membership Request Rejected',
-        body,
-      );
+      await this.mailerService.send({
+        to: membership.email,
+        subject: 'Membership Request Rejected',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send membership rejection email: ${error.message}`,
@@ -634,11 +629,11 @@ export class MembershipService {
       <p>The Membership Team</p>
       `;
 
-      await this.mailerService.sendMail(
-        membership.email,
-        'User Account Created',
-        body,
-      );
+      await this.mailerService.send({
+        to: membership.email,
+        subject: 'User Account Created',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send user account creation email: ${error.message}`,

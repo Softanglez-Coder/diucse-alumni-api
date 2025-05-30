@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@user';
+import { Template } from 'src/core/mailer/template';
 
 @Injectable()
 export class AuthService {
@@ -58,12 +59,16 @@ export class AuthService {
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
     try {
-      const body = `
-        <p>To reset your password, please click the link below:</p>
-        <p><a href="${process.env.RESET_PASSWORD_URL}?token=${token}">Reset Password</a></p>
-        <p>If you did not request this, please ignore this email.</p>
-        `;
-      await this.mailerService.sendMail(user.email, 'Password Recovery', body);
+      await this.mailerService.send({
+        to: user.email,
+        subject: 'Recover Password',
+        template: Template.RECOVER_PASSWORD,
+        variables: {
+          member_name: member.name,
+          reset_link: `${process.env.RESET_PASSWORD_URL}?token=${token}`,
+          expiration_time: '1 hour',
+        },
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send recovery email due to ${error.message}`,
@@ -98,7 +103,11 @@ export class AuthService {
                 <p>Your password has been successfully updated.</p>
                 <p>If you did not request this change, please contact support immediately.</p>
             `;
-      await this.mailerService.sendMail(user.email, 'Password Updated', body);
+      await this.mailerService.send({
+        to: user.email,
+        subject: 'Password Updated Successfully',
+        html: body,
+      });
     } catch (error) {
       throw new HttpException(
         `Failed to send confirmation email due to ${error.message}`,

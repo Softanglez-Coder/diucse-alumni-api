@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Invoice Reminder</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .button { display: inline-block; padding: 12px 24px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+    .invoice-details { margin: 24px 0; padding: 16px; background: #f1f1f1; border-radius: 6px; }
+    .invoice-details strong { display: inline-block; width: 120px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Payment Invoice Reminder</h2>
+    <p>Dear {{ recipient_name }},</p>
+    <p>
+      This is a reminder that the following invoice is still pending payment:
+    </p>
+    <div class="invoice-details">
+      <p><strong>Invoice No:</strong> {{ invoice_number }}</p>
+      <p><strong>Amount Due:</strong> {{ amount }} {{ currency }}</p>
+      <p><strong>Due Date:</strong> {{ due_date }}</p>
+      <p><strong>Description:</strong> {{ description }}</p>
+    </div>
+    <p>
+      To view or pay your invoice, please click the button below:
+    </p>
+    <p>
+      <a href="{{ payment_link }}" class="button">View & Pay Invoice</a>
+    </p>
+    <p>
+      If you have already made the payment, please disregard this message. For any questions, contact us at {{ support_email }}.
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>
