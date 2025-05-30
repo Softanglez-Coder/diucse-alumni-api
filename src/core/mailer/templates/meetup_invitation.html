@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>You're Invited: {{ meetup_name }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .button { display: inline-block; padding: 12px 24px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>You're Invited: {{ meetup_name }}</h2>
+    <p>Dear {{ recipient_name }},</p>
+    <p>
+      We are excited to invite you to <strong>{{ meetup_name }}</strong> taking place on {{ meetup_date }} at {{ meetup_location }}.
+    </p>
+    <p>
+      Join us for an opportunity to connect, share, and grow with fellow alumni.
+    </p>
+    <p>
+      For more details and to RSVP, please click the button below:
+    </p>
+    <p>
+      <a href="{{ rsvp_link }}" class="button">RSVP Now</a>
+    </p>
+    <p>
+      We look forward to seeing you there!
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>

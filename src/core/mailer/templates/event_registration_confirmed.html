@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Event Registration Confirmed</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .button { display: inline-block; padding: 12px 24px; background: #28a745; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Registration for {{ event_name }} is Confirmed!</h2>
+    <p>Dear {{ recipient_name }},</p>
+    <p>
+      Thank you for registering for <strong>{{ event_name }}</strong> scheduled on {{ event_date }}.
+    </p>
+    <p>
+      We look forward to seeing you at the event. If you have any questions, feel free to contact us at {{ support_email }}.
+    </p>
+    <p>
+      <a href="{{ event_details_link }}" class="button">View Event Details</a>
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>

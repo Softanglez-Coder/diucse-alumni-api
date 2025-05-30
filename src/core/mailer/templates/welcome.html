@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to DIU CSE Alumni Association!</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, {{ recipient_name }}!</h2>
+    <p>
+      We are delighted to welcome you to the DIU CSE Alumni Association community.
+    </p>
+    <p>
+      As a member, you'll receive updates on events, news, and opportunities to connect with fellow alumni.
+    </p>
+    <p>
+      If you have any questions or need assistance, please contact us at {{ support_email }}.
+    </p>
+    <p>
+      We look forward to your active participation!
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Membership Request Validated</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
+    .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .footer { margin-top: 32px; font-size: 12px; color: #888;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Membership Request Has Been Validated</h2>
+    <p>Dear {{ recipient_name }},</p>
+    <p>
+      We are pleased to inform you that your membership request has been successfully validated. Our team will review your application and notify you once it is approved or rejected.
+    </p>
+    <p>
+      If you have any questions or need further assistance, please contact us at {{ support_email }}.
+    </p>
+    <p>
+      Thank you for your interest in joining the DIU CSE Alumni Association!
+    </p>
+    <div class="footer">
+      &copy; {{ current_year }} DIU CSE Alumni Association
+    </div>
+  </div>
+</body>
+</html>
