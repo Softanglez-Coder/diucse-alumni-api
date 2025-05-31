@@ -25,4 +25,8 @@ export class UserRepository {
         const user = new this.userModel(payload);
         return await user.save();
     }
+
+    async update(id: string, payload: Partial<User>): Promise<UserDocument | null> {
+        return await this.userModel.findByIdAndUpdate(id, payload, { new: true }).exec();
+    }
 }

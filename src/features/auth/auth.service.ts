@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -140,12 +141,70 @@ export class AuthService {
     throw new NotImplementedException();
   }
 
-  async verifyEmail(user: UserEntity): Promise<void> {
-    throw new NotImplementedException();
+  async verifyEmail(request: RequestExtension): Promise<string> {
+    const token = request.query.token as string;
+    this.logger.log(`Email verification attempt with token: ${token}`);
+    if (!token) {
+      throw new BadRequestException('Verification token is required');
+    }
+
+    const id = this.jwtService.decode(token)?.sub;
+    if (!id) {
+      throw new BadRequestException('Invalid verification token');
+    }
+
+    const user = await this.userService.findById(id as string, false);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isEmailVerified) {
+      throw new ConflictException('Email is already verified');
+    }
+
+    user.isEmailVerified = true;
+
+    const updatedUser = await this.userService.update(user.id, user);
+    if (!updatedUser) {
+      throw new InternalServerErrorException('Could not update user email verification status');
+    }
+
+    this.logger.log(`Email verified successfully for user ${user.username}`, user.id);
+
+    return 'Email verified successfully';
   }
 
-  async sendVerificationEmail(user: UserEntity): Promise<void> {
-    throw new NotImplementedException();
+  async sendVerificationEmail({ user, host }: RequestExtension): Promise<void> {
+    this.logger.log(`Sending verification email to ${user.email}`);
+
+    if (!user.email) {
+      throw new BadRequestException('User email is not provided');
+    }
+
+    if (user.isEmailVerified) {
+      throw new ConflictException('Email is already verified');
+    }
+
+    const verificationToken = this.generateToken(user);
+    if (!verificationToken) {
+      throw new InternalServerErrorException('Could not generate verification token');
+    }
+
+    try {
+      await this.mailService.send({
+        to: user.email,
+        subject: 'Verify your email',
+        template: Template.EmailVerification,
+        variables: {
+          member_name: user.username,
+          verification_link: `${host}/auth/verify-email?token=${verificationToken.access}`
+        }
+      });
+      this.logger.log(`Verification email sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send verification email to ${user.email}`, error);
+      throw new InternalServerErrorException('Failed to send verification email');
+    }
   }
 
 

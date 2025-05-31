@@ -161,6 +161,55 @@ export class UserService {
         return response;
     }
 
+    async update(id: string, payload: Partial<CreateUserRequest>): Promise<UserEntity> {
+        if (!id) {
+            throw new BadRequestException("User ID is not provided");
+        }
+
+        const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+
+        if (payload.email && false === isEmail(payload.email)) {
+            throw new BadRequestException("Invalid email format");
+        }
+
+        if (payload.email) {
+            const emailExists = await this.userRepository.findByEmail(payload.email);
+            if (emailExists && emailExists._id.toString() !== id) {
+                throw new ConflictException(`User with email ${payload.email} already exists`);
+            }
+        }
+
+        if (payload.username) {
+            const usernameExists = await this.userRepository.findByUsername(payload.username);
+            if (usernameExists && usernameExists._id.toString() !== id) {
+                throw new ConflictException(`User with username ${payload.username} already exists`);
+            }
+        }
+
+        Object.assign(user, payload);
+
+        const updatedUser = await this.userRepository.update(user.id, user);
+        if (!updatedUser) {
+            throw new InternalServerErrorException("User could not be updated");
+        }
+
+        const response: UserEntity = {
+            id: updatedUser._id.toString(),
+            username: updatedUser.username,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isEmailVerified: updatedUser.isEmailVerified,
+            hash: updatedUser.hash,
+            isActive: updatedUser.isActive,
+            roles: updatedUser.roles || [],
+        };
+
+        return response;
+    }
+
     async createBotAccount(email: string, password: string): Promise<CreateUserResponse> {
         const payload: CreateUserRequest = {
             email: email,

@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller, Headers, HttpCode, HttpStatus, NotImplementedException,
+  Controller, Get, Headers, HttpCode, HttpStatus, NotImplementedException,
   Post,
   Req
 } from '@nestjs/common';
@@ -51,15 +51,16 @@ export class AuthController {
     return await this.authService.resetPassword(request.user, body);
   }
 
+  @Public()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('verify-email')
-  async verifyEmail(@Req() request: RequestExtension): Promise<void> {
-    return await this.authService.verifyEmail(request.user);
+  @Get('verify-email')
+  async verifyEmail(@Req() request: RequestExtension): Promise<string> {
+    return await this.authService.verifyEmail(request);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('send-verification-email')
   async sendVerificationEmail(@Req() request: RequestExtension): Promise<void> {
-    return await this.authService.sendVerificationEmail(request.user);
+    return await this.authService.sendVerificationEmail(request);
   }
 }
