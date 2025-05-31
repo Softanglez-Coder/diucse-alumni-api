@@ -3,14 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { Template } from './template';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
-export class SendEmailPayload {
-  to: string;
-  subject: string;
-  html?: string; // Optional HTML content
-  template?: Template;
-  variables?: Record<string, string>;
-}
+import { SendEmailPayload } from './models';
 
 @Injectable()
 export class MailerService {
@@ -45,6 +38,12 @@ export class MailerService {
       let body = await fs.readFile(templatePath, 'utf-8');
       
       // Replace variables in the template
+      variables = {
+        ...variables || {},
+
+        // Default variables can be added here if needed
+        website_base_url: process.env.FRONTEND_URL || 'https://csediualumni.com',
+      };
       for (const [key, value] of Object.entries(variables)) {
         body = body.replace(new RegExp(`{{ ${key} }}`, 'g'), value);
       }

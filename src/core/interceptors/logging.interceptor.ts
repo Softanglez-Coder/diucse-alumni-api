@@ -8,6 +8,12 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+/**
+ * LoggingInterceptor
+ *
+ * This interceptor logs incoming requests and outgoing responses.
+ * It logs the HTTP method, URL, and response status code along with the time taken to process the request.
+ */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   constructor(private readonly logger: Logger) {}

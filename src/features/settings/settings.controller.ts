@@ -9,7 +9,7 @@ export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {
   }
 
-  @Roles(Role.ADMIN)
+  @Roles(Role.SuperAdmin, Role.Admin)
   @Post()
   async create(@Body() body: CreateSettingsDto) {
     return await this.settingsService.create(body);

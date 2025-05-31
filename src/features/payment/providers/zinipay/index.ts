@@ -1,2 +1,3 @@
-export * from './create-zinipay-payment';
+export * from './models';
+
 export * from './zinipay.service';

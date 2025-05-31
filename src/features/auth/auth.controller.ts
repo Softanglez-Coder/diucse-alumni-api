@@ -1,63 +1,65 @@
 import {
   Body,
-  Controller,
-  Get,
-  Header,
-  Headers,
+  Controller, Headers, HttpCode, HttpStatus, NotImplementedException,
   Post,
-  UnauthorizedException,
+  Req
 } from '@nestjs/common';
-import { LoginDto } from './dtos';
 import { AuthService } from './auth.service';
-import { Public } from '@core';
+import { Public, RequestExtension } from '@core';
+import { RegisterResponse } from './responses';
+import { LoginRequest, RecoverPasswordRequest, RegisterRequest, ResetPasswordRequest } from './requests';
+import { LoginResponse } from './responses/login.response';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Post('login')
-  async login(@Body() body: LoginDto) {
-    const { email, password } = body;
-    return await this.authService.login(email, password);
+  @HttpCode(HttpStatus.CREATED)
+  @Post('register')
+  async register(@Body() body: RegisterRequest): Promise<RegisterResponse> {
+    return await this.authService.register(body);
   }
 
   @Public()
-  @Post('recover-password')
-  async recoverPassword(@Body() body: { email: string }) {
-    const { email } = body;
-    return await this.authService.recoverPassword(email);
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  async login(@Body() body: LoginRequest): Promise<LoginResponse> {
+    return await this.authService.login(body);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('logout')
+  async logout(@Req() request: RequestExtension): Promise<void> {
+    return await this.authService.logout(request);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('recover-password')
+  async forgotPassword(@Body() body: RecoverPasswordRequest): Promise<void> {
+    return await this.authService.recoverPassword(body);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('reset-password')
   async resetPassword(
-    @Body() body: { newPassword: string },
-    @Headers('Authorization') token: string,
-  ) {
-    const { newPassword } = body;
-
-    // Assuming the token is in the format "Bearer <token>"
-    const tokenValue = token.split(' ')[1];
-    if (!tokenValue) {
-      throw new UnauthorizedException(
-        'Invalid token format. Expected "Bearer <token>"',
-      );
-    }
-
-    return await this.authService.resetPassword(newPassword, tokenValue);
+    @Body() body: ResetPasswordRequest,
+    @Req() request: RequestExtension,
+  ): Promise<void> {
+    return await this.authService.resetPassword(request.user, body);
   }
 
-  @Get('me')
-  @Header('Cache-Control', 'none')
-  async me(@Headers('Authorization') token: string) {
-    // Assuming the token is in the format "Bearer <token>"
-    const tokenValue = token.split(' ')[1];
-    if (!tokenValue) {
-      throw new UnauthorizedException(
-        'Invalid token format. Expected "Bearer <token>"',
-      );
-    }
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('verify-email')
+  async verifyEmail(@Req() request: RequestExtension): Promise<void> {
+    return await this.authService.verifyEmail(request.user);
+  }
 
-    return await this.authService.me(tokenValue);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('send-verification-email')
+  async sendVerificationEmail(@Req() request: RequestExtension): Promise<void> {
+    return await this.authService.sendVerificationEmail(request.user);
   }
 }

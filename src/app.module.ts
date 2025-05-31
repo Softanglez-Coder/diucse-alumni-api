@@ -14,16 +14,12 @@ import {
 } from '@core';
 
 import { PaymentModule } from '@payment';
-import { MembershipModule } from '@membership';
-import { BatchModule } from '@batch';
-import { ShiftModule } from '@shift';
-import { MediaModule } from '@media';
-import { UserModule } from '@user';
-import { MemberModule } from '@member';
 import { AuthModule } from './features/auth';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpModule } from '@nestjs/axios';
 import { SettingsModule } from './features/settings/settings.module';
+import { UserModule } from './features/user/user.module';
+import { TokenModule } from './features/token/token.module';
 
 @Module({
   imports: [
@@ -41,17 +37,13 @@ import { SettingsModule } from './features/settings/settings.module';
     }),
     DatabaseModule,
     StorageModule,
-    MediaModule,
     PaymentModule,
-    MembershipModule,
-    BatchModule,
-    ShiftModule,
-    UserModule,
-    MemberModule,
     AuthModule,
     JwtModule,
     HttpModule,
-    SettingsModule
+    SettingsModule,
+    UserModule,
+    TokenModule
   ],
   controllers: [AppController],
   providers: [

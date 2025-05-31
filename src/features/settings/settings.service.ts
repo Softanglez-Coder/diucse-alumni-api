@@ -24,14 +24,11 @@ export class SettingsService {
       };
     }
 
-    const settingsObject = settings.reduce((acc, setting) => {
+    const values = settings.reduce((acc, setting) => {
       acc[setting.key] = setting.value;
       return acc;
     }, {});
 
-    return {
-      group: group,
-      settings: settingsObject
-    };
+    return { group, values };
   }
 }

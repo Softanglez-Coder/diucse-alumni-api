@@ -1,118 +1,190 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from './user.repository';
-import * as bcrypt from 'bcrypt';
-import { Role } from '@core';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, NotImplementedException } from "@nestjs/common";
+import { UserEntity } from "./user.entity";
+import { UserRepository } from "./user.repository";
+import { isEmail } from "class-validator";
+import { CreateUserRequest } from "./requests";
+import { CreateUserResponse } from "./responses";
+import * as bcrypt from "bcrypt";
+import { Role } from "@core";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+    constructor(
+        private readonly userRepository: UserRepository
+    ) {}
 
-  async create(email: string, password: string, roles: Role[] = [Role.MEMBER]) {
-    const hashedPassword = await this.hashPassword(password);
-    return await this.userRepository.create(email, hashedPassword, roles);
-  }
+    async create(payload: CreateUserRequest, roles: Role[] = [ Role.Guest ]): Promise<CreateUserResponse> {
+        if (!payload.email) {
+            throw new BadRequestException("Email is not provided");
+        }
 
-  async findByEmail(email: string) {
-    return await this.userRepository.findByUsername(email);
-  }
+        if (false === isEmail(payload.email)) {
+            throw new BadRequestException("Invalid email format");
+        }
 
-  async findById(id: string) {
-    return await this.userRepository.findById(id);
-  }
+        if (!payload.username) {
+            throw new BadRequestException("Username is not provided");
+        }
 
-  async updatePassword(id: string, newPassword: string) {
-    const hashedPassword = await this.hashPassword(newPassword);
-    return await this.userRepository.updatePassword(id, hashedPassword);
-  }
+        if (!payload.name) {
+            throw new BadRequestException("Name is not provided");
+        }
 
-  async deleteById(id: string) {
-    return await this.userRepository.deleteById(id);
-  }
+        if (!payload.password) {
+            throw new BadRequestException("Password is not provided");
+        }
 
-  async findAll() {
-    return await this.userRepository.findAll();
-  }
+        const emailExists = await this.userRepository.findByEmail(payload.email);
+        if (emailExists) {
+            throw new ConflictException(`User with email ${payload.email} already exists`);
+        }
 
-  async exists(email: string): Promise<boolean> {
-    return await this.userRepository.exists(email);
-  }
+        const usernameExists = await this.userRepository.findByUsername(payload.username);
+        if (usernameExists) {
+            throw new ConflictException(`User with username ${payload.username} already exists`);
+        }
 
-  async validateUser(email: string, password: string): Promise<boolean> {
-    const user = await this.userRepository.findByUsername(email);
+        const hashed = await bcrypt.hash(payload.password, 10);
 
-    if (!user || !user?.hash || user?.blocked) {
-      return false;
+        const user = await this.userRepository.create({
+            email: payload.email,
+            username: payload.username,
+            name: payload.name,
+            hash: hashed,
+            isEmailVerified: false,
+            isActive: true,
+            roles: roles,
+        });
+
+        if (!user) {
+            throw new InternalServerErrorException("User could not be created");
+        }
+
+        const response: CreateUserResponse = {
+            id: user._id.toString(),
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            isActive: user.isActive,
+            roles: user.roles || [],
+        };
+
+        return response;
+    }
+    
+    async findById(id: string, secure: boolean = true): Promise<UserEntity> {
+        if (!id) {
+            throw new BadRequestException("User ID is not provided");
+        }
+
+        const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+
+        const response: UserEntity = {
+            id: user._id.toString(),
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            hash: user.hash,
+            isActive: user.isActive,
+            roles: user.roles || [],
+        }
+
+        if (secure) {
+            delete response.hash; // Remove sensitive information
+        }
+
+        return response;
     }
 
-    return await this.comparePasswords(password, user.hash);
-  }
+    async findByEmail(email: string, secure: boolean = true): Promise<UserEntity> {
+        if (!email) {
+            throw new BadRequestException("Email is not provided");
+        }
 
-  private async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 10);
-  }
+        if (false === isEmail(email)) {
+            throw new BadRequestException("Invalid email format");
+        }
 
-  private async comparePasswords(
-    plainPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
-    return await bcrypt.compare(plainPassword, hashedPassword);
-  }
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            throw new NotFoundException(`User with email ${email} not found`);
+        }
 
-  async createBotAccount(email: string, password: string) {
-    return await this.create(email, password, Object.values(Role));
-  }
+        const response: UserEntity = {
+            id: user._id.toString(),
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            hash: user.hash,
+            isActive: user.isActive,
+            roles: user.roles || [],
+        }
 
-  async block(email: string, justification: string) {
-    const user = await this.userRepository.findByUsername(email);
+        if (secure) {
+            delete response.hash; // Remove sensitive information
+        }
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+        return response;
     }
 
-    if (user.blocked) {
-      throw new ConflictException('User is already blocked');
+    async findByUsername(username: string, secure: boolean = true): Promise<UserEntity> {
+        if (!username) {
+            throw new BadRequestException("Username is not provided");
+        }
+
+        const user = await this.userRepository.findByUsername(username);
+        if (!user) {
+            throw new NotFoundException(`User with username ${username} not found`);
+        }
+
+        const response: UserEntity = {
+            id: user._id.toString(),
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            hash: user.hash,
+            isActive: user.isActive,
+            roles: user.roles || [],
+        }
+
+        if (secure) {
+            delete response.hash; // Remove sensitive information
+        }
+
+        return response;
     }
 
-    user.blocked = true;
-    user.blockedJustification = justification || null;
-    return await user.save();
-  }
+    async createBotAccount(email: string, password: string): Promise<CreateUserResponse> {
+        const payload: CreateUserRequest = {
+            email: email,
+            username: `bot`,
+            name: `Bot User`,
+            password: password,
+        }
 
-  async unblock(email: string, justification: string) {
-    const user = await this.userRepository.findByUsername(email);
+        const roles: Role[] = [ Role.SuperAdmin ];
+        const user = await this.create(payload, roles);
+        if (!user) {
+            throw new InternalServerErrorException("Bot account could not be created");
+        }
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+        const response: CreateUserResponse = {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            isEmailVerified: user.isEmailVerified,
+            isActive: user.isActive,
+            roles: user.roles,
+        };
+
+        return response;
     }
-
-    if (!user.blocked) {
-      throw new ConflictException('User is not blocked');
-    }
-
-    user.blocked = false;
-    user.unblockedJustification = justification || null;
-    return await user.save();
-  }
-
-  async assignRoles(email: string, roles: Role[]) {
-    const user = await this.userRepository.findByUsername(email);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    user.roles = Array.from(new Set([...user.roles, ...roles]));
-    return await user.save();
-  }
-
-  async removeRoles(email: string, roles: Role[]) {
-    const user = await this.userRepository.findByUsername(email);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    user.roles = user.roles.filter((role) => !roles.includes(role));
-    return await user.save();
-  }
 }

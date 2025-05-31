@@ -1,5 +1,5 @@
 import { SettingsGroup } from '../enums';
-import { IsEnum, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsString } from 'class-validator';
 import { SettingsKey } from '../enums/settings-key';
 
 export class CreateSettingsDto {
@@ -9,6 +9,6 @@ export class CreateSettingsDto {
   @IsString()
   key: SettingsKey;
 
-  @IsString()
-  value: string;
+  @IsDefined()
+  value: string | number | boolean;
 }

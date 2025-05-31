@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SettingsGroup } from './enums/settings-group';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { SettingsKey } from './enums';
 
 @Schema({
@@ -26,12 +26,20 @@ export class Settings {
   key: SettingsKey;
 
   @Prop({
+    type: mongoose.Schema.Types.Mixed,
+    validate: {
+      validator: (value: string | number | boolean) => {
+        // Allow string, number, or boolean values
+        return typeof value === 'string' 
+            || typeof value === 'number'
+            || typeof value === 'boolean';
+      },
+      message: 'Value must be a string, number, or boolean',
+    },
     required: true,
-    type: String,
-    trim: true,
     default: '',
   })
-  value: string;
+  value: string | number | boolean;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);

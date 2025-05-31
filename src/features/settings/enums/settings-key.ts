@@ -1,3 +1,3 @@
 export enum SettingsKey {
-  MEMBERSHIP_FEE = 'membership_fee',
+  MembershipFee = 'membership_fee',
 }
