@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { UserEntity } from "@user";
+import { MemberEntity } from "@member";
 
 export interface RequestExtension extends Request {
-    user?: UserEntity;
+    member?: MemberEntity;
 }

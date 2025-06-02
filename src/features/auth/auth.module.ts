@@ -1,30 +1,27 @@
-import { Logger, Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { MailerModule } from '@core';
-import { AuthController } from './auth.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from '../user/user.module';
-import { TokenModule } from '@token';
+import { Module } from "@nestjs/common";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { MemberModule, MemberService } from "@member";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
-  controllers: [AuthController],
-  imports: [
-    MailerModule,
-    UserModule,
-    TokenModule,
-    JwtModule.registerAsync({
-      useFactory: async (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '7d' },
-      }),
-      imports: [ConfigModule],
-      inject: [ConfigService],
-    }),
-  ],
-  providers: [
-    AuthService,
-    Logger
-  ],
+    imports: [
+        JwtModule.registerAsync({
+             imports: [ConfigModule],
+             useFactory: async (configService: ConfigService) => ({
+               secret: configService.get<string>('JWT_SECRET'),
+               signOptions: { expiresIn: '1d' },
+             }),
+             inject: [ConfigService],
+           }),
+        MemberModule
+    ],
+    controllers: [
+        AuthController
+    ],
+    providers: [
+        AuthService,
+    ],
 })
 export class AuthModule {}

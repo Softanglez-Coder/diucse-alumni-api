@@ -19,10 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@core": ["./src/core/index"],
-      "@payment": ["./src/features/payment/index"],
-      "@user": ["./src/features/user/index"],
-      "@settings": ["./src/features/settings/index"],
-      "@token": ["./src/features/token/index"]
+      "@member": ["./src/features/member/index"],
+      "@payment": ["./src/features/payment/index"]
     }
   }
 }

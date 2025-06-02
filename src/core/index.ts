@@ -4,6 +4,7 @@ export * from './mailer';
 export * from './guards';
 export * from './decorators';
 export * from './interceptors';
+export * from './payment-gateway';
 
 export * from './role';
 

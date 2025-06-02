@@ -1,15 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { CreateZinipayPayment } from './models/create-zinipay-payment';
-import { firstValueFrom } from 'rxjs';
-import { ZinipayCreatePaymentResponse } from './models/zinipay-create-payment-response';
-import * as process from 'node:process';
-import { map } from 'rxjs/operators';
-import { ZinipayVerifyPaymentResponse } from './models/zinipay-verify-payment-response';
+import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
+import { map, firstValueFrom } from "rxjs";
+import { CreateZinipayPayment, ZinipayCreatePaymentResponse, ZinipayVerifyPaymentResponse } from "./models";
 
 @Injectable()
 export class ZinipayService {
-  constructor(
+    constructor(
     private readonly httpService: HttpService
   ) {}
 

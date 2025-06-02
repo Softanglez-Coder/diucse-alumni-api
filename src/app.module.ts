@@ -1,5 +1,5 @@
 import { Module, Logger } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 
 import {
   AuthGuard,
+  CleanResponseInterceptor,
   DatabaseModule,
   LoggingInterceptor,
   RolesGuard,
@@ -14,12 +15,10 @@ import {
 } from '@core';
 
 import { PaymentModule } from '@payment';
-import { AuthModule } from './features/auth';
 import { JwtModule } from '@nestjs/jwt';
-import { HttpModule } from '@nestjs/axios';
 import { SettingsModule } from './features/settings/settings.module';
-import { UserModule } from './features/user/user.module';
-import { TokenModule } from './features/token/token.module';
+import { MemberModule } from '@member';
+import { AuthModule } from './features/auth';
 
 @Module({
   imports: [
@@ -35,15 +34,18 @@ import { TokenModule } from './features/token/token.module';
         },
       ],
     }),
+
+    JwtModule,
+
+    // Core modules
     DatabaseModule,
     StorageModule,
-    PaymentModule,
+
+    // Feature modules
     AuthModule,
-    JwtModule,
-    HttpModule,
     SettingsModule,
-    UserModule,
-    TokenModule
+    PaymentModule,
+    MemberModule
   ],
   controllers: [AppController],
   providers: [
@@ -51,6 +53,10 @@ import { TokenModule } from './features/token/token.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CleanResponseInterceptor,
     },
     {
       provide: APP_GUARD,

@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ZinipayService } from './providers/zinipay';
-import { HttpModule } from '@nestjs/axios';
+import { PaymentGatewayModule } from '@core';
 
 @Module({
   imports: [
-    HttpModule,
-  ],
-  providers: [
-    ZinipayService
+    PaymentGatewayModule
   ],
 })
 export class PaymentModule {}
