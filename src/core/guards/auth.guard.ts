@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { MemberService } from '@member';
 import { IS_PUBLIC_KEY } from '../decorators';
 import * as process from 'node:process';
 import { ConfigService } from '@nestjs/config';
+import { UserService } from 'src/feature/user/user.service';
 
 /**
  * AuthGuard
@@ -25,9 +25,9 @@ import { ConfigService } from '@nestjs/config';
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private memberService: MemberService,
+    private userService: UserService,
     private reflector: Reflector,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -56,13 +56,11 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify(token, {
         secret: this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
       });
-      const member = await this.memberService.findById(payload.sub);
-      request.member = member;
+      const user = await this.userService.findById(payload.sub);
+      request.user = user;
       return true;
     } catch (e) {
-      throw new UnauthorizedException(
-        'Invalid or expired token. Error: ' + e.message,
-      );
+      throw new UnauthorizedException(e.message ?? 'Invalid token');
     }
   }
 }

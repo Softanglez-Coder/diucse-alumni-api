@@ -7,13 +7,16 @@ import { StorageFolder } from './storage-folder';
 export class StorageService {
   constructor(@Inject('CLOUDINARY') private client: typeof cloudinary) {}
 
-  async upload(file: Express.Multer.File, folder: StorageFolder): Promise<string> {
+  async upload(
+    file: Express.Multer.File,
+    folder: StorageFolder,
+  ): Promise<string> {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
 
     const stream = Readable.from(file.buffer);
-    
+
     return new Promise<string>((resolve, reject) => {
       const uploadStream = this.client.uploader.upload_stream(
         {

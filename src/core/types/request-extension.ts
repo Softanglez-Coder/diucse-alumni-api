@@ -1,6 +1,10 @@
-import { Request } from "express";
-import { MemberEntity } from "@member";
+import { Request } from 'express';
+import { Role } from '../role';
 
 export interface RequestExtension extends Request {
-    member?: MemberEntity;
+  user?: {
+    id?: string;
+    email?: string;
+    roles?: Role[];
+  };
 }

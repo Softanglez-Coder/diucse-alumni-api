@@ -5,7 +5,7 @@ import { ROLES_KEY } from '../decorators';
 
 /**
  * RolesGuard
- * 
+ *
  * This guard checks if the user has the required roles to access a route.
  * It retrieves the required roles from the route metadata using the ROLES_KEY.
  * If the user has at least one of the required roles, access is granted.
@@ -25,7 +25,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { member } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => member.roles?.includes(role));
+    const { user } = context.switchToHttp().getRequest();
+    return requiredRoles.some((role) => user.roles?.includes(role));
   }
 }
