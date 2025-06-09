@@ -4,8 +4,8 @@ import { RequestExtension } from 'src/core/types';
 
 @Controller('membership')
 export class MembershipController {
-    @Post('apply')
-    async apply(@Req() req: RequestExtension) {
+    @Post('save')
+    async save(@Req() req: RequestExtension) {
         const user = req.user;
     }
 
