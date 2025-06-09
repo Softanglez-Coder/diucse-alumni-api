@@ -9,23 +9,23 @@ export class BaseService<T extends Document> {
     return await this.repository.create(data);
   }
 
-  async findAll(options: PaginationOptions = {}) {
-    return await this.repository.findAll(options);
+  async findAll(options: PaginationOptions = {}, secure = true) {
+    return await this.repository.findAll(options, secure);
   }
 
-  async findById(id: string): Promise<T | null> {
-    return await this.repository.findById(id);
+  async findById(id: string, secure = true): Promise<T | null> {
+    return await this.repository.findById(id, secure);
   }
 
-  async findByProperty(property: string, value: any): Promise<T | null> {
-    return await this.repository.findByProperty(property, value);
+  async findByProperty(property: string, value: any, secure = true): Promise<T | null> {
+    return await this.repository.findByProperty(property, value, secure);
   }
 
-  async update(id: string, data: Partial<T>): Promise<T | null> {
-    return await this.repository.update(id, data);
+  async update(id: string, data: Partial<T>, secure = true): Promise<T | null> {
+    return await this.repository.update(id, data, secure);
   }
 
-  async delete(id: string): Promise<T | null> {
-    return await this.repository.delete(id);
+  async delete(id: string, secure = true): Promise<T | null> {
+    return await this.repository.delete(id, secure);
   }
 }

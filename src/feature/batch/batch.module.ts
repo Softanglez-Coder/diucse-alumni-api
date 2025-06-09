@@ -4,6 +4,7 @@ import { BatchService } from './batch.service';
 import { MongooseError } from 'mongoose';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Batch, BatchSchema } from './batch.schema';
+import { BatchRepository } from './batch.repository';
 
 @Module({
   imports: [
@@ -15,6 +16,9 @@ import { Batch, BatchSchema } from './batch.schema';
     ])
   ],
   controllers: [BatchController],
-  providers: [BatchService]
+  providers: [
+    BatchService,
+    BatchRepository
+  ]
 })
 export class BatchModule {}

@@ -14,15 +14,15 @@ export class Membership {
         ref: User.name,
         autopopulate: true
     })
-    user: UserDocument;
+    user: UserDocument | mongoose.Schema.Types.ObjectId;
 
     @Prop({
-        required: true,
         type: mongoose.Schema.Types.ObjectId,
         ref: Batch.name,
-        autopopulate: true
+        autopopulate: true,
+        default: null
     })
-    batch: BatchDocument
+    batch?: BatchDocument | mongoose.Schema.Types.ObjectId;
 
     @Prop({
         required: true,
@@ -30,23 +30,23 @@ export class Membership {
         enum: Object.values(MembershipStatus),
         default: MembershipStatus.Draft,
     })
-    status: MembershipStatus;
-
-    @Prop({
-        required: true,
-        type: String
-    })
-    phone: string;
+    status?: MembershipStatus;
 
     @Prop({
         type: String,
-        required: true
+        default: null
     })
-    photo: string;
+    phone?: string;
 
     @Prop({
         type: String,
-        default: ''
+        default: null
+    })
+    photo?: string;
+
+    @Prop({
+        type: String,
+        default: null
     })
     justification?: string;
 }

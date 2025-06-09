@@ -52,7 +52,7 @@ export class AuthService {
     async login(payload: LoginDto) {
         this.logger.log(`Attempting to log in user with email: ${payload.email}`);
 
-        const user = await this.userService.findByProperty('email', payload.email);
+        const user = await this.userService.findByProperty('email', payload.email, false);
         if (!user) {
             this.logger.warn(`Login failed: User not found for email: ${payload.email}`);
             throw new UnauthorizedException('Invalid credentials');

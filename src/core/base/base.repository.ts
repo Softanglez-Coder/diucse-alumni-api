@@ -10,7 +10,7 @@ export class BaseRepository<T extends Document> {
     return await createdDocument.save();
   }
 
-  async findAll(options: PaginationOptions = {}): Promise<T[]> {
+  async findAll(options: PaginationOptions = {}, secure: boolean = true): Promise<T[]> {
     const { page = 1, limit = 10, search, sort, sortBy, filter } = options;
 
     const query: Record<string, any> = {};
@@ -29,21 +29,25 @@ export class BaseRepository<T extends Document> {
 
     return this.model
       .find(query)
+      .select(secure ? '-password': '+password') // Exclude password field if secure is true
       .sort(sortBy ? { [sortBy]: sort === 'asc' ? 1 : -1 } : {})
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
   }
 
-  async findById(id: string): Promise<T | null> {
+  async findById(id: string, secure: boolean = true): Promise<T | null> {
     if (!id) {
       throw new BadRequestException('ID is required');
     }
 
-    return await this.model.findById(id).exec();
+    return await this.model
+      .findById(id)
+      .select(secure ? '-password': '+password') // Exclude password field if secure is true
+      .exec();
   }
 
-  async findByProperty(property: string, value: any): Promise<T | null> {
+  async findByProperty(property: string, value: any, secure: boolean = true): Promise<T | null> {
     if (!property || value === undefined) {
       throw new BadRequestException('Property and value are required');
     }
@@ -52,17 +56,21 @@ export class BaseRepository<T extends Document> {
 
     query[property] = value;
 
-    const document = await this.model.findOne(query).exec();
+    const document = await this.model
+      .findOne(query)
+      .select(secure ? '-password': '+password') // Exclude password field if secure is true
+      .exec();
     return document;
   }
 
-  async update(id: string, data: Partial<T>): Promise<T | null> {
+  async update(id: string, data: Partial<T>, secure: boolean = true): Promise<T | null> {
     if (!id) {
       throw new BadRequestException('ID is required');
     }
 
     const updatedDocument = await this.model
       .findByIdAndUpdate(id, data, { new: true })
+      .select(secure ? '-password': '+password') // Exclude password field if secure is true
       .exec();
     if (!updatedDocument) {
       throw new BadRequestException('Document not found');
@@ -71,12 +79,16 @@ export class BaseRepository<T extends Document> {
     return updatedDocument;
   }
 
-  async delete(id: string): Promise<T | null> {
+  async delete(id: string, secure: boolean = true): Promise<T | null> {
     if (!id) {
       throw new BadRequestException('ID is required');
     }
 
-    const deletedDocument = await this.model.findByIdAndDelete(id).exec();
+    const deletedDocument = await this.model
+      .findByIdAndDelete(id)
+      .select(secure ? '-password': '+password') // Exclude password field if secure is true
+      .exec();
+      
     if (!deletedDocument) {
       throw new BadRequestException('Document not found');
     }

@@ -1,1 +1,1 @@
-export * from './membership-application.dto';
+export * from './membership-update.dto';
