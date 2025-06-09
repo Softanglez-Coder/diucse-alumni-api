@@ -11,6 +11,7 @@ import { CommitteeModule } from './committee/committee.module';
 import { EventModule } from './event/event.module';
 import { BlogModule } from './blog/blog.module';
 import { NoticeModule } from './notice/notice.module';
+import { BatchModule } from './batch/batch.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { NoticeModule } from './notice/notice.module';
     EventModule,
     BlogModule,
     NoticeModule,
+    BatchModule,
   ],
   exports: [],
   controllers: [],
