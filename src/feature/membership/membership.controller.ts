@@ -3,7 +3,7 @@ import { RequestExtension } from 'src/core/types';
 import { Roles } from 'src/core/decorators';
 import { Role } from '@core';
 import { MembershipService } from './membership.service';
-import { MembershipUpdateDto } from './dtos';
+import { MembershipRejectionDto, MembershipUpdateDto } from './dtos';
 
 @Controller('membership')
 export class MembershipController {
@@ -18,13 +18,36 @@ export class MembershipController {
         return await this.membershipService.enroll(user.id);
     }
 
-    @Post(':id/apply')
-    async apply(@Param('id') id: string) {}
+    @Roles(Role.Guest)
+    @Patch(':id/request')
+    async request(@Param('id') id: string) {
+        return await this.membershipService.request(id);
+    }
+
+    @Roles(Role.Reviewer)
+    @Patch(':id/in-progress')
+    async inReview(@Param('id') id: string) {
+        return await this.membershipService.inProgress(id);
+    }
+
+    @Roles(Role.Reviewer)
+    @Patch(':id/approve')
+    async approve(@Param('id') id: string) {
+        return await this.membershipService.approve(id);
+    }
+
+    @Roles(Role.Reviewer)
+    @Patch(':id/reject')
+    async reject(
+        @Param('id') id: string,
+        @Body() dto: MembershipRejectionDto
+    ) {
+        return await this.membershipService.reject(id, dto.justification);
+    }
+
 
     @Roles(
         Role.Guest,
-        Role.SuperAdmin,
-        Role.Admin,
         Role.Reviewer
     )
     @Patch(':id')
@@ -35,6 +58,10 @@ export class MembershipController {
         return await this.membershipService.update(id, dto);
     }
 
+    @Roles(
+        Role.Guest,
+        Role.Reviewer
+    )
     @Get(':id')
     async findById( @Param('id') id: string ) {
         return await this.membershipService.findById(id);

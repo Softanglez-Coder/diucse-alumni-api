@@ -40,7 +40,7 @@ export class UserService extends BaseService<UserDocument> {
     const bot: User = {
       email,
       password: hash,
-      roles: [Role.SuperAdmin],
+      roles: Object.values(Role),
       name: 'Bot',
       active: true,
     };

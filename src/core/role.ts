@@ -6,16 +6,6 @@ export enum Role {
    * It can create, read, update, and delete any resource.
    * It can also manage roles and permissions for other users.
    * This role should be assigned with caution, as it has the power to change system settings and configurations.
-   */
-  SuperAdmin = 'super_admin',
-
-  /**
-   * Can do everything, including managing users and settings.
-   * This role is typically reserved for the system administrator.
-   * It has the highest level of access and control over the system.
-   * It can create, read, update, and delete any resource.
-   * It can also manage roles and permissions for other users.
-   * This role should be assigned with caution, as it has the power to change system settings and configurations.
    *
    * In this application, this role should be assinged to
    * president, vice-president, secretary of current board of directors.
