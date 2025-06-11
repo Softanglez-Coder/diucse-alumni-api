@@ -19,7 +19,7 @@ export class MembershipController {
     }
 
     @Roles(Role.Guest)
-    @Patch(':id/request')
+    @Post(':id/request')
     async request(@Param('id') id: string) {
         return await this.membershipService.request(id);
     }
@@ -28,6 +28,12 @@ export class MembershipController {
     @Patch(':id/in-progress')
     async inReview(@Param('id') id: string) {
         return await this.membershipService.inProgress(id);
+    }
+
+    @Roles(Role.Reviewer)
+    @Patch(':id/payment-required')
+    async paymentRequired(@Param('id') id: string) {
+        return await this.membershipService.paymentRequired(id);
     }
 
     @Roles(Role.Reviewer)

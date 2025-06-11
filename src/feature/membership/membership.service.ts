@@ -1,15 +1,21 @@
 import { BaseService } from '@core';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { Membership, MembershipDocument } from './membership.schema';
 import { MembershipRepository } from './membership.repository';
-import { UserService } from '../user';
+import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
 import mongoose from 'mongoose';
+import { InvoiceService } from '../invoice/invoice.service';
+import { CreateInvoiceDto } from '../invoice/create-invoice.dto';
+import { Invoice, InvoiceRemarks } from '../invoice';
 
 @Injectable()
 export class MembershipService extends BaseService<MembershipDocument> {
+    private readonly MEMBERSHIP_FEE = 500;
+
     constructor(
         private readonly membershipRepository: MembershipRepository,
+        private readonly invoiceService: InvoiceService,
         private readonly logger: Logger,
         private readonly userService: UserService
     ) {
@@ -63,6 +69,35 @@ export class MembershipService extends BaseService<MembershipDocument> {
         membership.status = MembershipStatus.InProgress;
         const updatedMembership = await this.membershipRepository.update(id, membership);
         this.logger.log(`Review started for membership with ID ${id}`);
+
+        return updatedMembership;
+    }
+
+    async paymentRequired(id: string) {
+        this.logger.log(`Marking membership with ID ${id} as payment required`);
+
+        const membership = await this.membershipRepository.findById(id);
+        if (!membership) {
+            this.logger.error(`Membership with ID ${id} not found`);
+            throw new NotFoundException(`Membership with ID ${id} not found`);
+        }
+
+        membership.status = MembershipStatus.PaymentRequired;
+        const updatedMembership = await this.membershipRepository.update(id, membership);
+
+        const membershipFeeInvoice: Invoice = {
+            amount: this.MEMBERSHIP_FEE,
+            user: (membership.user as UserDocument)?.id,
+            remarks: InvoiceRemarks.MembershipFee,
+        };
+        
+        const invoice = await this.invoiceService.create(membershipFeeInvoice);
+        if (!invoice) {
+            this.logger.error('Something went wrong on creating invoice');
+            throw new InternalServerErrorException('Failed to create invoice');
+        }
+
+        this.logger.log(`Membership with ID ${id} marked as payment required`);
 
         return updatedMembership;
     }

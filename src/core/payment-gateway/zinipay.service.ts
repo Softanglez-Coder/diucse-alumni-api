@@ -6,24 +6,33 @@ import {
   ZinipayCreatePaymentResponse,
   ZinipayVerifyPaymentResponse,
 } from './models';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ZinipayService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly config: ConfigService
+  ) {}
 
   async create(
     payload: CreateZinipayPayment,
   ): Promise<ZinipayCreatePaymentResponse> {
+    const frontend = this.config.get<string>('FRONTEND_URL');
+    const server = this.config.get<string>('SERVER_URL');
+
+    const success = this.config.get<string>('PAYMENT_SUCCESS_REDIRECT_URL');
+    const failed = this.config.get<string>('PAYMENT_FAILED_REDIRECT_URL');
+    const webhook = this.config.get<string>('PAYMENT_WEBHOOK_URL');
+
     const data = {
       cus_name: payload.customer.name,
       cus_email: payload.customer.email,
       amount: payload.amount,
-      redirect_url: `${payload.host}/${process.env.PAYMENT_SUCCESS_REDIRECT_URL}`,
-      cancel_url: `${payload.host}/${process.env.PAYMENT_CANCEL_REDIRECT_URL}`,
-      webhook_url: `${payload.host}/${process.env.PAYMENT_WEBHOOK_URL}`,
-      metadata: {
-        phone: payload.customer.phone,
-      },
+      redirect_url: `${frontend}/${success}`,
+      cancel_url: `${frontend}/${failed}`,
+      webhook_url: `${server}/${webhook}`,
+      metadata: payload.metadata,
     };
 
     const paymentUrl = 'https://api.zinipay.com/v1/payment/create';

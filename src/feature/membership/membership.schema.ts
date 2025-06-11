@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument } from "mongoose";
 import { User, UserDocument } from "../user";
 import { MembershipStatus } from "./membership-status";
 import { Batch, BatchDocument } from "../batch/batch.schema";
+import { Invoice, InvoiceDocument } from "../invoice";
 
 @Schema({
     timestamps: true
@@ -49,6 +50,14 @@ export class Membership {
         default: null
     })
     justification?: string;
+
+    @Prop({
+        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: Invoice.name,
+        autopopulate: true
+    })
+    invoice?: InvoiceDocument | mongoose.Schema.Types.ObjectId;
 }
 
 export const MembershipSchema = SchemaFactory.createForClass(Membership);
