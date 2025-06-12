@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { map, firstValueFrom } from 'rxjs';
 import {
   CreateZinipayPayment,
@@ -22,8 +22,13 @@ export class ZinipayService {
     const server = this.config.get<string>('SERVER_URL');
 
     const success = this.config.get<string>('PAYMENT_SUCCESS_REDIRECT_URL');
-    const failed = this.config.get<string>('PAYMENT_FAILED_REDIRECT_URL');
+    const failed = this.config.get<string>('PAYMENT_FAIL_REDIRECT_URL');
     const webhook = this.config.get<string>('PAYMENT_WEBHOOK_URL');
+
+    const apiKey = this.config.get<string>('ZINIPAY_API_KEY');
+    if (!apiKey) {
+      throw new InternalServerErrorException('ZINIPAY_API_KEY is not set in the environment variables');
+    }
 
     const data = {
       cus_name: payload.customer.name,
@@ -39,7 +44,7 @@ export class ZinipayService {
     const request$ = this.httpService
       .post<ZinipayCreatePaymentResponse>(paymentUrl, data, {
         headers: {
-          'zini-api-key': `${process.env.ZINIPAY_API_KEY}`,
+          'zini-api-key': apiKey,
           'Content-Type': 'application/json',
         },
       })
@@ -49,18 +54,24 @@ export class ZinipayService {
   }
 
   async verify(
-    trxId: string,
+    validationId: string,
     invoiceId: string,
   ): Promise<ZinipayVerifyPaymentResponse> {
     const data = {
       invoiceId: invoiceId,
-      val_id: trxId,
+      val_id: validationId,
     };
+
+    const apiKey = this.config.get<string>('ZINIPAY_API_KEY');
+    if (!apiKey) {
+      throw new InternalServerErrorException('ZINIPAY_API_KEY is not set in the environment variables');
+    }
+
     const verifyUrl = 'https://api.zinipay.com/v1/payment/verify';
     const request$ = this.httpService
       .post<ZinipayVerifyPaymentResponse>(verifyUrl, data, {
         headers: {
-          'zini-api-key': `${process.env.ZINIPAY_API_KEY}`,
+          'zini-api-key': apiKey,
           'Content-Type': 'application/json',
         },
       })

@@ -40,10 +40,15 @@ export class Invoice {
 
     @Prop({
         type: String,
-        required: true,
         default: ''
     })
     paymentUrl?: string;
+
+    @Prop({
+        type: String,
+        default: ''
+    })
+    validationId?: string;
 }
 
 export const InvoiceSchema = SchemaFactory.createForClass(Invoice);

@@ -83,7 +83,6 @@ export class MembershipService extends BaseService<MembershipDocument> {
         }
 
         membership.status = MembershipStatus.PaymentRequired;
-        const updatedMembership = await this.membershipRepository.update(id, membership);
 
         const membershipFeeInvoice: Invoice = {
             amount: this.MEMBERSHIP_FEE,
@@ -96,6 +95,10 @@ export class MembershipService extends BaseService<MembershipDocument> {
             this.logger.error('Something went wrong on creating invoice');
             throw new InternalServerErrorException('Failed to create invoice');
         }
+
+        membership.invoice = invoice.id;
+
+        const updatedMembership = await this.membershipRepository.update(id, membership);
 
         this.logger.log(`Membership with ID ${id} marked as payment required`);
 

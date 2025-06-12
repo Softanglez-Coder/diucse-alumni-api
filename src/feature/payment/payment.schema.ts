@@ -22,6 +22,24 @@ export class Payment {
         default: PaymentStatus.Pending
     })
     status: PaymentStatus;
+
+    @Prop({
+        type: String,
+        default: null
+    })
+    method: string;
+
+    @Prop({
+        type: String,
+        default: null
+    })
+    sender: string;
+
+    @Prop({
+        type: String,
+        default: null
+    })
+    trxId: string;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
