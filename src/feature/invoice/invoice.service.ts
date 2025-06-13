@@ -49,6 +49,6 @@ export class InvoiceService extends BaseService<InvoiceDocument> {
         invoice.paymentUrl = payment.payment_url;
         invoice.validationId = payment.val_id;
 
-        return this.repository.create(invoice);
+        return await this.repository.create(invoice);
     }
 }

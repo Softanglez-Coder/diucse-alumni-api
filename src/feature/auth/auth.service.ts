@@ -4,6 +4,8 @@ import { LoginDto, RegisterDto } from './dtos';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { MemberService } from '../member/member.service';
+import { MembershipService } from '../membership/membership.service';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +13,9 @@ export class AuthService {
         private readonly logger: Logger,
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
-        private readonly config: ConfigService
+        private readonly config: ConfigService,
+        private readonly memberService: MemberService,
+        private readonly membershipService: MembershipService,
     ) {}
 
     async register(payload: RegisterDto) {
@@ -58,6 +62,11 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
+        if (!user.active) {
+            this.logger.warn(`Login failed: User account is inactive for email: ${payload.email}`);
+            throw new UnauthorizedException('User account is inactive');
+        }
+
         const isPasswordValid = bcrypt.compareSync(
             payload.password,
             user.password,
@@ -82,5 +91,38 @@ export class AuthService {
         this.logger.log(`JWT token generated for user with email: ${payload.email}`);
 
         return { accessToken: token };
+    }
+
+    async me(userId: string) {
+        this.logger.log(`Fetching user details for user ID: ${userId}`);
+
+        const user = await this.userService.findById(userId);
+        if (!user) {
+            this.logger.error(`User not found with ID: ${userId}`);
+            throw new InternalServerErrorException('User not found');
+        }
+
+        this.logger.log(`User details fetched successfully for user ID: ${userId}`);
+
+        const membership = await this.membershipService.findByProperty('user', userId);
+        if (!membership) {
+            this.logger.warn(`No membership found for user ID: ${userId}`);
+        }
+
+        let member = null;
+        if (membership) {
+            member = await this.memberService.findByProperty('membership', membership?.id);
+        }
+
+        const response: any = {
+            user: user
+        };
+
+        if (member) {
+            response.member = member;
+        }
+
+        this.logger.log(`User details returned successfully for user ID: ${userId}`);
+        return response;
     }
 }

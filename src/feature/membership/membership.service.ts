@@ -1,4 +1,4 @@
-import { BaseService } from '@core';
+import { BaseService, Role } from '@core';
 import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { Membership, MembershipDocument } from './membership.schema';
 import { MembershipRepository } from './membership.repository';
@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import { InvoiceService } from '../invoice/invoice.service';
 import { CreateInvoiceDto } from '../invoice/create-invoice.dto';
 import { Invoice, InvoiceRemarks } from '../invoice';
+import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class MembershipService extends BaseService<MembershipDocument> {
@@ -17,7 +18,8 @@ export class MembershipService extends BaseService<MembershipDocument> {
         private readonly membershipRepository: MembershipRepository,
         private readonly invoiceService: InvoiceService,
         private readonly logger: Logger,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly memberService: MemberService
     ) {
         super(membershipRepository);
     }
@@ -114,8 +116,35 @@ export class MembershipService extends BaseService<MembershipDocument> {
             throw new NotFoundException(`Membership with ID ${id} not found`);
         }
 
+        const user = await this.userService.findById((membership.user as UserDocument)?.id);
+        if (!user) {
+            this.logger.error(`User with ID ${membership.user} not found`);
+            throw new NotFoundException(`User with ID ${membership.user} not found`);
+        }
+
+        user.roles.push(Role.Member);
+        const updatedUser = await this.userService.update(user.id, user);
+        if (!updatedUser) {
+            this.logger.error(`Failed to update user with ID ${user.id}`);
+            throw new InternalServerErrorException(`Failed to update user with ID ${user.id}`);
+        }
+
+        const member = await this.memberService.create({
+            membership: membership.id,
+        });
+
+        if (!member) {
+            this.logger.error(`Failed to create member for membership with ID ${id}`);
+            throw new InternalServerErrorException(`Failed to create member for membership with ID ${id}`);
+        }
+
         membership.status = MembershipStatus.Approved;
         const updatedMembership = await this.membershipRepository.update(id, membership);
+        if (!updatedMembership) {
+            this.logger.error(`Failed to update membership with ID ${id}`);
+            throw new InternalServerErrorException(`Failed to update membership with ID ${id}`);
+        }
+
         this.logger.log(`Membership with ID ${id} approved`);
 
         return updatedMembership;

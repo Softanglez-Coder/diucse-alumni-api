@@ -41,7 +41,23 @@ export class PaymentService extends BaseService<PaymentDocument> {
             throw new InternalServerErrorException('Failed to update invoice status');
         }
 
-        const payment: Payment = {
+        const payment = await this.paymentRepository.findByProperty('invoice', invoice.id);
+        if (payment) {
+            this.logger.warn(`Payment already exists for invoiceId: ${invoice.id}`);
+            payment.status = PaymentStatus.Verified;
+            payment.sender = varified.senderNumber;
+            payment.trxId = varified.transaction_id;
+            payment.method = varified.payment_method;
+
+            const updatedPayment = await this.paymentRepository.update(payment.id, payment);
+            if (!updatedPayment) {
+                throw new InternalServerErrorException('Failed to update payment record');
+            }
+
+            return updatedPayment;
+        }
+
+        const newPayment: Payment = {
             invoice: invoice.id,
             sender: varified.senderNumber,
             trxId: varified.transaction_id,
@@ -49,12 +65,12 @@ export class PaymentService extends BaseService<PaymentDocument> {
             status: PaymentStatus.Verified
         };
 
-        const newPaymant = await this.create(payment);
+        const created = await this.create(newPayment);
 
-        if (!newPaymant) {
+        if (!created) {
             throw new InternalServerErrorException('Failed to create payment record');
         }
         
-        return newPaymant;
+        return created;
     }
 }

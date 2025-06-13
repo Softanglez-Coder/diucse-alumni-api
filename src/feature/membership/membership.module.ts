@@ -6,6 +6,8 @@ import { MembershipRepository } from './membership.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Membership, MembershipSchema } from './membership.schema';
 import { InvoiceModule } from '../invoice/invoice.module';
+import { MemberModule } from '../member/member.module';
+import { StorageModule } from '@core';
 
 @Module({
   imports: [
@@ -16,7 +18,12 @@ import { InvoiceModule } from '../invoice/invoice.module';
       }
     ]),
     UserModule,
-    InvoiceModule
+    InvoiceModule,
+    MemberModule,
+    StorageModule
+  ],
+  exports: [
+    MembershipService
   ],
   providers: [
     Logger,
