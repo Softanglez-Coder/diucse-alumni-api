@@ -34,7 +34,7 @@ The APIs are designed to be RESTful and follow standard conventions. You can fin
 
 # Contributing
 
-We welcome contributions to this project! If you have any ideas, bug fixes, or improvements, please feel free to open a pull request. Before contributing, please read our [contributing guidelines](./CONTRIBUTING.md).
+We welcome contributions to this project! If you have any ideas, bug fixes, or improvements, please feel free to open a pull request. Before contributing, please read our [contributing guidelines][contributing_guideline].
 
 # License
 This project is licensed under the MIT License. See the [LICENSE][license] file for details.
@@ -48,3 +48,4 @@ If you have any questions or need assistance, feel free to reach out to us via t
 [docs]: ./docs
 [license]: ./LICENSE
 [postman_collection]: https://www.postman.com/devlikhon/workspace/diu-cse-alumni/collection/11335698-ea46de0a-2cc7-459b-9415-1cc1565d772e?action=share&creator=11335698&active-environment=11335698-55d60770-3db8-40ec-a4e8-d2a484baab6e
+[contributing_guideline]: ./CONTRIBUTING.md
