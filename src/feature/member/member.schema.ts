@@ -5,6 +5,7 @@ import { Membership, MembershipDocument } from "../membership/membership.schema"
 
 @Schema({
     timestamps: true,
+    collection: 'members',
 })
 export class Member {
     @Prop({
@@ -15,6 +16,14 @@ export class Member {
         autopopulate: true,
     })
     membership: mongoose.Schema.Types.ObjectId | MembershipDocument;
+
+    // company
+
+    // education
+
+    // social media links
+
+    // misc
 }
 
 export const MemberSchema = SchemaFactory.createForClass(Member);

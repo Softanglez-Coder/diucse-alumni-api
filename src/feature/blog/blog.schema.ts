@@ -5,6 +5,7 @@ import { Member, MemberDocument } from "../member/member.schema";
 
 @Schema({
     timestamps: true,
+    collection: 'blogs',
 })
 export class Blog {
     @Prop({

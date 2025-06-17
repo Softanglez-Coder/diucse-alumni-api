@@ -5,7 +5,8 @@ import { InvoiceStatus } from "./invoice-status";
 import { InvoiceRemarks } from "./invoice-remarks";
 
 @Schema({
-    timestamps: true
+    timestamps: true,
+    collection: 'invoices',
 })
 export class Invoice {
     @Prop({

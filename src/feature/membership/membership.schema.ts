@@ -6,7 +6,8 @@ import { Batch, BatchDocument } from "../batch/batch.schema";
 import { Invoice, InvoiceDocument } from "../invoice";
 
 @Schema({
-    timestamps: true
+    timestamps: true,
+    collection: 'memberships',
 })
 export class Membership {
     @Prop({

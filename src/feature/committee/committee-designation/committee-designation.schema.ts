@@ -4,6 +4,7 @@ import { Role } from "@core";
 
 @Schema({
     timestamps: true,
+    collection: 'committee_designations',
 })
 export class CommitteeDesignation {
     @Prop({

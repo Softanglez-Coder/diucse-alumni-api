@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { EventService } from './event.service';
-import { EventController } from './event.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Event, EventSchema } from './event.schema';
-import { EventRegistration, EventRegistrationSchema } from './event-registration.schema';
-import { EventCoupon, EventCouponSchema } from './event-coupon.schema';
+import { EventSchema, Event, EventController, EventService, EventRepository } from './event';
+import { EventCoupon, EventCouponController, EventCouponRepository, EventCouponSchema, EventCouponService } from './event-coupon';
+import { EventRegistration, EventRegistrationController, EventRegistrationRepository, EventRegistrationSchema, EventRegistrationService } from './event-registration';
 
 @Module({
   imports: [
@@ -23,7 +21,20 @@ import { EventCoupon, EventCouponSchema } from './event-coupon.schema';
       }
     ])
   ],
-  providers: [EventService],
-  controllers: [EventController],
+  providers: [
+    EventService,
+    EventRepository,
+
+    EventCouponService,
+    EventCouponRepository,
+
+    EventRegistrationService,
+    EventRegistrationRepository
+  ],
+  controllers: [
+    EventController,
+    EventCouponController,
+    EventRegistrationController
+  ],
 })
 export class EventModule {}

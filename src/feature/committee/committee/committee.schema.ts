@@ -3,6 +3,7 @@ import { HydratedDocument } from "mongoose";
 
 @Schema({
     timestamps: true,
+    collection: 'committees',
 })
 export class Committee {
     @Prop({

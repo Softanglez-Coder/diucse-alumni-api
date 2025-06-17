@@ -3,6 +3,7 @@ import { HydratedDocument } from "mongoose";
 
 @Schema({
     timestamps: true,
+    collection: 'events',
 })
 export class Event {
     @Prop({

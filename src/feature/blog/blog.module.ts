@@ -3,6 +3,7 @@ import { BlogService } from './blog.service';
 import { BlogController } from './blog.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './blog.schema';
+import { BlogRepository } from './blog.repository';
 
 @Module({
   imports: [
@@ -13,7 +14,10 @@ import { Blog, BlogSchema } from './blog.schema';
       }
     ])
   ],
-  providers: [BlogService],
+  providers: [
+    BlogService,
+    BlogRepository
+  ],
   controllers: [BlogController],
 })
 export class BlogModule {}

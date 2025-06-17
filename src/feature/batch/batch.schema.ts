@@ -3,6 +3,7 @@ import { HydratedDocument } from "mongoose";
 
 @Schema({
     timestamps: true,
+    collection: 'batches',
 })
 export class Batch {
     @Prop({

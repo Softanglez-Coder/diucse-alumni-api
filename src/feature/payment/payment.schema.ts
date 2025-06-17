@@ -4,7 +4,8 @@ import mongoose, { HydratedDocument, mongo } from "mongoose";
 import { PaymentStatus } from "./payment-status";
 
 @Schema({
-    timestamps: true
+    timestamps: true,
+    collection: 'payments',
 })
 export class Payment {
     @Prop({

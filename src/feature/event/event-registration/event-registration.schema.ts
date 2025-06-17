@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
-import { EventDocument } from "./event.schema";
-import { User, UserDocument } from "../user";
+import { User, UserDocument } from "../../user";
 import { EventRegistrationStatus } from "./event-registration-status";
-import { Invoice, InvoiceDocument } from "../invoice";
-import { EventCoupon, EventCouponDocument } from "./event-coupon.schema";
+import { Invoice, InvoiceDocument } from "../../invoice";
+import { EventCoupon, EventCouponDocument } from "../event-coupon/event-coupon.schema";
+import { EventDocument, Event } from "../event";
 
 @Schema({
     timestamps: true,
+    collection: 'event_registrations',
 })
 export class EventRegistration {
     @Prop({

@@ -11,6 +11,7 @@ import { EventModule } from './event/event.module';
 import { BlogModule } from './blog/blog.module';
 import { NoticeModule } from './notice/notice.module';
 import { BatchModule } from './batch/batch.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BatchModule } from './batch/batch.module';
     BlogModule,
     NoticeModule,
     BatchModule,
+    SettingsModule
   ],
   exports: [],
   controllers: [],

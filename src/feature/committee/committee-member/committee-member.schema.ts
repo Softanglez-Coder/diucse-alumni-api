@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import { Role } from "@core";
-import { Committee, CommitteeDocument } from "./committee.schema";
-import { CommitteeDesignation, CommitteeDesignationDocument } from "./committee-designation.schema";
-import { Member, MemberDocument } from "../member/member.schema";
+import { Committee, CommitteeDocument } from "../committee/committee.schema";
+import { CommitteeDesignation, CommitteeDesignationDocument } from "../committee-designation/committee-designation.schema";
+import { Member, MemberDocument } from "../../member/member.schema";
 
 @Schema({
     timestamps: true,
+    collection: 'committee_members',
 })
 export class CommitteeMember {
     @Prop({

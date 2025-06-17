@@ -4,6 +4,7 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema({
   timestamps: true,
+  collection: 'users',
 })
 export class User {
   @Prop({
