@@ -1,2 +1,0 @@
-### GET request to check health of API server
-GET {{ baseUrl}}/health
