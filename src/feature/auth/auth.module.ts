@@ -7,16 +7,8 @@ import { MemberModule } from '../member/member.module';
 import { MembershipModule } from '../membership/membership.module';
 
 @Module({
-  imports: [
-    UserModule,
-    MemberModule,
-    MembershipModule,
-    JwtModule
-  ],
-  providers: [
-    Logger,
-    AuthService,
-  ],
+  imports: [UserModule, MemberModule, MembershipModule, JwtModule],
+  providers: [Logger, AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

@@ -17,7 +17,11 @@ export class BaseService<T extends Document> {
     return await this.repository.findById(id, secure);
   }
 
-  async findByProperty(property: string, value: any, secure = true): Promise<T | null> {
+  async findByProperty(
+    property: string,
+    value: any,
+    secure = true,
+  ): Promise<T | null> {
     return await this.repository.findByProperty(property, value, secure);
   }
 

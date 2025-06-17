@@ -1,29 +1,32 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
-import { User, UserDocument } from "../user";
-import { Membership, MembershipDocument } from "../membership/membership.schema";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { User, UserDocument } from '../user';
+import {
+  Membership,
+  MembershipDocument,
+} from '../membership/membership.schema';
 
 @Schema({
-    timestamps: true,
-    collection: 'members',
+  timestamps: true,
+  collection: 'members',
 })
 export class Member {
-    @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        ref: Membership.name,
-        required: true,
-        index: true,
-        autopopulate: true,
-    })
-    membership: mongoose.Schema.Types.ObjectId | MembershipDocument;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Membership.name,
+    required: true,
+    index: true,
+    autopopulate: true,
+  })
+  membership: mongoose.Schema.Types.ObjectId | MembershipDocument;
 
-    // company
+  // company
 
-    // education
+  // education
 
-    // social media links
+  // social media links
 
-    // misc
+  // misc
 }
 
 export const MemberSchema = SchemaFactory.createForClass(Member);

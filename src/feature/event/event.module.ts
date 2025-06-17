@@ -1,8 +1,26 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EventSchema, Event, EventController, EventService, EventRepository } from './event';
-import { EventCoupon, EventCouponController, EventCouponRepository, EventCouponSchema, EventCouponService } from './event-coupon';
-import { EventRegistration, EventRegistrationController, EventRegistrationRepository, EventRegistrationSchema, EventRegistrationService } from './event-registration';
+import {
+  EventSchema,
+  Event,
+  EventController,
+  EventService,
+  EventRepository,
+} from './event';
+import {
+  EventCoupon,
+  EventCouponController,
+  EventCouponRepository,
+  EventCouponSchema,
+  EventCouponService,
+} from './event-coupon';
+import {
+  EventRegistration,
+  EventRegistrationController,
+  EventRegistrationRepository,
+  EventRegistrationSchema,
+  EventRegistrationService,
+} from './event-registration';
 
 @Module({
   imports: [
@@ -17,9 +35,9 @@ import { EventRegistration, EventRegistrationController, EventRegistrationReposi
       },
       {
         name: EventCoupon.name,
-        schema: EventCouponSchema
-      }
-    ])
+        schema: EventCouponSchema,
+      },
+    ]),
   ],
   providers: [
     EventService,
@@ -29,12 +47,12 @@ import { EventRegistration, EventRegistrationController, EventRegistrationReposi
     EventCouponRepository,
 
     EventRegistrationService,
-    EventRegistrationRepository
+    EventRegistrationRepository,
   ],
   controllers: [
     EventController,
     EventCouponController,
-    EventRegistrationController
+    EventRegistrationController,
   ],
 })
 export class EventModule {}

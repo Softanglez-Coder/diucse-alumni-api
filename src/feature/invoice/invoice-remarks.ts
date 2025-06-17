@@ -1,3 +1,3 @@
 export enum InvoiceRemarks {
-    MembershipFee = 'membership_fee',
+  MembershipFee = 'membership_fee',
 }

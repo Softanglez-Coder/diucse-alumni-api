@@ -11,16 +11,11 @@ import { MemberRepository } from './member.repository';
       {
         name: Member.name,
         schema: MemberSchema,
-      }
-    ])
+      },
+    ]),
   ],
-  exports: [
-    MemberService
-  ],
-  providers: [
-    MemberRepository,
-    MemberService
-  ],
+  exports: [MemberService],
+  providers: [MemberRepository, MemberService],
   controllers: [MemberController],
 })
 export class MemberModule {}

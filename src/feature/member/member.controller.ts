@@ -4,13 +4,11 @@ import { Public } from '@core';
 
 @Controller('member')
 export class MemberController {
-    constructor(
-        private readonly memberService: MemberService
-    ) {}
+  constructor(private readonly memberService: MemberService) {}
 
-    @Public()
-    @Get()
-    async findAll() {
-        return await this.memberService.findAll();
-    }
+  @Public()
+  @Get()
+  async findAll() {
+    return await this.memberService.findAll();
+  }
 }

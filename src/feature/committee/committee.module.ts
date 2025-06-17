@@ -1,8 +1,26 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CommitteeDesignation, CommitteeDesignationController, CommitteeDesignationRepository, CommitteeDesignationSchema, CommitteeDesignationService } from './committee-designation';
-import { CommitteeMember, CommitteeMemberController, CommitteeMemberRepository, CommitteeMemberSchema, CommitteeMemberService } from './committee-member';
-import { Committee, CommitteeController, CommitteeRepository, CommitteeSchema, CommitteeService } from './committee';
+import {
+  CommitteeDesignation,
+  CommitteeDesignationController,
+  CommitteeDesignationRepository,
+  CommitteeDesignationSchema,
+  CommitteeDesignationService,
+} from './committee-designation';
+import {
+  CommitteeMember,
+  CommitteeMemberController,
+  CommitteeMemberRepository,
+  CommitteeMemberSchema,
+  CommitteeMemberService,
+} from './committee-member';
+import {
+  Committee,
+  CommitteeController,
+  CommitteeRepository,
+  CommitteeSchema,
+  CommitteeService,
+} from './committee';
 
 @Module({
   imports: [
@@ -18,8 +36,8 @@ import { Committee, CommitteeController, CommitteeRepository, CommitteeSchema, C
       {
         name: CommitteeMember.name,
         schema: CommitteeMemberSchema,
-      }
-    ])
+      },
+    ]),
   ],
   providers: [
     CommitteeService,
@@ -27,12 +45,12 @@ import { Committee, CommitteeController, CommitteeRepository, CommitteeSchema, C
     CommitteeMemberService,
     CommitteeRepository,
     CommitteeMemberRepository,
-    CommitteeDesignationRepository
+    CommitteeDesignationRepository,
   ],
   controllers: [
     CommitteeController,
     CommitteeMemberController,
-    CommitteeDesignationController
+    CommitteeDesignationController,
   ],
 })
 export class CommitteeModule {}

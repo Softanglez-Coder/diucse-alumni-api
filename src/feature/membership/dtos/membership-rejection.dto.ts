@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class MembershipRejectionDto {
-    @IsString()
-    @IsNotEmpty()
-    justification: string;
+  @IsString()
+  @IsNotEmpty()
+  justification: string;
 }

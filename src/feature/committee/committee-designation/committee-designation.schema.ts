@@ -1,29 +1,31 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
-import { Role } from "@core";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Role } from '@core';
 
 @Schema({
-    timestamps: true,
-    collection: 'committee_designations',
+  timestamps: true,
+  collection: 'committee_designations',
 })
 export class CommitteeDesignation {
-    @Prop({
-        required: true,
-        type: String,
-        unique: true,
-    })
-    title: string;
+  @Prop({
+    required: true,
+    type: String,
+    unique: true,
+  })
+  title: string;
 
-    @Prop({
-        required: true,
-        type: [String],
-        enum: Object.values(Role),
-        default: [],
-    })
-    roles: Role[];
+  @Prop({
+    required: true,
+    type: [String],
+    enum: Object.values(Role),
+    default: [],
+  })
+  roles: Role[];
 }
 
-export const CommitteeDesignationSchema = SchemaFactory.createForClass(CommitteeDesignation);
+export const CommitteeDesignationSchema =
+  SchemaFactory.createForClass(CommitteeDesignation);
 CommitteeDesignationSchema.plugin(require('mongoose-autopopulate'));
 
-export type CommitteeDesignationDocument = HydratedDocument<CommitteeDesignation>;
+export type CommitteeDesignationDocument =
+  HydratedDocument<CommitteeDesignation>;

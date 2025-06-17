@@ -5,9 +5,7 @@ import { MemberRepository } from './member.repository';
 
 @Injectable()
 export class MemberService extends BaseService<MemberDocument> {
-    constructor(
-        private readonly memberRepository: MemberRepository
-    ) {
-        super(memberRepository);
-    }
+  constructor(private readonly memberRepository: MemberRepository) {
+    super(memberRepository);
+  }
 }

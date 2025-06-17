@@ -11,13 +11,10 @@ import { BlogRepository } from './blog.repository';
       {
         name: Blog.name,
         schema: BlogSchema,
-      }
-    ])
+      },
+    ]),
   ],
-  providers: [
-    BlogService,
-    BlogRepository
-  ],
+  providers: [BlogService, BlogRepository],
   controllers: [BlogController],
 })
 export class BlogModule {}

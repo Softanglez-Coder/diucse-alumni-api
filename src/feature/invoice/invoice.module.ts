@@ -12,18 +12,14 @@ import { UserModule, UserService } from '../user';
     MongooseModule.forFeature([
       {
         name: Invoice.name,
-        schema: InvoiceSchema
-      }
+        schema: InvoiceSchema,
+      },
     ]),
     PaymentGatewayModule,
-    UserModule
+    UserModule,
   ],
   exports: [InvoiceService],
-  providers: [
-    InvoiceService,
-    InvoiceRepository,
-    Logger
-  ],
+  providers: [InvoiceService, InvoiceRepository, Logger],
   controllers: [InvoiceController],
 })
 export class InvoiceModule {}

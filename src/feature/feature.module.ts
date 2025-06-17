@@ -27,7 +27,7 @@ import { SettingsModule } from './settings/settings.module';
     BlogModule,
     NoticeModule,
     BatchModule,
-    SettingsModule
+    SettingsModule,
   ],
   exports: [],
   controllers: [],

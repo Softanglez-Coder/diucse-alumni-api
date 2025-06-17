@@ -14,22 +14,16 @@ import { StorageModule } from '@core';
     MongooseModule.forFeature([
       {
         name: Membership.name,
-        schema: MembershipSchema
-      }
+        schema: MembershipSchema,
+      },
     ]),
     UserModule,
     InvoiceModule,
     MemberModule,
-    StorageModule
+    StorageModule,
   ],
-  exports: [
-    MembershipService
-  ],
-  providers: [
-    Logger,
-    MembershipService,
-    MembershipRepository
-  ],
+  exports: [MembershipService],
+  providers: [Logger, MembershipService, MembershipRepository],
   controllers: [MembershipController],
 })
 export class MembershipModule {}

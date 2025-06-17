@@ -10,8 +10,8 @@ import { Notice, NoticeSchema } from './notice.schema';
       {
         name: Notice.name,
         schema: NoticeSchema,
-      }
-    ])
+      },
+    ]),
   ],
   providers: [NoticeService],
   controllers: [NoticeController],

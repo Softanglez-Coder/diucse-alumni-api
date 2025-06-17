@@ -1,28 +1,28 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
 @Schema({
-    timestamps: true,
-    collection: 'committees',
+  timestamps: true,
+  collection: 'committees',
 })
 export class Committee {
-    @Prop({
-        required: true,
-        type: String,
-    })
-    name: string;
+  @Prop({
+    required: true,
+    type: String,
+  })
+  name: string;
 
-    @Prop({
-        required: true,
-        type: String,
-    })
-    start: string;
+  @Prop({
+    required: true,
+    type: String,
+  })
+  start: string;
 
-    @Prop({
-        required: true,
-        type: String,
-    })
-    end: string;
+  @Prop({
+    required: true,
+    type: String,
+  })
+  end: string;
 }
 
 export const CommitteeSchema = SchemaFactory.createForClass(Committee);

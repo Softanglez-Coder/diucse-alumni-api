@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 export class ZinipayService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
   ) {}
 
   async create(
@@ -27,7 +27,9 @@ export class ZinipayService {
 
     const apiKey = this.config.get<string>('ZINIPAY_API_KEY');
     if (!apiKey) {
-      throw new InternalServerErrorException('ZINIPAY_API_KEY is not set in the environment variables');
+      throw new InternalServerErrorException(
+        'ZINIPAY_API_KEY is not set in the environment variables',
+      );
     }
 
     const data = {
@@ -64,7 +66,9 @@ export class ZinipayService {
 
     const apiKey = this.config.get<string>('ZINIPAY_API_KEY');
     if (!apiKey) {
-      throw new InternalServerErrorException('ZINIPAY_API_KEY is not set in the environment variables');
+      throw new InternalServerErrorException(
+        'ZINIPAY_API_KEY is not set in the environment variables',
+      );
     }
 
     const verifyUrl = 'https://api.zinipay.com/v1/payment/verify';

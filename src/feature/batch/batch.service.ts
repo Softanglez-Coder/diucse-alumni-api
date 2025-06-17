@@ -5,9 +5,7 @@ import { BatchRepository } from './batch.repository';
 
 @Injectable()
 export class BatchService extends BaseService<BatchDocument> {
-    constructor(
-        private readonly batchRepository: BatchRepository
-    ) {
-        super(batchRepository);
-    }
+  constructor(private readonly batchRepository: BatchRepository) {
+    super(batchRepository);
+  }
 }

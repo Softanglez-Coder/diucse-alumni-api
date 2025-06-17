@@ -11,14 +11,11 @@ import { BatchRepository } from './batch.repository';
     MongooseModule.forFeature([
       {
         name: Batch.name,
-        schema: BatchSchema
-      }
-    ])
+        schema: BatchSchema,
+      },
+    ]),
   ],
   controllers: [BatchController],
-  providers: [
-    BatchService,
-    BatchRepository
-  ]
+  providers: [BatchService, BatchRepository],
 })
 export class BatchModule {}
