@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -71,11 +72,17 @@ export class AuthService {
     try {
       await this.mailService.send({
         subject: 'Welcome to CSE DIU Alumni',
-        to: user.email,
+        to: [user.email],
         template: Template.RegisteredAsGuest,
         variables: {
           member_name: user.name ?? 'Guest',
-        }
+        },
+        attachments: [
+          {
+            filename: 'welcome.jpg',
+            path: 'https://static.vecteezy.com/system/resources/previews/011/976/274/non_2x/stick-figures-welcome-free-vector.jpg'
+          }
+        ]
       });
 
       this.logger.log(`Welcome email sent to ${user.email}`);
@@ -179,5 +186,194 @@ export class AuthService {
       `User details returned successfully for user ID: ${userId}`,
     );
     return response;
+  }
+
+  async verifyEmail(token: string) {
+    this.logger.log(`Verifying email with token: ${token}`);
+    let payload;
+    try {
+      payload = this.jwtService.verify(token, {
+        secret: this.config.get<string>('JWT_SECRET'),
+      });
+    } catch (error) {
+      this.logger.error(`Email verification failed: Invalid token`);
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+    this.logger.log(`Token verified successfully for user ID: ${payload.sub}`);
+    const user = await this.userService.findById(payload.sub);
+    if (!user) {
+      this.logger.error(`Email verification failed: User not found with ID: ${payload.sub}`);
+      throw new UnauthorizedException('User not found');
+    }
+
+    if (user.emailVerified) {
+      this.logger.warn(`Email already verified for user ID: ${user.id}`);
+      throw new ConflictException('Email already verified');
+    }
+
+    user.emailVerified = true;
+    const updatedUser = await this.userService.update(user.id, user);
+    if (!updatedUser) {
+      this.logger.error(`Email verification failed: Failed to update user ID: ${user.id}`);
+      throw new InternalServerErrorException('Email verification failed');
+    }
+    this.logger.log(`Email verified successfully for user ID: ${user.id}`);
+
+    // Send email verification success notification
+    try {
+      await this.mailService.send({
+        subject: 'Email Verified Successfully',
+        to: [user.email],
+        template: Template.EmailVerified,
+        variables: {
+          member_name: user.name || 'Guest',
+        },
+      });
+
+      this.logger.log(`Email verification success notification sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send email verification success notification to ${user.email}: ${error.message}`,
+      );
+    }
+
+    return { message: 'Email verified successfully' };
+  }
+
+  async forgotPassword(email: string) {
+    this.logger.log(`Processing forgot password for email: ${email}`);
+
+    const user = await this.userService.findByProperty('email', email);
+    if (!user) {
+      this.logger.warn(`Forgot password failed: User not found for email: ${email}`);
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Generate reset token
+    const resetToken = this.jwtService.sign(
+      { sub: user.id, email: user.email },
+      {
+        expiresIn: '1h',
+        secret: this.config.get<string>('JWT_SECRET'),
+      },
+    );
+
+    // Send reset email
+    try {
+      await this.mailService.send({
+        subject: 'Password Reset Request',
+        to: [user.email],
+        template: Template.ForgotPassword,
+        variables: {
+          reset_link: `${this.config.get<string>('FRONTEND_URL')}/reset-password?token=${resetToken}`,
+          member_name: user.name || 'Guest',
+        },
+      });
+
+      this.logger.log(`Password reset email sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password reset email to ${user.email}: ${error.message}`,
+      );
+      throw new InternalServerErrorException('Failed to send reset email');
+    }
+
+    return { message: 'Password reset email sent successfully' };
+  }
+
+  async resetPassword(userId: string, token: string, newPassword: string) {
+    if (token && !userId) {
+      const payload = this.jwtService.verify(token, {
+        secret: this.config.get<string>('JWT_SECRET'),
+      });
+      userId = payload.sub;
+    }
+
+    this.logger.log(`Resetting password for user ID: ${userId}`);
+
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      this.logger.error(`User not found with ID: ${userId}`);
+      throw new InternalServerErrorException('User not found');
+    }
+
+    if (!newPassword) {
+      this.logger.error(`Password reset failed: New password is required`);
+      throw new BadRequestException('New password is required');
+    }
+
+    const hash = bcrypt.hashSync(newPassword, 10);
+    user.password = hash;
+
+    const updatedUser = await this.userService.update(user.id, user);
+    if (!updatedUser) {
+      this.logger.error(`Failed to update password for user ID: ${userId}`);
+      throw new InternalServerErrorException('Password reset failed');
+    }
+
+    this.logger.log(`Password reset successfully for user ID: ${userId}`);
+
+    // Send password reset success notification
+    try {
+      await this.mailService.send({
+        subject: 'Password Reset Successfully',
+        to: [user.email],
+        template: Template.PasswordReset,
+        variables: {
+          member_name: user.name || 'Guest',
+        },
+      });
+
+      this.logger.log(`Password reset success notification sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password reset success notification to ${user.email}: ${error.message}`,
+      );
+    }
+
+    return { message: 'Password reset successfully' };
+  }
+
+  async resendVerificationEmail(userId: string) {
+    this.logger.log(`Resending verification email for user ID: ${userId}`);
+
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      this.logger.error(`User not found with ID: ${userId}`);
+      throw new InternalServerErrorException('User not found');
+    }
+
+    if (user.emailVerified) {
+      this.logger.warn(`Email already verified for user ID: ${userId}`);
+      throw new ConflictException('Email already verified');
+    }
+
+    // Send verification email
+    try {
+      await this.mailService.send({
+        subject: 'Email Verification',
+        to: [user.email],
+        template: Template.EmailVerification,
+        variables: {
+          verification_link: `${this.config.get<string>('FRONTEND_URL')}/verify-email?token=${this.jwtService.sign(
+            { sub: user.id, email: user.email },
+            {
+              expiresIn: '1h',
+              secret: this.config.get<string>('JWT_SECRET'),
+            },
+          )}`,
+          member_name: user.name || 'Guest',
+        },
+      });
+
+      this.logger.log(`Verification email resent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to resend verification email to ${user.email}: ${error.message}`,
+      );
+      throw new InternalServerErrorException('Failed to resend verification email');
+    }
+
+    return { message: 'Verification email resent successfully' };
   }
 }
