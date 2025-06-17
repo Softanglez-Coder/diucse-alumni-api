@@ -1,7 +1,17 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Mongoose } from 'mongoose';
+import { Settings, SettingsSchema } from './settings.schema';
 
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Settings.name,
+        schema: SettingsSchema,
+      }
+    ])
+  ],
   providers: [],
   controllers: [],
   exports: [],
