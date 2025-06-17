@@ -1,12 +1,4 @@
-import {
-  IsMongoId,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-  IsUrl,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsMongoId, IsOptional, IsPhoneNumber, IsUrl } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class MembershipUpdateDto {

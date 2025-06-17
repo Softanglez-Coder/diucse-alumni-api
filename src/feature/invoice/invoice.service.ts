@@ -4,11 +4,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateInvoiceDto } from './create-invoice.dto';
 import { InvoiceRepository } from './invoice.repository';
 import { BaseService, ZinipayService } from '@core';
 import { Invoice, InvoiceDocument } from './invoice.schema';
-import mongoose from 'mongoose';
 import { UserService } from '../user';
 
 @Injectable()

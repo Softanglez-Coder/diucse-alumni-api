@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Invoice, InvoiceDocument } from '../invoice';
-import mongoose, { HydratedDocument, mongo } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { PaymentStatus } from './payment-status';
 
 @Schema({

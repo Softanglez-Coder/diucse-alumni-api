@@ -9,9 +9,7 @@ import { Membership, MembershipDocument } from './membership.schema';
 import { MembershipRepository } from './membership.repository';
 import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
-import mongoose from 'mongoose';
 import { InvoiceService } from '../invoice/invoice.service';
-import { CreateInvoiceDto } from '../invoice/create-invoice.dto';
 import { Invoice, InvoiceRemarks } from '../invoice';
 import { MemberService } from '../member/member.service';
 

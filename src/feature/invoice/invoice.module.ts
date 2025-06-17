@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Invoice, InvoiceSchema } from './invoice.schema';
 import { InvoiceRepository } from './invoice.repository';
 import { PaymentGatewayModule } from '@core';
-import { UserModule, UserService } from '../user';
+import { UserModule } from '../user';
 
 @Module({
   imports: [

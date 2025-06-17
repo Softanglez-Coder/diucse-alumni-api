@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Role } from '@core';
 import { Committee, CommitteeDocument } from '../committee/committee.schema';
 import {
   CommitteeDesignation,

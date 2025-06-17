@@ -2,7 +2,6 @@ import { BaseRepository } from '@core';
 import { Injectable } from '@nestjs/common';
 import { Membership, MembershipDocument } from './membership.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { privateDecrypt } from 'crypto';
 import { Model } from 'mongoose';
 
 @Injectable()
