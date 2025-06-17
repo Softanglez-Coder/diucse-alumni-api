@@ -6,7 +6,6 @@ import { MembershipModule } from './membership/membership.module';
 import { MemberModule } from './member/member.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
-import { PolicyModule } from './policy/policy.module';
 import { CommitteeModule } from './committee/committee.module';
 import { EventModule } from './event/event.module';
 import { BlogModule } from './blog/blog.module';
@@ -22,7 +21,6 @@ import { BatchModule } from './batch/batch.module';
     MemberModule,
     InvoiceModule,
     PaymentModule,
-    PolicyModule,
     CommitteeModule,
     EventModule,
     BlogModule,

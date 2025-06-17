@@ -22,7 +22,7 @@ export class MembershipController {
 
     @Roles(Role.Guest)
     @UseInterceptors(FileInterceptor('file'))
-    @Post(':id/upload/photo')
+    @Patch(':id/photo')
     async upload(
         @Param('id') id: string,
         @UploadedFile() file: Express.Multer.File
