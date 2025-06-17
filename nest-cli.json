@@ -6,7 +6,7 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "core/mailer/templates/**/*",
+        "include": "core/email-templates/**/*",
         "outDir": "dist"
       }
     ]
