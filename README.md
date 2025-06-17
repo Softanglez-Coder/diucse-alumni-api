@@ -28,6 +28,10 @@ This will start the server on the default port (usually `3000`). You can access 
 # Documentation
 For detailed documentation how the application works, the user flow, and the API endpoints, please refer to the [documentation folder][docs].
 
+# APIs
+
+The APIs are designed to be RESTful and follow standard conventions. You can find the API documentation in the Postman collection [hosted here][postman_collection]. The collection includes all the endpoints, request parameters, and response formats.
+
 # Contributing
 
 We welcome contributions to this project! If you have any ideas, bug fixes, or improvements, please feel free to open a pull request. Before contributing, please read our [contributing guidelines](./CONTRIBUTING.md).
@@ -43,3 +47,4 @@ If you have any questions or need assistance, feel free to reach out to us via t
 [yarn_documentation]: https://yarnpkg.com/getting-started/install
 [docs]: ./docs
 [license]: ./LICENSE
+[postman_collection]: https://www.postman.com/devlikhon/workspace/diu-cse-alumni/collection/11335698-ea46de0a-2cc7-459b-9415-1cc1565d772e?action=share&creator=11335698&active-environment=11335698-55d60770-3db8-40ec-a4e8-d2a484baab6e
