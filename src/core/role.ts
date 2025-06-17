@@ -10,7 +10,7 @@ export enum Role {
    * In this application, this role should be assinged to
    * president, vice-president, secretary of current board of directors.
    */
-  ADMIN = 'admin',
+  Admin = 'admin',
 
   /**
    * Can manage every opration related to finance.
@@ -20,7 +20,7 @@ export enum Role {
    * It can also manage financial reports and budgets.
    * This role is typically assigned to the accountant, trasourar or financial manager.
    */
-  ACCOUNTANT = 'accountant',
+  Accountant = 'accountant',
 
   /**
    * Can send mails, manage newsletters, and handle marketing campaigns.
@@ -28,7 +28,7 @@ export enum Role {
    * including newsletters, promotional materials, and campaigns.
    * It can create, read, update, and delete marketing content.
    */
-  MARKETING_MANAGER = 'marketing_manager',
+  MarketingManager = 'marketing_manager',
 
   /**
    * Responsible for ecommerce oprations, ticket sales, and other sales-related activities.
@@ -36,7 +36,7 @@ export enum Role {
    * It can also manage sales reports and customer interactions.
    * This role is typically assigned to sales representatives, sales managers, or sales directors.
    */
-  SALES_MANAGER = 'sales_manager',
+  SalesManager = 'sales_manager',
 
   /**
    * Responsible for managing events, including planning, organizing, and executing events.
@@ -44,7 +44,7 @@ export enum Role {
    * It can also manage event registrations, schedules, and resources.
    * This role is typically assigned to event coordinators or managers.
    */
-  EVENT_MANAGER = 'event_manager',
+  EventManager = 'event_manager',
 
   /**
    * Responsible for resolving and managing customer inquiries, issues, and feedback.
@@ -52,13 +52,13 @@ export enum Role {
    * It can also manage customer feedback and inquiries.
    * This role is typically assigned to customer support representatives or managers.
    */
-  CUSTOMER_SUPPORT = 'customer_support',
+  CustomerSupport = 'customer_support',
 
   /**
    * Responsible for new member request review, approval, and rejection.
    * This role can read, update member requests.
    */
-  REVIEWER = 'reviewer',
+  Reviewer = 'reviewer',
 
   /**
    * Responsible for managing content on the platform.
@@ -66,7 +66,7 @@ export enum Role {
    * It can also manage content categories and tags.
    * This role is typically assigned to content editors, or managers.
    */
-  PUBLISHER = 'publisher',
+  Publisher = 'publisher',
 
   /**
    * This role is for regular users who can access the system
@@ -77,5 +77,13 @@ export enum Role {
    *
    * If no role is assigned to a user, they will be assigned this role by default.
    */
-  MEMBER = 'member',
+  Member = 'member',
+
+  /**
+   * This role is for users who can access the system
+   * but have no permissions.
+   * This role is typically assigned to users who are not yet registered or have not been assigned a role.
+   * Users with this role can only read public resources.
+   */
+  Guest = 'guest',
 }

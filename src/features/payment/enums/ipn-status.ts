@@ -1,7 +1,0 @@
-export enum IPNStatus {
-  VALID = 'VALID',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
-  UNATTEMPTED = 'UNATTEMPTED',
-  EXPIRED = 'EXPIRED',
-}
