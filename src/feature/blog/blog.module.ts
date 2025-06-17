@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Blog, BlogController, BlogRepository, BlogSchema, BlogService } from "./blog";
 import { BlogComment, BlogCommentController, BlogCommentRepository, BlogCommentSchema, BlogCommentService } from "./blog-comment";
@@ -17,6 +17,8 @@ import { BlogComment, BlogCommentController, BlogCommentRepository, BlogCommentS
     ]),
   ],
   providers: [
+    Logger,
+    
     BlogService,
     BlogRepository,
 

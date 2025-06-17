@@ -11,7 +11,6 @@ import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
 import { InvoiceService } from '../invoice/invoice.service';
 import { Invoice, InvoiceRemarks } from '../invoice';
-import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class MembershipService extends BaseService<MembershipDocument> {
@@ -22,7 +21,6 @@ export class MembershipService extends BaseService<MembershipDocument> {
     private readonly invoiceService: InvoiceService,
     private readonly logger: Logger,
     private readonly userService: UserService,
-    private readonly memberService: MemberService,
   ) {
     super(membershipRepository);
   }
@@ -146,17 +144,6 @@ export class MembershipService extends BaseService<MembershipDocument> {
       );
     }
 
-    const member = await this.memberService.create({
-      membership: membership.id,
-    });
-
-    if (!member) {
-      this.logger.error(`Failed to create member for membership with ID ${id}`);
-      throw new InternalServerErrorException(
-        `Failed to create member for membership with ID ${id}`,
-      );
-    }
-
     membership.status = MembershipStatus.Approved;
     const updatedMembership = await this.membershipRepository.update(
       id,
@@ -192,5 +179,19 @@ export class MembershipService extends BaseService<MembershipDocument> {
     this.logger.log(`Membership with ID ${id} rejected`);
 
     return updatedMembership;
+  }
+
+  async findByUserId(userId: string): Promise<MembershipDocument | null> {
+    this.logger.log(`Finding membership for user with ID ${userId}`);
+
+    const membership = await this.membershipRepository.findByProperty('user', userId);
+
+    if (!membership) {
+      this.logger.warn(`No membership found for user with ID ${userId}`);
+      return null;
+    }
+
+    this.logger.log(`Membership found for user with ID ${userId}`);
+    return membership;
   }
 }

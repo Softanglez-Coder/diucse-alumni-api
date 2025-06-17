@@ -11,7 +11,6 @@ import { LoginDto, RegisterDto } from './dtos';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { MemberService } from '../member/member.service';
 import { MembershipService } from '../membership/membership.service';
 import { MailService, Template } from '../mail';
 
@@ -22,7 +21,6 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
-    private readonly memberService: MemberService,
     private readonly membershipService: MembershipService,
     private readonly mailService: MailService
   ) {}
@@ -157,35 +155,7 @@ export class AuthService {
     }
 
     this.logger.log(`User details fetched successfully for user ID: ${userId}`);
-
-    const membership = await this.membershipService.findByProperty(
-      'user',
-      userId,
-    );
-    if (!membership) {
-      this.logger.warn(`No membership found for user ID: ${userId}`);
-    }
-
-    let member = null;
-    if (membership) {
-      member = await this.memberService.findByProperty(
-        'membership',
-        membership?.id,
-      );
-    }
-
-    const response: any = {
-      user: user,
-    };
-
-    if (member) {
-      response.member = member;
-    }
-
-    this.logger.log(
-      `User details returned successfully for user ID: ${userId}`,
-    );
-    return response;
+    return user;
   }
 
   async verifyEmail(token: string) {

@@ -5,7 +5,8 @@ import {
   CommitteeDesignation,
   CommitteeDesignationDocument,
 } from '../committee-designation/committee-designation.schema';
-import { Member, MemberDocument } from '../../member/member.schema';
+import { UserDocument } from 'src/feature/user';
+import { User } from '@auth0/auth0-spa-js';
 
 @Schema({
   timestamps: true,
@@ -31,10 +32,10 @@ export class CommitteeMember {
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
-    ref: Member.name,
+    ref: User.name,
     autopopulate: true,
   })
-  member: mongoose.Schema.Types.ObjectId | MemberDocument;
+  member: mongoose.Schema.Types.ObjectId | UserDocument;
 }
 
 export const CommitteeMemberSchema =

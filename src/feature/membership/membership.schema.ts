@@ -19,32 +19,12 @@ export class Membership {
   user: UserDocument | mongoose.Schema.Types.ObjectId;
 
   @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: Batch.name,
-    autopopulate: true,
-    default: null,
-  })
-  batch?: BatchDocument | mongoose.Schema.Types.ObjectId;
-
-  @Prop({
     required: true,
     type: String,
     enum: Object.values(MembershipStatus),
     default: MembershipStatus.Draft,
   })
   status?: MembershipStatus;
-
-  @Prop({
-    type: String,
-    default: null,
-  })
-  phone?: string;
-
-  @Prop({
-    type: String,
-    default: null,
-  })
-  photo?: string;
 
   @Prop({
     type: String,
