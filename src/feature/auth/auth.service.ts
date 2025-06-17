@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { MemberService } from '../member/member.service';
 import { MembershipService } from '../membership/membership.service';
+import { MailService, Template } from '../mail';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly memberService: MemberService,
     private readonly membershipService: MembershipService,
+    private readonly mailService: MailService
   ) {}
 
   async register(payload: RegisterDto) {
@@ -62,7 +64,26 @@ export class AuthService {
       email: user.email,
       password: payload.password,
     });
+
     this.logger.log(`JWT token generated for user with email: ${user.email}`);
+
+    // Send welcome email
+    try {
+      await this.mailService.send({
+        subject: 'Welcome to CSE DIU Alumni',
+        to: user.email,
+        template: Template.RegisteredAsGuest,
+        variables: {
+          member_name: user.name ?? 'Guest',
+        }
+      });
+
+      this.logger.log(`Welcome email sent to ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send welcome email to ${user.email}: ${error.message}`,
+      );
+    }
 
     return loggedIn;
   }

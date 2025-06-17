@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Member, MemberDocument } from '../member/member.schema';
+import { Member, MemberDocument } from '../../member/member.schema';
+import { BlogType } from './blog-type';
 
 @Schema({
   timestamps: true,
@@ -32,6 +33,14 @@ export class Blog {
     default: false,
   })
   published?: boolean;
+
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(BlogType),
+    default: BlogType.General,
+  })
+  type?: BlogType;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

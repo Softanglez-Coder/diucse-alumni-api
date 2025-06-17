@@ -5,9 +5,16 @@ import { UserModule } from '../user';
 import { JwtModule } from '@nestjs/jwt';
 import { MemberModule } from '../member/member.module';
 import { MembershipModule } from '../membership/membership.module';
+import { MailModule } from '../mail';
 
 @Module({
-  imports: [UserModule, MemberModule, MembershipModule, JwtModule],
+  imports: [
+    UserModule,
+    MemberModule,
+    MembershipModule,
+    JwtModule,
+    MailModule
+  ],
   providers: [Logger, AuthService],
   controllers: [AuthController],
 })
