@@ -5,6 +5,10 @@ import { PaginationOptions } from './pagination-options';
 export class BaseRepository<T extends Document> {
   constructor(protected model: Model<T>) {}
 
+  getModel(): Model<T> {
+    return this.model;
+  }
+
   async create(data: Partial<T>): Promise<T> {
     const createdDocument = new this.model(data);
     return await createdDocument.save();

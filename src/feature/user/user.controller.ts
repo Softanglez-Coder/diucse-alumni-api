@@ -26,7 +26,13 @@ export class UserController {
   @Get()
   async findAll() {
     const users = await this.userService.findAll();
-    return users.filter(user => user.email !== process.env.BOT_EMAIL);
+    return users.filter((user) => user.email !== process.env.BOT_EMAIL);
+  }
+
+  @Public()
+  @Get(':role')
+  async findByRole(@Param('role') role: Role) {
+    return await this.userService.findByRole(role);
   }
 
   @Roles(Role.Guest)
