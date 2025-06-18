@@ -1,8 +1,9 @@
-import { Roles, Role, StorageFolder, StorageService } from '@core';
+import { Roles, Role, StorageFolder, StorageService, Public } from '@core';
 import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Req,
@@ -14,17 +15,25 @@ import { UserService } from './user.service';
 import { RequestExtension } from 'src/core/types';
 import { UpdateUserDto } from './dtos';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly storageService: StorageService,
   ) {}
 
+  @Public()
+  @Get()
+  async findAll() {
+    const users = await this.userService.findAll();
+    return users.filter(user => user.email !== process.env.BOT_EMAIL);
+  }
+
   @Roles(Role.Guest)
+  @Patch()
   async update(
     @Req() req: RequestExtension,
-    @Body() body: UpdateUserDto,
+    @Body() body: Partial<UpdateUserDto>,
   ) {
     const updated = await this.userService.update(req.user?.id, body);
     return updated;
@@ -41,7 +50,7 @@ export class UserController {
       throw new BadRequestException('File upload failed');
     }
 
-    const url = await this.storageService.upload(file, StorageFolder.Members);
+    const url = await this.storageService.upload(file, StorageFolder.Users);
     if (!url) {
       throw new BadRequestException('File upload failed');
     }

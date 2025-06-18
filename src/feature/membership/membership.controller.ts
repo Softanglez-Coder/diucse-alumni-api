@@ -17,7 +17,7 @@ import { MembershipService } from './membership.service';
 import { MembershipRejectionDto } from './dtos';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('membership')
+@Controller('memberships')
 export class MembershipController {
   constructor(
     private readonly membershipService: MembershipService,

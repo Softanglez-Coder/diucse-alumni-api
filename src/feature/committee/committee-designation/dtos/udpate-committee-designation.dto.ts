@@ -1,4 +1,5 @@
 import { Role } from "@core";
+import { Optional } from "@nestjs/common";
 import { IsString, IsEnum } from "class-validator";
 
 export class UpdateCommitteeDesignationDto {

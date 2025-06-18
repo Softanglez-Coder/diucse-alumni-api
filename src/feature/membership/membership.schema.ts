@@ -33,7 +33,7 @@ export class Membership {
   justification?: string;
 
   @Prop({
-    required: true,
+    required: false,
     type: mongoose.Schema.Types.ObjectId,
     ref: Invoice.name,
     autopopulate: true,
