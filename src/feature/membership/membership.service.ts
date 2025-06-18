@@ -1,6 +1,7 @@
 import { BaseService, Role } from '@core';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -11,7 +12,12 @@ import { MembershipRepository } from './membership.repository';
 import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
 import { InvoiceService } from '../invoice/invoice.service';
-import { Invoice, InvoiceRemarks } from '../invoice';
+import {
+  Invoice,
+  InvoiceDocument,
+  InvoiceRemarks,
+  InvoiceStatus,
+} from '../invoice';
 import { SettingsService } from '../settings/settings.service';
 import { SettingsKey } from '../settings/settings-key';
 import { MailService, Template } from '../mail';
@@ -36,6 +42,17 @@ export class MembershipService extends BaseService<MembershipDocument> {
     if (!user) {
       this.logger.error(`User with ID ${userId} not found`);
       throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const existingMembership = await this.membershipRepository.findByProperty(
+      'user',
+      user.id,
+    );
+    if (existingMembership) {
+      this.logger.error(`User with ID ${userId} already has a membership`);
+      throw new ConflictException(
+        `User with ID ${userId} already has a membership`,
+      );
     }
 
     const membership: Membership = {
@@ -70,6 +87,20 @@ export class MembershipService extends BaseService<MembershipDocument> {
     if (!membership) {
       this.logger.error(`Membership with ID ${id} not found`);
       throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+
+    if (membership.status === MembershipStatus.Requested) {
+      this.logger.error(`Membership with ID ${id} is already requested`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already requested`,
+      );
+    }
+
+    if (membership.status === MembershipStatus.Approved) {
+      this.logger.error(`Membership with ID ${id} is already approved`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already approved`,
+      );
     }
 
     membership.status = MembershipStatus.Requested;
@@ -115,6 +146,27 @@ export class MembershipService extends BaseService<MembershipDocument> {
       throw new NotFoundException(`Membership with ID ${id} not found`);
     }
 
+    if (membership.status === MembershipStatus.InProgress) {
+      this.logger.error(`Membership with ID ${id} is already in progress`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already in progress`,
+      );
+    }
+
+    if (membership.status === MembershipStatus.Approved) {
+      this.logger.error(`Membership with ID ${id} is already approved`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already approved`,
+      );
+    }
+
+    if (membership.status !== MembershipStatus.Requested) {
+      this.logger.error(`Membership with ID ${id} is not in requested status`);
+      throw new BadRequestException(
+        `Membership with ID ${id} is not in requested status`,
+      );
+    }
+
     membership.status = MembershipStatus.InProgress;
     const updatedMembership = await this.membershipRepository.update(
       id,
@@ -132,6 +184,27 @@ export class MembershipService extends BaseService<MembershipDocument> {
     if (!membership) {
       this.logger.error(`Membership with ID ${id} not found`);
       throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+
+    if (membership.status === MembershipStatus.PaymentRequired) {
+      this.logger.error(`Membership with ID ${id} is already payment required`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already payment required`,
+      );
+    }
+
+    if (membership.status === MembershipStatus.Approved) {
+      this.logger.error(`Membership with ID ${id} is already approved`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already approved`,
+      );
+    }
+
+    if (membership.status !== MembershipStatus.InProgress) {
+      this.logger.error(`Membership with ID ${id} is not in progress status`);
+      throw new BadRequestException(
+        `Membership with ID ${id} is not in progress status`,
+      );
     }
 
     membership.status = MembershipStatus.PaymentRequired;
@@ -197,12 +270,50 @@ export class MembershipService extends BaseService<MembershipDocument> {
       throw new NotFoundException(`Membership with ID ${id} not found`);
     }
 
+    if (membership.status === MembershipStatus.Approved) {
+      this.logger.error(`Membership with ID ${id} is already approved`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already approved`,
+      );
+    }
+
+    if (membership.status === MembershipStatus.PaymentRequired) {
+      const invoice = membership.invoice as InvoiceDocument;
+      if (invoice.status !== InvoiceStatus.Paid) {
+        this.logger.error(
+          `Membership with ID ${id} cannot be approved because payment is required and invoice status is ${invoice.status}`,
+        );
+        throw new ConflictException(
+          `Membership with ID ${id} cannot be approved because payment is required and invoice status is ${invoice.status}`,
+        );
+      }
+    }
+
     const user = await this.userService.findById(
       (membership.user as UserDocument)?.id,
     );
     if (!user) {
       this.logger.error(`User with ID ${membership.user} not found`);
       throw new NotFoundException(`User with ID ${membership.user} not found`);
+    }
+
+    if (user.roles.includes(Role.Member)) {
+      this.logger.error(`User with ID ${user.id} is already a member`);
+      throw new ConflictException(
+        `User with ID ${user.id} is already a member`,
+      );
+    }
+
+    // check if name is set
+    if (!user.name || user.name.trim() === '') {
+      this.logger.error(`User with ID ${user.id} has no name set`);
+      throw new BadRequestException(`User with ID ${user.id} has no name set`);
+    }
+
+    // check if batch is set
+    if (!user.batch) {
+      this.logger.error(`User with ID ${user.id} has no batch set`);
+      throw new BadRequestException(`User with ID ${user.id} has no batch set`);
     }
 
     user.roles.push(Role.Member);
@@ -215,6 +326,7 @@ export class MembershipService extends BaseService<MembershipDocument> {
     }
 
     membership.status = MembershipStatus.Approved;
+    membership.justification = null; // Clear justification on approval
     const updatedMembership = await this.membershipRepository.update(
       id,
       membership,
@@ -253,6 +365,13 @@ export class MembershipService extends BaseService<MembershipDocument> {
     if (!membership) {
       this.logger.error(`Membership with ID ${id} not found`);
       throw new NotFoundException(`Membership with ID ${id} not found`);
+    }
+
+    if (membership.status === MembershipStatus.Rejected) {
+      this.logger.error(`Membership with ID ${id} is already rejected`);
+      throw new ConflictException(
+        `Membership with ID ${id} is already rejected`,
+      );
     }
 
     membership.status = MembershipStatus.Rejected;
