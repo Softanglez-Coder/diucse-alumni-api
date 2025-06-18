@@ -7,6 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Membership, MembershipSchema } from './membership.schema';
 import { InvoiceModule } from '../invoice/invoice.module';
 import { StorageModule } from '@core';
+import { MailModule, MailService } from '../mail';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { StorageModule } from '@core';
     UserModule,
     InvoiceModule,
     StorageModule,
+    MailModule,
+    SettingsModule,
   ],
   exports: [MembershipService],
   providers: [Logger, MembershipService, MembershipRepository],

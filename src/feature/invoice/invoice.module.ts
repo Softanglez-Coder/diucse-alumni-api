@@ -6,6 +6,7 @@ import { Invoice, InvoiceSchema } from './invoice.schema';
 import { InvoiceRepository } from './invoice.repository';
 import { PaymentGatewayModule } from '@core';
 import { UserModule } from '../user';
+import { MailModule } from '../mail';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserModule } from '../user';
     ]),
     PaymentGatewayModule,
     UserModule,
+    MailModule,
   ],
   exports: [InvoiceService],
   providers: [InvoiceService, InvoiceRepository, Logger],

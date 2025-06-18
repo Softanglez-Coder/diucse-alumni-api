@@ -8,6 +8,7 @@ import { InvoiceRepository } from './invoice.repository';
 import { BaseService, ZinipayService } from '@core';
 import { Invoice, InvoiceDocument } from './invoice.schema';
 import { UserService } from '../user';
+import { MailService, Template } from '../mail';
 
 @Injectable()
 export class InvoiceService extends BaseService<InvoiceDocument> {
@@ -16,6 +17,7 @@ export class InvoiceService extends BaseService<InvoiceDocument> {
     private readonly paymentGatewayService: ZinipayService,
     private readonly userService: UserService,
     private readonly logger: Logger,
+    private readonly mailService: MailService,
   ) {
     super(invoiceRepository);
   }
@@ -56,6 +58,32 @@ export class InvoiceService extends BaseService<InvoiceDocument> {
     invoice.paymentUrl = payment.payment_url;
     invoice.validationId = payment.val_id;
 
-    return await this.repository.create(invoice);
+    const created = await this.repository.create(invoice);
+    if (!created) {
+      this.logger.error('Failed to create invoice');
+      throw new InternalServerErrorException('Failed to create invoice');
+    }
+
+    // Send invoice created email
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Invoice Created',
+        template: Template.InvoiceCreated,
+        variables: {
+          invoice_id: created.id,
+          name: user.name,
+          amount: invoice.amount.toString(),
+          remarks: invoice.remarks,
+          payment_url: invoice.paymentUrl,
+        },
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to send invoice created email: ${error.message}`,
+      );
+    }
+
+    return created;
   }
 }

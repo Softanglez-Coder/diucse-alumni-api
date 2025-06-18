@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Membership Rejected</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #333;
+      }
+      p {
+        color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Membership Rejected</h1>
+      <p>Dear {{ name }},</p>
+      <p>
+        We regret to inform you that your membership request has been rejected
+        due to <b>{{ justification }}</b>. If you have any questions or need
+        further clarification, please do not hesitate to contact us. If you have
+        already paid for the membership, we will process a refund within the
+        next 7-10 business days.
+      </p>
+      <p>
+        Thank you for your understanding, and we hope to have the opportunity to
+        serve you in the future.
+      </p>
+    </div>
+  </body>
+</html>

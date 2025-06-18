@@ -6,6 +6,7 @@ import { InvoiceModule } from '../invoice';
 import { PaymentRepository } from './payment.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Payment, PaymentSchema } from './payment.schema';
+import { MailModule } from '../mail';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Payment, PaymentSchema } from './payment.schema';
     ]),
     PaymentGatewayModule,
     InvoiceModule,
+    MailModule,
   ],
   providers: [PaymentService, PaymentRepository, Logger],
   controllers: [PaymentController],

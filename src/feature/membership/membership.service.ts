@@ -1,5 +1,6 @@
 import { BaseService, Role } from '@core';
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -11,16 +12,19 @@ import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
 import { InvoiceService } from '../invoice/invoice.service';
 import { Invoice, InvoiceRemarks } from '../invoice';
+import { SettingsService } from '../settings/settings.service';
+import { SettingsKey } from '../settings/settings-key';
+import { MailService, Template } from '../mail';
 
 @Injectable()
 export class MembershipService extends BaseService<MembershipDocument> {
-  private readonly MEMBERSHIP_FEE = 500;
-
   constructor(
     private readonly membershipRepository: MembershipRepository,
     private readonly invoiceService: InvoiceService,
     private readonly logger: Logger,
     private readonly userService: UserService,
+    private readonly settingsService: SettingsService<any>,
+    private readonly mailService: MailService,
   ) {
     super(membershipRepository);
   }
@@ -42,6 +46,20 @@ export class MembershipService extends BaseService<MembershipDocument> {
       await this.membershipRepository.create(membership);
     this.logger.log(`Membership created for user ${userId}`);
 
+    // Send confirmation email
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Membership Enrollment Confirmation',
+        template: Template.MembershipEnrolled,
+        variables: {
+          name: user.name,
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send confirmation email: ${error.message}`);
+    }
+
     return createdMembership;
   }
 
@@ -60,6 +78,30 @@ export class MembershipService extends BaseService<MembershipDocument> {
       membership,
     );
     this.logger.log(`Membership with ID ${id} requested`);
+
+    // Send request email
+    const user = await this.userService.findById(
+      (membership.user as UserDocument)?.id,
+    );
+
+    if (!user) {
+      this.logger.error(`User with ID ${membership.user} not found`);
+      throw new NotFoundException(`User with ID ${membership.user} not found`);
+    }
+
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Membership Request Confirmation',
+        template: Template.MembershipRequested,
+        variables: {
+          name: user.name,
+        },
+      });
+      this.logger.log(`Request email sent to user ${user.email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send request email: ${error.message}`);
+    }
 
     return updatedMembership;
   }
@@ -94,8 +136,36 @@ export class MembershipService extends BaseService<MembershipDocument> {
 
     membership.status = MembershipStatus.PaymentRequired;
 
+    let membershipFee = 0;
+    const membershipFeeSettings = await this.settingsService.findByProperty(
+      'key',
+      SettingsKey.MembershipFee,
+    );
+    if (!membershipFeeSettings) {
+      this.logger.error('Membership fee settings not found');
+      throw new NotFoundException('Membership fee settings not found');
+    }
+
+    const isValidFee =
+      typeof membershipFeeSettings.value === 'number' &&
+      membershipFeeSettings.value >= 0;
+    if (!isValidFee) {
+      this.logger.error('Invalid membership fee value');
+      throw new BadRequestException('Invalid membership fee value');
+    }
+
+    membershipFee = membershipFeeSettings.value;
+    if (membershipFee <= 0) {
+      this.logger.error('Membership fee must be greater than zero');
+      throw new BadRequestException('Membership fee must be greater than zero');
+    }
+
+    this.logger.log(
+      `Membership fee set to ${membershipFee} for membership ID ${id}`,
+    );
+
     const membershipFeeInvoice: Invoice = {
-      amount: this.MEMBERSHIP_FEE,
+      amount: membershipFee,
       user: (membership.user as UserDocument)?.id,
       remarks: InvoiceRemarks.MembershipFee,
     };
@@ -158,6 +228,21 @@ export class MembershipService extends BaseService<MembershipDocument> {
 
     this.logger.log(`Membership with ID ${id} approved`);
 
+    // Send approval email
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Membership Approved',
+        template: Template.MembershipApproved,
+        variables: {
+          name: user.name,
+        },
+      });
+      this.logger.log(`Approval email sent to user ${user.email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send approval email: ${error.message}`);
+    }
+
     return updatedMembership;
   }
 
@@ -178,13 +263,40 @@ export class MembershipService extends BaseService<MembershipDocument> {
     );
     this.logger.log(`Membership with ID ${id} rejected`);
 
+    // Send rejection email
+    const user = await this.userService.findById(
+      (membership.user as UserDocument)?.id,
+    );
+    if (!user) {
+      this.logger.error(`User with ID ${membership.user} not found`);
+      throw new NotFoundException(`User with ID ${membership.user} not found`);
+    }
+
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Membership Rejected',
+        template: Template.MembershipRejected,
+        variables: {
+          name: user.name,
+          justification: membership.justification,
+        },
+      });
+      this.logger.log(`Rejection email sent to user ${user.email}`);
+    } catch (error) {
+      this.logger.error(`Failed to send rejection email: ${error.message}`);
+    }
+
     return updatedMembership;
   }
 
   async findByUserId(userId: string): Promise<MembershipDocument | null> {
     this.logger.log(`Finding membership for user with ID ${userId}`);
 
-    const membership = await this.membershipRepository.findByProperty('user', userId);
+    const membership = await this.membershipRepository.findByProperty(
+      'user',
+      userId,
+    );
 
     if (!membership) {
       this.logger.warn(`No membership found for user with ID ${userId}`);

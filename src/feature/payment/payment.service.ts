@@ -9,6 +9,8 @@ import { InvoiceService, InvoiceStatus } from '../invoice';
 import { Payment, PaymentDocument } from './payment.schema';
 import { PaymentRepository } from './payment.repository';
 import { PaymentStatus } from './payment-status';
+import { MailService, Template } from '../mail';
+import { UserDocument } from '../user';
 
 @Injectable()
 export class PaymentService extends BaseService<PaymentDocument> {
@@ -17,6 +19,7 @@ export class PaymentService extends BaseService<PaymentDocument> {
     private readonly paymentGatewayService: ZinipayService,
     private readonly invoiceService: InvoiceService,
     private readonly paymentRepository: PaymentRepository,
+    private readonly mailService: MailService,
   ) {
     super(paymentRepository);
   }
@@ -95,6 +98,34 @@ export class PaymentService extends BaseService<PaymentDocument> {
 
     if (!created) {
       throw new InternalServerErrorException('Failed to create payment record');
+    }
+
+    const user = invoice.user as UserDocument;
+    if (!user.email) {
+      this.logger.warn(
+        `No email found for user associated with invoiceId: ${invoice.id}`,
+      );
+      return created;
+    }
+
+    // Send payment received email
+    try {
+      await this.mailService.send({
+        to: [user.email],
+        subject: 'Payment Received',
+        template: Template.InvoicePaid,
+        variables: {
+          name: user.name,
+          amount: invoice.amount.toString(),
+          invoice_id: invoice.id,
+          payment_method: varified.payment_method,
+          transaction_id: varified.transaction_id,
+        },
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to send payment received email: ${error.message}`,
+      );
     }
 
     return created;

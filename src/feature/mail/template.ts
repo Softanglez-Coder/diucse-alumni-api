@@ -1,11 +1,11 @@
 export enum Template {
   // Authentication
-  RegisteredAsGuest = 'registered_as_guest',
-  EmailVerification = 'email_varification',
-  ForgotPassword = "forgot_password",
-  EmailVerified = 'email_verified',
-  PasswordReset = 'password_reset',
-  PasswordChanged = 'password_changed',
+  RegisteredAsGuest = 'registered_as_guest', // done
+  EmailVerification = 'email_varification', // done
+  ForgotPassword = 'forgot_password', // done
+  EmailVerified = 'email_verified', // done
+  PasswordReset = 'password_reset', // done
+  PasswordChanged = 'password_changed', // done
   AccountDeactivated = 'account_deactivated',
   AccountReactivated = 'account_reactivated',
 
@@ -34,13 +34,11 @@ export enum Template {
   InvoiceCreated = 'invoice_created',
   InvoicePaid = 'invoice_paid',
 
-  // Member
-  MemberCreated = 'member_created',
-
   // Membership
-  MembershipSubmitted = 'membership_submitted',
-  MembershipApproved = 'membership_approved',
-  MembershipRejected = 'membership_rejected',
+  MembershipEnrolled = 'membership_enrolled', // done
+  MembershipRequested = 'membership_requested', // done
+  MembershipApproved = 'membership_approved', // done
+  MembershipRejected = 'membership_rejected', // done
 
   // Notice
   NoticePublished = 'notice_published',
