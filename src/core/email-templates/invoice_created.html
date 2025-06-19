@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice Created</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #333;
+      }
+      p {
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Invoice Created</h1>
+      <p>Dear {{ name }},</p>
+      <p>
+        Your invoice has been successfully created for {{ remarks }}. Below are
+        the details:
+      </p>
+      <ul>
+        <li><strong>Invoice ID:</strong> {{ invoice_id }}</li>
+        <li><strong>Total Amount:</strong> {{ amount }}</li>
+        <li><strong>Payment URL:</strong> {{ payment_url }}</li>
+      </ul>
+
+      <p>
+        Please review the invoice and make the payment at your earliest
+        convenience. If you have paid already, please ignore this email.
+      </p>
+    </div>
+  </body>
+</html>

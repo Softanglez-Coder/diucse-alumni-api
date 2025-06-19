@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Member, MemberDocument } from '../member/member.schema';
+import { BlogType } from './blog-type';
+import { User } from '@auth0/auth0-spa-js';
+import { UserDocument } from 'src/feature/user';
 
 @Schema({
   timestamps: true,
@@ -10,10 +12,10 @@ export class Blog {
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
-    ref: Member.name,
+    ref: User.name,
     autopopulate: true,
   })
-  author: mongoose.Schema.Types.ObjectId | MemberDocument;
+  author: mongoose.Schema.Types.ObjectId | UserDocument;
 
   @Prop({
     required: true,
@@ -32,6 +34,14 @@ export class Blog {
     default: false,
   })
   published?: boolean;
+
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(BlogType),
+    default: BlogType.General,
+  })
+  type?: BlogType;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);

@@ -4,7 +4,7 @@ export class SendEmailPayload {
   /**
    * to whom the email should be sent
    */
-  to: string;
+  to: string[];
 
   /**
    * subject of the email
@@ -37,4 +37,17 @@ export class SendEmailPayload {
    * ```
    */
   variables?: Record<string, string>;
+
+  /**
+   * Optional attachments to include in the email.
+   * This is an array of objects, each containing the file path and optional filename.
+   */
+  attachments?: Array<{
+    filename: string;
+    path?: string; // Path to the file on disk or URL to download
+    
+    // Either path or content should be provided, not both
+    content?: Buffer | string;
+    contentType?: string;
+  }>;
 }

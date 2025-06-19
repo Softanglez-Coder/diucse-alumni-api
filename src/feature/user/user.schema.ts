@@ -1,6 +1,7 @@
 import { Role } from '@core';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Batch, BatchDocument } from '../batch/batch.schema';
 
 @Schema({
   timestamps: true,
@@ -40,7 +41,34 @@ export class User {
     default: true,
   })
   active?: boolean;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  emailVerified?: boolean;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Batch.name,
+    autopopulate: true,
+    default: null,
+  })
+  batch?: BatchDocument | mongoose.Schema.Types.ObjectId;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  phone?: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  photo?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.plugin(require('mongoose-autopopulate'));
 export type UserDocument = HydratedDocument<User>;

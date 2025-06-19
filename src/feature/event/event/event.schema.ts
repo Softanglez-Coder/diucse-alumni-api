@@ -76,6 +76,12 @@ export class Event {
     default: false,
   })
   published?: boolean;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  memberOnly?: boolean;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

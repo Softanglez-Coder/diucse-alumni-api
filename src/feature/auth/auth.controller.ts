@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, Req } from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dtos';
 import { AuthService } from './auth.service';
 import { Public } from 'src/core/decorators';
@@ -23,5 +23,49 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: RequestExtension) {
     return await this.authService.me(req.user?.id);
+  }
+
+  @Public()
+  @Patch('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return await this.authService.verifyEmail(token);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return await this.authService.forgotPassword(email);
+  }
+
+  @Public()
+  @Patch('reset-password')
+  async resetPassword(
+    @Req() req: RequestExtension,
+    @Query('token') token: string,
+    @Body('password') password: string,
+  ) {
+    return await this.authService.resetPassword(
+      req.user?.id,
+      token,
+      password,
+    );
+  }
+
+  @Patch('change-password')
+  async changePassword(
+    @Req() req: RequestExtension,
+    @Query('token') token: string,
+    @Body('password') password: string,
+  ) {
+    return await this.authService.resetPassword(
+      req.user?.id,
+      token,
+      password,
+    );
+  }
+
+  @Post('resend-verification-email')
+  async resendVerificationEmail(@Req() req: RequestExtension) {
+    return await this.authService.resendVerificationEmail(req.user?.id);
   }
 }

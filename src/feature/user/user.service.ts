@@ -1,5 +1,5 @@
 import { BaseService, Role } from '@core';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from './user.schema';
 import { UserRepository } from './user.repository';
@@ -14,6 +14,20 @@ export class UserService extends BaseService<UserDocument> {
   ) {
     super(userRepository);
     this.createBot();
+  }
+
+  async findByRole(role: Role): Promise<User[]> {
+    if (!Object.values(Role).includes(role)) {
+      this.logger.error(`Invalid role: ${role}`);
+      throw new BadRequestException(`Invalid role: ${role}`);
+    }
+
+    const members = await this.userRepository.getModel().find({
+      roles: { $in: [role] },
+      email: { $ne: process.env.BOT_EMAIL },
+    });
+
+    return members;
   }
 
   async createBot() {
