@@ -49,25 +49,26 @@ export class User {
   emailVerified?: boolean;
 
   @Prop({
-      type: mongoose.Schema.Types.ObjectId,
-      ref: Batch.name,
-      autopopulate: true,
-      default: null,
-    })
-    batch?: BatchDocument | mongoose.Schema.Types.ObjectId;
-  
-    @Prop({
-      type: String,
-      default: null,
-    })
-    phone?: string;
-  
-    @Prop({
-      type: String,
-      default: null,
-    })
-    photo?: string;
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Batch.name,
+    autopopulate: true,
+    default: null,
+  })
+  batch?: BatchDocument | mongoose.Schema.Types.ObjectId;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  phone?: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  photo?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.plugin(require('mongoose-autopopulate'));
 export type UserDocument = HydratedDocument<User>;
