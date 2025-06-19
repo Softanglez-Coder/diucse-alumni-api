@@ -1,3 +1,3 @@
 export enum SettingsGroup {
-    Membership = 'membership',
+  Membership = 'membership',
 }

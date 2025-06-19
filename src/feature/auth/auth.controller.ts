@@ -44,11 +44,7 @@ export class AuthController {
     @Query('token') token: string,
     @Body('password') password: string,
   ) {
-    return await this.authService.resetPassword(
-      req.user?.id,
-      token,
-      password,
-    );
+    return await this.authService.resetPassword(req.user?.id, token, password);
   }
 
   @Patch('change-password')
@@ -57,11 +53,7 @@ export class AuthController {
     @Query('token') token: string,
     @Body('password') password: string,
   ) {
-    return await this.authService.resetPassword(
-      req.user?.id,
-      token,
-      password,
-    );
+    return await this.authService.resetPassword(req.user?.id, token, password);
   }
 
   @Post('resend-verification-email')

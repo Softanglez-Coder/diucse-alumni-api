@@ -45,7 +45,7 @@ export class SendEmailPayload {
   attachments?: Array<{
     filename: string;
     path?: string; // Path to the file on disk or URL to download
-    
+
     // Either path or content should be provided, not both
     content?: Buffer | string;
     contentType?: string;

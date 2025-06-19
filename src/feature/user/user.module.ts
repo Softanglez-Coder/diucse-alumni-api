@@ -14,7 +14,7 @@ import { StorageModule } from '@core';
         schema: UserSchema,
       },
     ]),
-    StorageModule
+    StorageModule,
   ],
   exports: [UserService],
   controllers: [UserController],

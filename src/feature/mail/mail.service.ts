@@ -30,7 +30,7 @@ export class MailService {
 
     await this.transporter.sendMail({
       from: process.env.EMAIL_FROM,
-      to: [ payload.to ],
+      to: [payload.to],
       subject: payload.subject,
       html: body,
       attachments: payload.attachments,

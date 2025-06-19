@@ -1,21 +1,8 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Req,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { RequestExtension } from 'src/core/types';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { Roles } from 'src/core/decorators';
-import { Role, StorageFolder, StorageService } from '@core';
+import { Role, StorageService } from '@core';
 import { MembershipService } from './membership.service';
 import { MembershipRejectionDto } from './dtos';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('memberships')
 export class MembershipController {
@@ -23,13 +10,6 @@ export class MembershipController {
     private readonly membershipService: MembershipService,
     private readonly storageService: StorageService,
   ) {}
-
-  @Roles(Role.Guest)
-  @Post('enroll')
-  async enroll(@Req() req: RequestExtension) {
-    const user = req.user;
-    return await this.membershipService.enroll(user.id);
-  }
 
   @Roles(Role.Guest)
   @Post(':id/request')

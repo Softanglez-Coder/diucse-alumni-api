@@ -7,7 +7,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Membership, MembershipDocument } from './membership.schema';
+import { MembershipDocument } from './membership.schema';
 import { MembershipRepository } from './membership.repository';
 import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
@@ -33,51 +33,6 @@ export class MembershipService extends BaseService<MembershipDocument> {
     private readonly mailService: MailService,
   ) {
     super(membershipRepository);
-  }
-
-  async enroll(userId: string) {
-    this.logger.log(`Enrolling user with ID ${userId}`);
-
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      this.logger.error(`User with ID ${userId} not found`);
-      throw new NotFoundException(`User with ID ${userId} not found`);
-    }
-
-    const existingMembership = await this.membershipRepository.findByProperty(
-      'user',
-      user.id,
-    );
-    if (existingMembership) {
-      this.logger.error(`User with ID ${userId} already has a membership`);
-      throw new ConflictException(
-        `User with ID ${userId} already has a membership`,
-      );
-    }
-
-    const membership: Membership = {
-      user: user.id,
-    };
-
-    const createdMembership =
-      await this.membershipRepository.create(membership);
-    this.logger.log(`Membership created for user ${userId}`);
-
-    // Send confirmation email
-    try {
-      await this.mailService.send({
-        to: [user.email],
-        subject: 'Membership Enrollment Confirmation',
-        template: Template.MembershipEnrolled,
-        variables: {
-          name: user.name,
-        },
-      });
-    } catch (error) {
-      this.logger.error(`Failed to send confirmation email: ${error.message}`);
-    }
-
-    return createdMembership;
   }
 
   async request(id: string) {

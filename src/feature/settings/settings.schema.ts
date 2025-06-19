@@ -1,41 +1,41 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
-import { SettingsGroup } from "./settings-group";
-import { SettingsKey } from "./settings-key";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { SettingsGroup } from './settings-group';
+import { SettingsKey } from './settings-key';
 
 @Schema({
-    timestamps: true,
-    collection: 'settings',
+  timestamps: true,
+  collection: 'settings',
 })
 export class Settings<T> {
-    @Prop({
-        type: String,
-        required: true,
-        enum: Object.values(SettingsGroup),
-    })
-    group: SettingsGroup;
+  @Prop({
+    type: String,
+    required: true,
+    enum: Object.values(SettingsGroup),
+  })
+  group: SettingsGroup;
 
-    @Prop({
-        type: String,
-        required: true,
-        unique: true,
-        enum: Object.values(SettingsKey)
-    })
-    key: SettingsKey;
-    
-    @Prop({
-        type: String,
-        required: true,
-        default: null,
-    })
-    description: string;
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    enum: Object.values(SettingsKey),
+  })
+  key: SettingsKey;
 
-    @Prop({
-        type: mongoose.Schema.Types.Mixed,
-        required: true,
-        default: null,
-    })
-    value: T;
+  @Prop({
+    type: String,
+    required: true,
+    default: null,
+  })
+  description: string;
+
+  @Prop({
+    type: mongoose.Schema.Types.Mixed,
+    required: true,
+    default: null,
+  })
+  value: T;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);

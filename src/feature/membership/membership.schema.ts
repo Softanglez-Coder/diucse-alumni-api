@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User, UserDocument } from '../user';
 import { MembershipStatus } from './membership-status';
-import { Batch, BatchDocument } from '../batch/batch.schema';
 import { Invoice, InvoiceDocument } from '../invoice';
 
 @Schema({

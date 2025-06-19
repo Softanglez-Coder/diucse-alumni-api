@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  NotImplementedException,
-  Param,
-  Patch,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { Public, Role, Roles } from '@core';
 import { BlogService } from './blog.service';
 import { CreateBlogDto, UpdateBlogDto } from './dtos';
@@ -17,16 +8,11 @@ import { BlogType } from './blog-type';
 
 @Controller('blog')
 export class BlogController {
-  constructor(
-    private readonly service: BlogService
-  ) {}
+  constructor(private readonly service: BlogService) {}
 
   @Roles(Role.Member)
   @Post()
-  async create(
-    @Req() req: RequestExtension,
-    @Body() dto: CreateBlogDto
-  ) {
+  async create(@Req() req: RequestExtension, @Body() dto: CreateBlogDto) {
     const blog: Blog = {
       author: req.user.id as any,
       title: dto.title,
@@ -45,18 +31,13 @@ export class BlogController {
 
   @Public()
   @Get(':id')
-  async findOne(
-    @Param('id') id: string
-  ) {
+  async findOne(@Param('id') id: string) {
     return await this.service.findById(id);
   }
 
   @Roles(Role.Member)
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateBlogDto
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateBlogDto) {
     return await this.service.update(id, dto);
   }
 
