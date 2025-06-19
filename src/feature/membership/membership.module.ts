@@ -1,4 +1,4 @@
-import { forwardRef, Logger, Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { MembershipService } from './membership.service';
 import { MembershipController } from './membership.controller';
 import { UserModule } from '../user';
@@ -7,7 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Membership, MembershipSchema } from './membership.schema';
 import { InvoiceModule } from '../invoice/invoice.module';
 import { StorageModule } from '@core';
-import { MailModule, MailService } from '../mail';
+import { MailModule } from '../mail';
 import { SettingsModule } from '../settings/settings.module';
 
 @Module({

@@ -7,12 +7,7 @@ import { MembershipModule } from '../membership/membership.module';
 import { MailModule } from '../mail';
 
 @Module({
-  imports: [
-    UserModule,
-    MembershipModule,
-    JwtModule,
-    MailModule
-  ],
+  imports: [UserModule, MembershipModule, JwtModule, MailModule],
   providers: [Logger, AuthService],
   controllers: [AuthController],
 })

@@ -22,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly membershipService: MembershipService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   async register(payload: RegisterDto) {
@@ -78,9 +78,9 @@ export class AuthService {
         attachments: [
           {
             filename: 'welcome.jpg',
-            path: 'https://static.vecteezy.com/system/resources/previews/011/976/274/non_2x/stick-figures-welcome-free-vector.jpg'
-          }
-        ]
+            path: 'https://static.vecteezy.com/system/resources/previews/011/976/274/non_2x/stick-figures-welcome-free-vector.jpg',
+          },
+        ],
       });
 
       this.logger.log(`Welcome email sent to ${user.email}`);
@@ -166,13 +166,15 @@ export class AuthService {
         secret: this.config.get<string>('JWT_SECRET'),
       });
     } catch (error) {
-      this.logger.error(`Email verification failed: Invalid token`);
+      this.logger.error(`Email verification failed: ${error.message}`);
       throw new UnauthorizedException('Invalid or expired token');
     }
     this.logger.log(`Token verified successfully for user ID: ${payload.sub}`);
     const user = await this.userService.findById(payload.sub);
     if (!user) {
-      this.logger.error(`Email verification failed: User not found with ID: ${payload.sub}`);
+      this.logger.error(
+        `Email verification failed: User not found with ID: ${payload.sub}`,
+      );
       throw new UnauthorizedException('User not found');
     }
 
@@ -184,7 +186,9 @@ export class AuthService {
     user.emailVerified = true;
     const updatedUser = await this.userService.update(user.id, user);
     if (!updatedUser) {
-      this.logger.error(`Email verification failed: Failed to update user ID: ${user.id}`);
+      this.logger.error(
+        `Email verification failed: Failed to update user ID: ${user.id}`,
+      );
       throw new InternalServerErrorException('Email verification failed');
     }
     this.logger.log(`Email verified successfully for user ID: ${user.id}`);
@@ -200,7 +204,9 @@ export class AuthService {
         },
       });
 
-      this.logger.log(`Email verification success notification sent to ${user.email}`);
+      this.logger.log(
+        `Email verification success notification sent to ${user.email}`,
+      );
     } catch (error) {
       this.logger.error(
         `Failed to send email verification success notification to ${user.email}: ${error.message}`,
@@ -215,7 +221,9 @@ export class AuthService {
 
     const user = await this.userService.findByProperty('email', email);
     if (!user) {
-      this.logger.warn(`Forgot password failed: User not found for email: ${email}`);
+      this.logger.warn(
+        `Forgot password failed: User not found for email: ${email}`,
+      );
       throw new UnauthorizedException('User not found');
     }
 
@@ -294,7 +302,9 @@ export class AuthService {
         },
       });
 
-      this.logger.log(`Password reset success notification sent to ${user.email}`);
+      this.logger.log(
+        `Password reset success notification sent to ${user.email}`,
+      );
     } catch (error) {
       this.logger.error(
         `Failed to send password reset success notification to ${user.email}: ${error.message}`,
@@ -341,7 +351,9 @@ export class AuthService {
       this.logger.error(
         `Failed to resend verification email to ${user.email}: ${error.message}`,
       );
-      throw new InternalServerErrorException('Failed to resend verification email');
+      throw new InternalServerErrorException(
+        'Failed to resend verification email',
+      );
     }
 
     return { message: 'Verification email resent successfully' };

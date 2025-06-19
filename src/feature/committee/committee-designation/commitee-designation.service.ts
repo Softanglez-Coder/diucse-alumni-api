@@ -5,9 +5,9 @@ import { CommitteeDesignationRepository } from './committee-designation.reposito
 
 @Injectable()
 export class CommitteeDesignationService extends BaseService<CommitteeDesignationDocument> {
-    constructor(
-        private readonly committeeDesignationRepository: CommitteeDesignationRepository
-    ) {
-        super(committeeDesignationRepository);
-    }
+  constructor(
+    private readonly committeeDesignationRepository: CommitteeDesignationRepository,
+  ) {
+    super(committeeDesignationRepository);
+  }
 }

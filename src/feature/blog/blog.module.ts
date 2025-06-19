@@ -1,7 +1,19 @@
-import { Logger, Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { Blog, BlogController, BlogRepository, BlogSchema, BlogService } from "./blog";
-import { BlogComment, BlogCommentController, BlogCommentRepository, BlogCommentSchema, BlogCommentService } from "./blog-comment";
+import { Logger, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  Blog,
+  BlogController,
+  BlogRepository,
+  BlogSchema,
+  BlogService,
+} from './blog';
+import {
+  BlogComment,
+  BlogCommentController,
+  BlogCommentRepository,
+  BlogCommentSchema,
+  BlogCommentService,
+} from './blog-comment';
 
 @Module({
   imports: [
@@ -13,21 +25,18 @@ import { BlogComment, BlogCommentController, BlogCommentRepository, BlogCommentS
       {
         name: BlogComment.name,
         schema: BlogCommentSchema,
-      }
+      },
     ]),
   ],
   providers: [
     Logger,
-    
+
     BlogService,
     BlogRepository,
 
     BlogCommentService,
-    BlogCommentRepository
+    BlogCommentRepository,
   ],
-  controllers: [
-    BlogController,
-    BlogCommentController
-  ],
+  controllers: [BlogController, BlogCommentController],
 })
 export class BlogModule {}

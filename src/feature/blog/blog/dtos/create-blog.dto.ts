@@ -1,13 +1,13 @@
-import { IsEnum, IsString } from "class-validator";
-import { BlogType } from "../blog-type";
+import { IsEnum, IsString } from 'class-validator';
+import { BlogType } from '../blog-type';
 
 export class CreateBlogDto {
-    @IsString()
-    title: string;
+  @IsString()
+  title: string;
 
-    @IsString()
-    content: string;
+  @IsString()
+  content: string;
 
-    @IsEnum(BlogType)
-    type: BlogType;
+  @IsEnum(BlogType)
+  type: BlogType;
 }

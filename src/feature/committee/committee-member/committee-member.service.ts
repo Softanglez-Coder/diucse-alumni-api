@@ -1,7 +1,6 @@
 import { BaseService } from '@core';
 import { Injectable } from '@nestjs/common';
 import { CommitteeMemberDocument } from './committee-member.schema';
-import { CommitteeMemberController } from './committee-member.controller';
 import { CommitteeMemberRepository } from './committee-member.repository';
 
 @Injectable()

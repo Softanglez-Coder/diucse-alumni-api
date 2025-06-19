@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Mongoose } from 'mongoose';
 import { Settings, SettingsSchema } from './settings.schema';
 import { SettingsController } from './settings.controller';
 import { SettingsRepository } from './settings.repository';
@@ -12,16 +11,11 @@ import { SettingsService } from './settings.service';
       {
         name: Settings.name,
         schema: SettingsSchema,
-      }
-    ])
+      },
+    ]),
   ],
-  providers: [
-    SettingsRepository,
-    SettingsService
-  ],
+  providers: [SettingsRepository, SettingsService],
   controllers: [SettingsController],
-  exports: [
-    SettingsService
-  ],
+  exports: [SettingsService],
 })
 export class SettingsModule {}
