@@ -7,7 +7,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { MembershipDocument } from './membership.schema';
+import { Membership, MembershipDocument } from './membership.schema';
 import { MembershipRepository } from './membership.repository';
 import { UserDocument, UserService } from '../user';
 import { MembershipStatus } from './membership-status';
@@ -35,46 +35,57 @@ export class MembershipService extends BaseService<MembershipDocument> {
     super(membershipRepository);
   }
 
-  async request(id: string) {
-    this.logger.log(`Requesting membership with ID ${id}`);
+  async request(userId: string) {
+    this.logger.log(`Requesting membership for user ID ${userId}`);
 
-    const membership = await this.membershipRepository.findById(id);
-    if (!membership) {
-      this.logger.error(`Membership with ID ${id} not found`);
-      throw new NotFoundException(`Membership with ID ${id} not found`);
-    }
-
-    if (membership.status === MembershipStatus.Requested) {
-      this.logger.error(`Membership with ID ${id} is already requested`);
-      throw new ConflictException(
-        `Membership with ID ${id} is already requested`,
-      );
-    }
-
-    if (membership.status === MembershipStatus.Approved) {
-      this.logger.error(`Membership with ID ${id} is already approved`);
-      throw new ConflictException(
-        `Membership with ID ${id} is already approved`,
-      );
-    }
-
-    membership.status = MembershipStatus.Requested;
-    const updatedMembership = await this.membershipRepository.update(
-      id,
-      membership,
-    );
-    this.logger.log(`Membership with ID ${id} requested`);
-
-    // Send request email
-    const user = await this.userService.findById(
-      (membership.user as UserDocument)?.id,
-    );
+    const user = await this.userService.findById(userId);
 
     if (!user) {
-      this.logger.error(`User with ID ${membership.user} not found`);
-      throw new NotFoundException(`User with ID ${membership.user} not found`);
+      this.logger.error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
+    const membership = await this.findByUserId(userId);
+
+    let updatedMembership: MembershipDocument | null = null;
+
+    if (!membership) {
+      const newMembership: Membership = {
+        user: userId as any,
+        status: MembershipStatus.Requested,
+      };
+
+      const createdMembership =
+        await this.membershipRepository.create(newMembership);
+      this.logger.log(`New membership created with ID ${createdMembership.id}`);
+
+      updatedMembership = createdMembership;
+    } else {
+      const id = membership.id;
+      if (membership.status === MembershipStatus.Requested) {
+        this.logger.error(`Membership with ID ${id} is already requested`);
+        throw new ConflictException(
+          `Membership with ID ${id} is already requested`,
+        );
+      }
+
+      if (membership.status === MembershipStatus.Approved) {
+        this.logger.error(`Membership with ID ${id} is already approved`);
+        throw new ConflictException(
+          `Membership with ID ${id} is already approved`,
+        );
+      }
+
+      membership.status = MembershipStatus.Requested;
+      updatedMembership = await this.membershipRepository.update(
+        id,
+        membership,
+      );
+    }
+
+    this.logger.log(`Membership with ID ${updatedMembership} requested`);
+
+    // Send request email
     try {
       await this.mailService.send({
         to: [user.email],

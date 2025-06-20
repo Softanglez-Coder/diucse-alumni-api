@@ -10,16 +10,13 @@ import {
 import { SettingsService } from './settings.service';
 import { SettingsGroup } from './settings-group';
 import { SettingsKey } from './settings-key';
-import { Public, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
+import { SettingsDocument } from './settings.schema';
 
 @Controller('settings')
-export class SettingsController {
-  constructor(private readonly settingsService: SettingsService<any>) {}
-
-  @Public()
-  @Get()
-  async findAll() {
-    return await this.settingsService.findAll();
+export class SettingsController extends BaseController<SettingsDocument<any>> {
+  constructor(private readonly settingsService: SettingsService<any>) {
+    super(settingsService);
   }
 
   @Roles(Role.Admin)

@@ -1,20 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { Roles } from 'src/core/decorators';
-import { Role, StorageService } from '@core';
+import { BaseController, Role } from '@core';
 import { MembershipService } from './membership.service';
 import { MembershipRejectionDto } from './dtos';
+import { MembershipDocument } from './membership.schema';
+import { RequestExtension } from 'src/core/types';
 
 @Controller('memberships')
-export class MembershipController {
-  constructor(
-    private readonly membershipService: MembershipService,
-    private readonly storageService: StorageService,
-  ) {}
+export class MembershipController extends BaseController<MembershipDocument> {
+  constructor(private readonly membershipService: MembershipService) {
+    super(membershipService);
+  }
 
   @Roles(Role.Guest)
-  @Post(':id/request')
-  async request(@Param('id') id: string) {
-    return await this.membershipService.request(id);
+  @Post('request')
+  async request(@Req() req: RequestExtension) {
+    return await this.membershipService.request(req.user?.id);
   }
 
   @Roles(Role.Reviewer)

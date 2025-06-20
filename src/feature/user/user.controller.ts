@@ -1,4 +1,11 @@
-import { Roles, Role, StorageFolder, StorageService, Public } from '@core';
+import {
+  Roles,
+  Role,
+  StorageFolder,
+  StorageService,
+  Public,
+  BaseController,
+} from '@core';
 import {
   BadRequestException,
   Body,
@@ -14,19 +21,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { RequestExtension } from 'src/core/types';
 import { UpdateUserDto } from './dtos';
+import { UserDocument } from './user.schema';
 
 @Controller('users')
-export class UserController {
+export class UserController extends BaseController<UserDocument> {
   constructor(
     private readonly userService: UserService,
     private readonly storageService: StorageService,
-  ) {}
-
-  @Public()
-  @Get()
-  async findAll() {
-    const users = await this.userService.findAll();
-    return users.filter((user) => user.email !== process.env.BOT_EMAIL);
+  ) {
+    super(userService);
   }
 
   @Public()
