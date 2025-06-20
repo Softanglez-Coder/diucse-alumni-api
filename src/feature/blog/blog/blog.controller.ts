@@ -1,14 +1,16 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { Public, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
 import { BlogService } from './blog.service';
 import { CreateBlogDto, UpdateBlogDto } from './dtos';
 import { RequestExtension } from 'src/core/types';
-import { Blog } from './blog.schema';
+import { Blog, BlogDocument } from './blog.schema';
 import { BlogType } from './blog-type';
 
 @Controller('blog')
-export class BlogController {
-  constructor(private readonly service: BlogService) {}
+export class BlogController extends BaseController<BlogDocument> {
+  constructor(private readonly blogService: BlogService) {
+    super(blogService);
+  }
 
   @Roles(Role.Member)
   @Post()
@@ -20,37 +22,31 @@ export class BlogController {
       type: dto.type,
     };
 
-    return await this.service.create(blog);
-  }
-
-  @Public()
-  @Get()
-  async findAll() {
-    return await this.service.findAll();
+    return await this.blogService.create(blog);
   }
 
   @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.service.findById(id);
+    return await this.blogService.findById(id);
   }
 
   @Roles(Role.Member)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateBlogDto) {
-    return await this.service.update(id, dto);
+    return await this.blogService.update(id, dto);
   }
 
   @Roles(Role.Publisher)
   @Patch(':id/publish')
   async publish(@Param('id') id: string) {
-    return await this.service.publish(id);
+    return await this.blogService.publish(id);
   }
 
   @Roles(Role.Publisher)
   @Patch(':id/unpublish')
   async unpublish(@Param('id') id: string) {
-    return await this.service.unpublish(id);
+    return await this.blogService.unpublish(id);
   }
 
   @Get('types')

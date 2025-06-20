@@ -6,21 +6,18 @@ import {
   Post,
 } from '@nestjs/common';
 import { EventService } from './event.service';
-import { Roles, Role, Public } from '@core';
+import { Roles, Role, Public, BaseController } from '@core';
+import { EventDocument } from './event.schema';
 
 @Controller('event')
-export class EventController {
-  constructor(private readonly service: EventService) {}
+export class EventController extends BaseController<EventDocument> {
+  constructor(private readonly eventService: EventService) {
+    super(eventService);
+  }
 
   @Roles(Role.EventManager)
   @Post()
   async create() {
-    throw new NotImplementedException('Method not implemented');
-  }
-
-  @Public()
-  @Get()
-  async findAll() {
     throw new NotImplementedException('Method not implemented');
   }
 

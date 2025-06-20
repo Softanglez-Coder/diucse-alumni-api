@@ -6,21 +6,18 @@ import {
   Post,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
-import { Public, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
+import { NoticeDocument } from './notice.schema';
 
 @Controller('notice')
-export class NoticeController {
-  constructor(private readonly service: NoticeService) {}
+export class NoticeController extends BaseController<NoticeDocument> {
+  constructor(private readonly noticeService: NoticeService) {
+    super(noticeService);
+  }
 
   @Roles(Role.Publisher)
   @Post()
   async create() {
-    throw new NotImplementedException('Method not implemented');
-  }
-
-  @Public()
-  @Get()
-  async findAll() {
     throw new NotImplementedException('Method not implemented');
   }
 

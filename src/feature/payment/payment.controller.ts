@@ -1,15 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { Public, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
+import { PaymentDocument } from './payment.schema';
 
 @Controller('payments')
-export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
-
-  @Roles(Role.Admin, Role.Accountant)
-  @Get()
-  async findAll() {
-    return await this.paymentService.findAll();
+export class PaymentController extends BaseController<PaymentDocument> {
+  constructor(private readonly paymentService: PaymentService) {
+    super(paymentService);
   }
 
   @Public()

@@ -1,24 +1,19 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CommitteeMemberService } from './committee-member.service';
-import { Public, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
 import { CreateCommitteeMemberDto, UpdateCommitteeMemberDto } from './dtos';
+import { CommitteeMemberDocument } from './committee-member.schema';
 
 @Controller('committee-members')
-export class CommitteeMemberController {
-  constructor(
-    private readonly committeeMemberService: CommitteeMemberService,
-  ) {}
+export class CommitteeMemberController extends BaseController<CommitteeMemberDocument> {
+  constructor(private readonly committeeMemberService: CommitteeMemberService) {
+    super(committeeMemberService);
+  }
 
   @Roles(Role.Admin)
   @Post()
   async create(@Body() dto: CreateCommitteeMemberDto) {
     return this.committeeMemberService.create(dto);
-  }
-
-  @Public()
-  @Get()
-  async findAll() {
-    return this.committeeMemberService.findAll();
   }
 
   @Roles(Role.Admin)
