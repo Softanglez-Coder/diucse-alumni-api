@@ -1,16 +1,9 @@
 import {
   Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
   Query,
   Controller,
-  ParseBoolPipe,
   DefaultValuePipe,
   ParseIntPipe,
-  Patch,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 import { PaginationOptions } from './pagination-options';

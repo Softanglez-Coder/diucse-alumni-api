@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import { CommitteeMemberService } from './committee-member.service';
-import { BaseController, Public, Role, Roles } from '@core';
+import { BaseController, Role, Roles } from '@core';
 import { CreateCommitteeMemberDto, UpdateCommitteeMemberDto } from './dtos';
 import { CommitteeMemberDocument } from './committee-member.schema';
 

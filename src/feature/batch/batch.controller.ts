@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import { BatchService } from './batch.service';
-import { BaseController, Public, Role, Roles } from '@core';
+import { BaseController, Role, Roles } from '@core';
 import { CreateBatchDto, UpdateBatchDto } from './dtos';
 import { BatchDocument } from './batch.schema';
 

@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { BaseController, Public, Role, Roles } from '@core';
+import { BaseController, Public } from '@core';
 import { PaymentDocument } from './payment.schema';
 
 @Controller('payments')

@@ -1,13 +1,5 @@
-import { BaseController, Public, Role, Roles } from '@core';
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { BaseController, Role, Roles } from '@core';
+import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import {
   CreateCommitteeDesignationDto,
   UpdateCommitteeDesignationDto,
