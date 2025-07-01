@@ -6,7 +6,7 @@ import { RequestExtension } from 'src/core/types';
 import { Blog, BlogDocument } from './blog.schema';
 import { BlogType } from './blog-type';
 
-@Controller('blog')
+@Controller('blogs')
 export class BlogController extends BaseController<BlogDocument> {
   constructor(private readonly blogService: BlogService) {
     super(blogService);

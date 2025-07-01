@@ -9,7 +9,7 @@ import { EventService } from './event.service';
 import { Roles, Role, Public, BaseController } from '@core';
 import { EventDocument } from './event.schema';
 
-@Controller('event')
+@Controller('events')
 export class EventController extends BaseController<EventDocument> {
   constructor(private readonly eventService: EventService) {
     super(eventService);
