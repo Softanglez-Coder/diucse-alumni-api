@@ -4,7 +4,7 @@ import { BaseController, Role, Roles } from '@core';
 import { CreateBatchDto, UpdateBatchDto } from './dtos';
 import { BatchDocument } from './batch.schema';
 
-@Controller('batch')
+@Controller('batches')
 export class BatchController extends BaseController<BatchDocument> {
   constructor(private readonly batchService: BatchService) {
     super(batchService);

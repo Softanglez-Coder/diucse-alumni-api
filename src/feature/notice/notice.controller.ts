@@ -9,7 +9,7 @@ import { NoticeService } from './notice.service';
 import { BaseController, Public, Role, Roles } from '@core';
 import { NoticeDocument } from './notice.schema';
 
-@Controller('notice')
+@Controller('notices')
 export class NoticeController extends BaseController<NoticeDocument> {
   constructor(private readonly noticeService: NoticeService) {
     super(noticeService);
