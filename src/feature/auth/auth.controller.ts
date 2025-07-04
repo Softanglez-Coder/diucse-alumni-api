@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, Req, Res } from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dtos';
 import { AuthService } from './auth.service';
 import { Public } from 'src/core/decorators';
 import { RequestExtension } from 'src/core/types';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -10,19 +11,51 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() payload: RegisterDto) {
-    return await this.authService.register(payload);
+  async register(
+    @Res({ passthrough: true }) res: Response,
+    @Body() payload: RegisterDto
+  ) {
+    const { accessToken } = await this.authService.register(payload);
+
+    res.cookie('auth_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Set to true in production
+      
+      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+      sameSite: 'lax', // Adjust based on your requirements
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+      path: '/',
+    });
+
+    return { message: 'Registration successful' };
   }
 
   @Public()
   @Post('login')
-  async login(@Body() payload: LoginDto) {
-    return await this.authService.login(payload);
+  async login(
+    @Res({ passthrough: true }) res: Response,
+    @Body() payload: LoginDto
+  ) {
+    const { accessToken } = await this.authService.login(payload);
+
+    res.cookie('auth_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Set to true in production
+
+      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+      sameSite: 'lax', // Adjust based on your requirements
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+      path: '/',
+    });
+
+    return { message: 'Login successful' };
   }
 
   @Get('me')
-  async me(@Req() req: RequestExtension) {
-    return await this.authService.me(req.user?.id);
+  me(@Req() req: RequestExtension) {
+    return req.user;
   }
 
   @Public()
@@ -59,5 +92,16 @@ export class AuthController {
   @Post('resend-verification-email')
   async resendVerificationEmail(@Req() req: RequestExtension) {
     return await this.authService.resendVerificationEmail(req.user?.id);
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('auth_token', {
+      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+      path: '/',
+    });
+
+    return { message: 'Logout successful' };
   }
 }

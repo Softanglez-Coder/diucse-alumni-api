@@ -145,19 +145,6 @@ export class AuthService {
     return { accessToken: token };
   }
 
-  async me(userId: string) {
-    this.logger.log(`Fetching user details for user ID: ${userId}`);
-
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      this.logger.error(`User not found with ID: ${userId}`);
-      throw new InternalServerErrorException('User not found');
-    }
-
-    this.logger.log(`User details fetched successfully for user ID: ${userId}`);
-    return user;
-  }
-
   async verifyEmail(token: string) {
     this.logger.log(`Verifying email with token: ${token}`);
     let payload;

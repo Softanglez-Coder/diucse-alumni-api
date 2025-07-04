@@ -10,7 +10,17 @@ async function bootstrap() {
   app.use(helmet());
 
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'https://csediualumni.com',
+      'https://admin.csediualumni.com',
+      'https://portal.csediualumni.com',
+      'http://localhost:4200',
+      'http://admin.localhost:4300',
+      'http://portal.localhost:4400'
+    ],
+    credentials: true,
+  });
 
   // Add global validation pipe
   app.useGlobalPipes(
