@@ -41,20 +41,11 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const authHeader = 
-         request.headers['authorization']
-      || request.headers['Authorization']
-      || request.cookies['auth_token'];
-
-    if (!authHeader) {
-      throw new UnauthorizedException('No authorization header');
+    const token = request.cookies?.['auth_token'];
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
     }
-
-    const [type, token] = authHeader.split(' ');
-    if (type !== 'Bearer' || !token) {
-      throw new UnauthorizedException('Invalid authorization format');
-    }
-
+    
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,

@@ -17,16 +17,19 @@ export class AuthController {
   ) {
     const { accessToken } = await this.authService.register(payload);
 
-    res.cookie('auth_token', accessToken, {
+    // Cookie domain configuration based on environment
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Set to true in production
-      
-      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
-      sameSite: 'lax', // Adjust based on your requirements
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/',
-    });
+      // For local development with custom hosts, use '.localhost' to share across subdomains
+      // For production, use '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+    };
+
+    res.cookie('auth_token', accessToken, cookieOptions);
 
     return { message: 'Registration successful' };
   }
@@ -39,16 +42,19 @@ export class AuthController {
   ) {
     const { accessToken } = await this.authService.login(payload);
 
-    res.cookie('auth_token', accessToken, {
+    // Cookie domain configuration based on environment
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Set to true in production
-
-      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
-      sameSite: 'lax', // Adjust based on your requirements
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/',
-    });
+      // For local development with custom hosts, use '.localhost' to share across subdomains
+      // For production, use '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+    };
+
+    res.cookie('auth_token', accessToken, cookieOptions);
 
     return { message: 'Login successful' };
   }
@@ -96,11 +102,14 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('auth_token', {
-      // if local, set domain to '.localhost', otherwise set to '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+    const cookieOptions = {
       path: '/',
-    });
+      // For local development with custom hosts, use '.localhost' to share across subdomains
+      // For production, use '.csediualumni.com'
+      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
+    };
+
+    res.clearCookie('auth_token', cookieOptions);
 
     return { message: 'Logout successful' };
   }
