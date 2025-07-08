@@ -35,7 +35,7 @@ import { UserModule } from 'src/feature/user/user.module';
       throttlers: [
         {
           ttl: 60_000,
-          limit: 10,
+          limit: 1000,
         },
       ],
     }),
