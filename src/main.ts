@@ -18,13 +18,13 @@ async function bootstrap() {
     origin: [
       'https://csediualumni.com',
       'https://admin.csediualumni.com',
-      'https://portal.csediualumni.com',
       'http://localhost:4200',
-      'http://admin.localhost:4300',
-      'http://portal.localhost:4400',
-      'http://api.localhost:3000'
+      'http://localhost:4300',
+      'http://localhost:3000'
     ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   // Add global validation pipe

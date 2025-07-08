@@ -9,6 +9,21 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private getCookieOptions() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    return {
+      httpOnly: true,
+      secure: isProduction, // Only use secure cookies in production (HTTPS)
+      sameSite: 'lax' as const, // Use 'lax' for both dev and prod
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+      // In production, use domain to share across subdomains
+      // In development, omit domain to work with localhost:port
+      ...(isProduction && { domain: '.csediualumni.com' }),
+    };
+  }
+
   @Public()
   @Post('register')
   async register(
@@ -17,19 +32,7 @@ export class AuthController {
   ) {
     const { accessToken } = await this.authService.register(payload);
 
-    // Cookie domain configuration based on environment
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/',
-      // For local development with custom hosts, use '.localhost' to share across subdomains
-      // For production, use '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
-    };
-
-    res.cookie('auth_token', accessToken, cookieOptions);
+    res.cookie('auth_token', accessToken, this.getCookieOptions());
 
     return { message: 'Registration successful' };
   }
@@ -42,19 +45,7 @@ export class AuthController {
   ) {
     const { accessToken } = await this.authService.login(payload);
 
-    // Cookie domain configuration based on environment
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/',
-      // For local development with custom hosts, use '.localhost' to share across subdomains
-      // For production, use '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
-    };
-
-    res.cookie('auth_token', accessToken, cookieOptions);
+    res.cookie('auth_token', accessToken, this.getCookieOptions());
 
     return { message: 'Login successful' };
   }
@@ -102,15 +93,21 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    const cookieOptions = {
-      path: '/',
-      // For local development with custom hosts, use '.localhost' to share across subdomains
-      // For production, use '.csediualumni.com'
-      domain: process.env.NODE_ENV === 'production' ? '.csediualumni.com' : '.localhost',
-    };
-
-    res.clearCookie('auth_token', cookieOptions);
+    res.clearCookie('auth_token', this.getCookieOptions());
 
     return { message: 'Logout successful' };
+  }
+
+  @Public()
+  @Post('token')
+  async getToken(
+    @Body() payload: LoginDto
+  ) {
+    const { accessToken } = await this.authService.login(payload);
+    
+    return { 
+      accessToken,
+      message: 'Use this token in Authorization header as: Bearer <token>'
+    };
   }
 }
