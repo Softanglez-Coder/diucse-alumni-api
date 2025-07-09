@@ -14,21 +14,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // Enable CORS
-  const corsOrigins = process.env.NODE_ENV === 'production'
-    ? [
-        'https://csediualumni.com',
-        'https://admin.csediualumni.com',
-      ]
-    : [
-        'https://csediualumni.com',
-        'https://admin.csediualumni.com',
-        'http://localhost:4200',
-        'http://localhost:4300',
-        'http://localhost:3000'
-      ];
-
   app.enableCors({
-    origin: corsOrigins,
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
