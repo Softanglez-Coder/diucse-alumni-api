@@ -12,18 +12,6 @@ export class Batch {
     unique: true,
   })
   name: string;
-
-  @Prop({
-    type: String,
-    default: '',
-  })
-  description: string;
-
-  @Prop({
-    type: Number,
-    required: true,
-  })
-  passingYear: number;
 }
 
 export const BatchSchema = SchemaFactory.createForClass(Batch);

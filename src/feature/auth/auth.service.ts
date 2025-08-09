@@ -45,6 +45,8 @@ export class AuthService {
       email: payload.email,
       password: hash,
       name: payload.name,
+      currentPosition: payload.currentPosition,
+      company: payload.company,
     };
 
     this.logger.log(`Registering user with email: ${user.email}`);

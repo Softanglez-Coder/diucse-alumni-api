@@ -18,4 +18,12 @@ export class UpdateUserDto {
   @IsMongoId()
   @Optional()
   batch: mongoose.Schema.Types.ObjectId;
+
+  @IsString()
+  @Optional()
+  currentPosition?: string;
+
+  @IsString()
+  @Optional()
+  company?: string;
 }

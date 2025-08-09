@@ -67,6 +67,18 @@ export class User {
     default: null,
   })
   photo?: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  currentPosition?: string;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  company?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
