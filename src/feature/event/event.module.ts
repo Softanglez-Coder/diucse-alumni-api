@@ -54,5 +54,6 @@ import {
     EventCouponController,
     EventRegistrationController,
   ],
+  exports: [EventService], // Export EventService to be used by other modules
 })
 export class EventModule {}
