@@ -42,6 +42,12 @@ export class MembershipController extends BaseController<MembershipDocument> {
     return await this.membershipService.reject(id, dto.justification);
   }
 
+  @Roles(Role.Guest)
+  @Get('me')
+  async findMyMembership(@Req() req: RequestExtension) {
+    return await this.membershipService.findByProperty('user', req.user?.id);
+  }
+
   @Roles(Role.Guest, Role.Reviewer)
   @Get(':id')
   async findById(@Param('id') id: string) {
