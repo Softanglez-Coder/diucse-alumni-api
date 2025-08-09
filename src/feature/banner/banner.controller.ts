@@ -1,5 +1,6 @@
 import {
   BaseController,
+  Public,
   Role,
   Roles,
   StorageFolder,
@@ -9,10 +10,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
-  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -20,7 +21,6 @@ import { BannerDocument } from './banner.schema';
 import { BannerService } from './banner.service';
 import { CreateBannerDto } from './dtos';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { RequestExtension } from 'src/core/types';
 
 @Controller('banners')
 export class BannerController extends BaseController<BannerDocument> {
@@ -35,6 +35,12 @@ export class BannerController extends BaseController<BannerDocument> {
   @Post()
   async create(@Body() dto: CreateBannerDto) {
     return await this.bannerService.create(dto);
+  }
+
+  @Public()
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return await this.bannerService.findById(id);
   }
 
   @Roles(Role.Admin, Role.Publisher)
