@@ -1,11 +1,15 @@
 import {
   IsEmail,
+  IsMongoId,
   IsOptional,
   IsString,
   IsStrongPassword,
+  IsUrl,
+  Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import mongoose from 'mongoose';
 
 export class RegisterDto {
   @IsString()
@@ -18,6 +22,22 @@ export class RegisterDto {
 
   @IsStrongPassword()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^[+]?[\d\s\-()]{10,20}$/, {
+    message:
+      'Phone number must be a valid format (10-20 digits with optional +, spaces, -, ())',
+  })
+  phone?: string;
+
+  @IsOptional()
+  @IsUrl()
+  photo?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  batch?: mongoose.Schema.Types.ObjectId;
 
   @IsOptional()
   @IsString()

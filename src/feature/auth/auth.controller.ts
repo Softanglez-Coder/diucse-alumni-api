@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Patch, Post, Query, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dtos';
 import { AuthService } from './auth.service';
 import { Public } from 'src/core/decorators';
@@ -11,7 +20,7 @@ export class AuthController {
 
   private getCookieOptions() {
     const isProduction = process.env.NODE_ENV === 'production';
-    
+
     return {
       httpOnly: true,
       secure: isProduction, // Only use secure cookies in production (HTTPS)
@@ -28,7 +37,7 @@ export class AuthController {
   @Post('register')
   async register(
     @Res({ passthrough: true }) res: Response,
-    @Body() payload: RegisterDto
+    @Body() payload: RegisterDto,
   ) {
     const { accessToken } = await this.authService.register(payload);
 
@@ -41,7 +50,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Res({ passthrough: true }) res: Response,
-    @Body() payload: LoginDto
+    @Body() payload: LoginDto,
   ) {
     const { accessToken } = await this.authService.login(payload);
 
@@ -100,14 +109,12 @@ export class AuthController {
 
   @Public()
   @Post('token')
-  async getToken(
-    @Body() payload: LoginDto
-  ) {
+  async getToken(@Body() payload: LoginDto) {
     const { accessToken } = await this.authService.login(payload);
-    
-    return { 
+
+    return {
       accessToken,
-      message: 'Use this token in Authorization header as: Bearer <token>'
+      message: 'Use this token in Authorization header as: Bearer <token>',
     };
   }
 }

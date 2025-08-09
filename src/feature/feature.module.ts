@@ -27,7 +27,7 @@ import { BannerModule } from './banner';
     NoticeModule,
     BatchModule,
     SettingsModule,
-    BannerModule
+    BannerModule,
   ],
   exports: [],
   controllers: [],

@@ -17,7 +17,7 @@ import { UserService } from 'src/feature/user/user.service';
  * This guard checks if the request has a valid JWT token in either:
  * 1. The 'auth_token' cookie (for web applications)
  * 2. The Authorization header with Bearer token (for API testing tools like Postman)
- * 
+ *
  * If the token is valid, it retrieves the user associated with the token and attaches it to the request object.
  * If the token is invalid or expired, it throws an UnauthorizedException.
  *
@@ -44,10 +44,10 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    
+
     // Try to get token from cookie first (for web apps)
     let token = request.cookies?.['auth_token'];
-    
+
     // If no cookie token, try Authorization header (for Postman/API testing)
     if (!token) {
       const authHeader = request.headers.authorization;
@@ -55,11 +55,11 @@ export class AuthGuard implements CanActivate {
         token = authHeader.substring(7); // Remove 'Bearer ' prefix
       }
     }
-    
+
     if (!token) {
       throw new UnauthorizedException('No token provided');
     }
-    
+
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,

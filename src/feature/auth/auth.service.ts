@@ -45,6 +45,9 @@ export class AuthService {
       email: payload.email,
       password: hash,
       name: payload.name,
+      phone: payload.phone,
+      photo: payload.photo,
+      batch: payload.batch,
       currentPosition: payload.currentPosition,
       company: payload.company,
     };
