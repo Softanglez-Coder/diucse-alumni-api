@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { SettingsGroup } from './settings-group';
 import { SettingsKey } from './settings-key';
 
 @Schema({
@@ -8,13 +7,6 @@ import { SettingsKey } from './settings-key';
   collection: 'settings',
 })
 export class Settings<T> {
-  @Prop({
-    type: String,
-    required: true,
-    enum: Object.values(SettingsGroup),
-  })
-  group: SettingsGroup;
-
   @Prop({
     type: String,
     required: true,

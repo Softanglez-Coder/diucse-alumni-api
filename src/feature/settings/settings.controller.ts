@@ -8,7 +8,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { SettingsService } from './settings.service';
-import { SettingsGroup } from './settings-group';
 import { SettingsKey } from './settings-key';
 import { BaseController, Public, Role, Roles } from '@core';
 import { SettingsDocument } from './settings.schema';
@@ -23,6 +22,12 @@ export class SettingsController extends BaseController<SettingsDocument<any>> {
   @Post()
   async create(@Body() body: any) {
     return await this.settingsService.create(body);
+  }
+
+  @Public()
+  @Get('keys/:key')
+  async findByKey(@Param('key') key: SettingsKey) {
+    return await this.settingsService.findByProperty('key', key);
   }
 
   @Public()
@@ -41,17 +46,5 @@ export class SettingsController extends BaseController<SettingsDocument<any>> {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return await this.settingsService.delete(id);
-  }
-
-  @Public()
-  @Get(':group')
-  async findByGroup(@Param('group') group: SettingsGroup) {
-    return await this.settingsService.findByProperty('group', group);
-  }
-
-  @Public()
-  @Get(':key')
-  async findByKey(@Param('key') key: SettingsKey) {
-    return await this.settingsService.findByProperty('key', key);
   }
 }
