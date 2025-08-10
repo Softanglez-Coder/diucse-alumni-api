@@ -33,9 +33,9 @@ export class UserController extends BaseController<UserDocument> {
   }
 
   @Public()
-  @Get(':role')
-  async findByRole(@Param('role') role: Role) {
-    return await this.userService.findByRole(role);
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return await this.userService.findById(id);
   }
 
   @Roles(Role.Guest)
