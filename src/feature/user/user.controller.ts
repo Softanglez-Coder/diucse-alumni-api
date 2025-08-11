@@ -33,6 +33,12 @@ export class UserController extends BaseController<UserDocument> {
   }
 
   @Public()
+  @Get('members')
+  async getMembers() {
+    return await this.userService.findByRole(Role.Member);
+  }
+
+  @Public()
   @Get(':id')
   async findById(@Param('id') id: string) {
     return await this.userService.findById(id);
