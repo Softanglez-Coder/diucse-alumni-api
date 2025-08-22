@@ -11,4 +11,15 @@ export class BlogRepository extends BaseRepository<BlogDocument> {
   ) {
     super(blogModel);
   }
+
+  async createByDrafting(
+    dto: Partial<BlogDocument>,
+    userId: string,
+  ): Promise<BlogDocument> {
+    const blog = new this.blogModel(dto);
+    blog.author = userId as any; // Assuming userId is a string that can be cast to ObjectId
+    blog.published = false;
+    blog.inReview = false;
+    return blog.save();
+  }
 }

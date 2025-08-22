@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { BlogType } from './blog-type';
 import { User } from '@auth0/auth0-spa-js';
 import { UserDocument } from 'src/feature/user';
 
@@ -36,12 +35,10 @@ export class Blog {
   published?: boolean;
 
   @Prop({
-    required: true,
-    type: String,
-    enum: Object.values(BlogType),
-    default: BlogType.General,
+    type: Boolean,
+    default: false,
   })
-  type?: BlogType;
+  inReview?: boolean;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
