@@ -1,6 +1,6 @@
 import { BaseService } from '@core';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { BlogDocument } from './blog.schema';
+import { BlogDocument, BlogStatus } from './blog.schema';
 import { BlogRepository } from './blog.repository';
 import { CreateBlogDto } from './dtos';
 
@@ -19,8 +19,7 @@ export class BlogService extends BaseService<BlogDocument> {
     const blogModel = this.blogRepository.getModel();
     const blog = new blogModel(dto);
     blog.author = userId as any; // Assuming userId is a string that can be cast to ObjectId
-    blog.published = false;
-    blog.inReview = false;
+    blog.status = BlogStatus.DRAFT;
     const createdBlog = await blog.save();
 
     this.logger.log(`Blog created with id: ${createdBlog._id}`);
@@ -52,8 +51,7 @@ export class BlogService extends BaseService<BlogDocument> {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
 
-    blog.published = false;
-    blog.inReview = false;
+    blog.status = BlogStatus.DRAFT;
 
     return await this.blogRepository.update(id, blog);
   }
@@ -67,8 +65,7 @@ export class BlogService extends BaseService<BlogDocument> {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
 
-    blog.inReview = true;
-    blog.published = false;
+    blog.status = BlogStatus.IN_REVIEW;
 
     return await this.blogRepository.update(id, blog);
   }
@@ -82,8 +79,7 @@ export class BlogService extends BaseService<BlogDocument> {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
 
-    blog.published = true;
-    blog.inReview = false;
+    blog.status = BlogStatus.PUBLISHED;
 
     return await this.blogRepository.update(id, blog);
   }
@@ -97,9 +93,38 @@ export class BlogService extends BaseService<BlogDocument> {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
 
-    blog.published = false;
-    blog.inReview = false;
+    blog.status = BlogStatus.DRAFT;
 
     return await this.blogRepository.update(id, blog);
+  }
+
+  async getBlogsByStatus(status: BlogStatus): Promise<BlogDocument[]> {
+    this.logger.log(`Fetching blogs with status: ${status}`);
+    return await this.blogRepository.findByStatus(status);
+  }
+
+  async getPublishedBlogs(): Promise<BlogDocument[]> {
+    this.logger.log('Fetching published blogs');
+    return await this.blogRepository.findPublishedBlogs();
+  }
+
+  async getBlogsInReview(): Promise<BlogDocument[]> {
+    this.logger.log('Fetching blogs in review');
+    return await this.blogRepository.findBlogsInReview();
+  }
+
+  async getDraftBlogs(): Promise<BlogDocument[]> {
+    this.logger.log('Fetching draft blogs');
+    return await this.blogRepository.findDraftBlogs();
+  }
+
+  async getMyBlogsByStatus(
+    userId: string,
+    status: BlogStatus,
+  ): Promise<BlogDocument[]> {
+    this.logger.log(
+      `Fetching blogs with status ${status} for user with id: ${userId}`,
+    );
+    return await this.blogRepository.findByStatusAndAuthor(status, userId);
   }
 }

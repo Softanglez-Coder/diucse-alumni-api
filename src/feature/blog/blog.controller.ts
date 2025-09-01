@@ -1,6 +1,6 @@
 import { BaseController, Public, Role, Roles } from '@core';
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { BlogDocument } from './blog.schema';
+import { BlogDocument, BlogStatus } from './blog.schema';
 import { BlogService } from './blog.service';
 import { RequestExtension } from 'src/core/types';
 import { CreateBlogDto, UpdateBlogDto } from './dtos';
@@ -62,5 +62,26 @@ export class BlogController extends BaseController<BlogDocument> {
     @Body() body: UpdateBlogDto,
   ): Promise<BlogDocument> {
     return this.blogService.update(id, body);
+  }
+
+  @Public()
+  @Get('published')
+  async getPublishedBlogs(): Promise<BlogDocument[]> {
+    return this.blogService.getPublishedBlogs();
+  }
+
+  @Roles(Role.Publisher)
+  @Get('in-review')
+  async getBlogsInReview(): Promise<BlogDocument[]> {
+    return this.blogService.getBlogsInReview();
+  }
+
+  @Roles(Role.Member)
+  @Get('me/status/:status')
+  async getMyBlogsByStatus(
+    @Param('status') status: BlogStatus,
+    @Req() req: RequestExtension,
+  ): Promise<BlogDocument[]> {
+    return this.blogService.getMyBlogsByStatus(req.user?.id, status);
   }
 }

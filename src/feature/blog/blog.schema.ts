@@ -3,6 +3,12 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from '@auth0/auth0-spa-js';
 import { UserDocument } from 'src/feature/user';
 
+export enum BlogStatus {
+  DRAFT = 'draft',
+  IN_REVIEW = 'in_review',
+  PUBLISHED = 'published',
+}
+
 @Schema({
   timestamps: true,
   collection: 'blogs',
@@ -29,16 +35,11 @@ export class Blog {
   content: string;
 
   @Prop({
-    type: Boolean,
-    default: false,
+    type: String,
+    enum: Object.values(BlogStatus),
+    default: BlogStatus.DRAFT,
   })
-  published?: boolean;
-
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  inReview?: boolean;
+  status: BlogStatus;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
