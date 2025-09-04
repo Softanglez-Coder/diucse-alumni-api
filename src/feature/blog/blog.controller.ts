@@ -19,6 +19,27 @@ export class BlogController extends BaseController<BlogDocument> {
     return this.blogService.create(body, req.user?.id);
   }
 
+  @Public()
+  @Get('published')
+  async getPublishedBlogs(): Promise<BlogDocument[]> {
+    return this.blogService.getPublishedBlogs();
+  }
+
+  @Roles(Role.Publisher)
+  @Get('in-review')
+  async getBlogsInReview(): Promise<BlogDocument[]> {
+    return this.blogService.getBlogsInReview();
+  }
+
+  @Roles(Role.Member)
+  @Get('me/status/:status')
+  async getMyBlogsByStatus(
+    @Param('status') status: BlogStatus,
+    @Req() req: RequestExtension,
+  ): Promise<BlogDocument[]> {
+    return this.blogService.getMyBlogsByStatus(req.user?.id, status);
+  }
+
   @Roles(Role.Member)
   @Get('me')
   async getMyBlogs(@Req() req: RequestExtension): Promise<BlogDocument[]> {
@@ -62,26 +83,5 @@ export class BlogController extends BaseController<BlogDocument> {
     @Body() body: UpdateBlogDto,
   ): Promise<BlogDocument> {
     return this.blogService.update(id, body);
-  }
-
-  @Public()
-  @Get('published')
-  async getPublishedBlogs(): Promise<BlogDocument[]> {
-    return this.blogService.getPublishedBlogs();
-  }
-
-  @Roles(Role.Publisher)
-  @Get('in-review')
-  async getBlogsInReview(): Promise<BlogDocument[]> {
-    return this.blogService.getBlogsInReview();
-  }
-
-  @Roles(Role.Member)
-  @Get('me/status/:status')
-  async getMyBlogsByStatus(
-    @Param('status') status: BlogStatus,
-    @Req() req: RequestExtension,
-  ): Promise<BlogDocument[]> {
-    return this.blogService.getMyBlogsByStatus(req.user?.id, status);
   }
 }
