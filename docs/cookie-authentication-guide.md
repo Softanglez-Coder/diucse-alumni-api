@@ -7,12 +7,14 @@ This application implements cookie-based authentication that works across differ
 ## Architecture
 
 ### Production Setup
+
 - **API**: `https://api.csediualumni.com`
 - **Main App**: `https://csediualumni.com`
 - **Admin App**: `https://admin.csediualumni.com`
 - **Cookie Domain**: `.csediualumni.com` (shares across subdomains)
 
 ### Development Setup
+
 - **API**: `http://localhost:3000`
 - **Main App**: `http://localhost:4200`
 - **Admin App**: `http://localhost:4300`
@@ -21,6 +23,7 @@ This application implements cookie-based authentication that works across differ
 ## Cookie Configuration
 
 ### Production Cookies
+
 ```typescript
 {
   httpOnly: true,        // Prevents XSS attacks
@@ -33,6 +36,7 @@ This application implements cookie-based authentication that works across differ
 ```
 
 ### Development Cookies
+
 ```typescript
 {
   httpOnly: true,        // Prevents XSS attacks
@@ -49,11 +53,13 @@ This application implements cookie-based authentication that works across differ
 The application supports two authentication methods:
 
 ### 1. Cookie-Based (Web Applications)
+
 - Automatically set on login/register
 - Sent automatically with requests
 - Used by Angular applications
 
 ### 2. Bearer Token (API Testing)
+
 - Manual token handling
 - Authorization header: `Bearer <token>`
 - Used by Postman, curl, etc.
@@ -63,6 +69,7 @@ The application supports two authentication methods:
 ### Authentication Endpoints
 
 #### Register
+
 ```
 POST /auth/register
 Content-Type: application/json
@@ -73,10 +80,12 @@ Content-Type: application/json
   // other registration fields
 }
 ```
+
 - Sets `auth_token` cookie
 - Returns success message
 
 #### Login
+
 ```
 POST /auth/login
 Content-Type: application/json
@@ -86,10 +95,12 @@ Content-Type: application/json
   "password": "password123"
 }
 ```
+
 - Sets `auth_token` cookie
 - Returns success message
 
 #### Get Token (For API Testing)
+
 ```
 POST /auth/token
 Content-Type: application/json
@@ -99,29 +110,39 @@ Content-Type: application/json
   "password": "password123"
 }
 ```
+
 - Returns raw JWT token
 - Use for Postman Authorization header
 
 #### Logout
+
 ```
 POST /auth/logout
 ```
+
 - Clears `auth_token` cookie
 - Returns success message
 
 #### Get Current User
+
 ```
 GET /auth/me
 ```
+
 - Requires authentication
 - Returns current user data
 
 ## Frontend Integration
 
 ### Angular HTTP Interceptor
+
 ```typescript
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+} from '@angular/common/http';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -129,17 +150,18 @@ export class AuthInterceptor implements HttpInterceptor {
     // Clone request to include credentials
     const authReq = req.clone({
       setHeaders: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      withCredentials: true  // Important: sends cookies
+      withCredentials: true, // Important: sends cookies
     });
-    
+
     return next.handle(authReq);
   }
 }
 ```
 
 ### Angular Service
+
 ```typescript
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -152,19 +174,23 @@ export class AuthService {
 
   login(credentials: any) {
     return this.http.post(`${this.apiUrl}/auth/login`, credentials, {
-      withCredentials: true  // Important: includes cookies
+      withCredentials: true, // Important: includes cookies
     });
   }
 
   logout() {
-    return this.http.post(`${this.apiUrl}/auth/logout`, {}, {
-      withCredentials: true
-    });
+    return this.http.post(
+      `${this.apiUrl}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   getCurrentUser() {
     return this.http.get(`${this.apiUrl}/auth/me`, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 }
@@ -173,11 +199,13 @@ export class AuthService {
 ## Postman Testing
 
 ### Setup
+
 1. **Use the token endpoint** to get a JWT token:
+
    ```
    POST http://localhost:3000/auth/token
    Content-Type: application/json
-   
+
    {
      "email": "user@example.com",
      "password": "password123"
@@ -192,11 +220,13 @@ export class AuthService {
    ```
 
 ### Alternative: Cookie-based testing
+
 1. **Login first**:
+
    ```
    POST http://localhost:3000/auth/login
    Content-Type: application/json
-   
+
    {
      "email": "user@example.com",
      "password": "password123"
@@ -216,6 +246,7 @@ export class AuthService {
 4. **Token Expiry**: 7-day expiration limits exposure window
 
 ### CORS Configuration
+
 - Allows specific origins only
 - Enables credentials for cookie sharing
 - Restricts methods and headers
@@ -239,18 +270,21 @@ PORT=3000
 ## Troubleshooting
 
 ### Cookies Not Being Set
+
 1. Check CORS configuration
 2. Ensure `withCredentials: true` in frontend
 3. Verify domain settings
 4. Check browser dev tools > Application > Cookies
 
 ### Authentication Failing
+
 1. Verify JWT secret is consistent
 2. Check token expiration
 3. Ensure proper Authorization header format
 4. Validate cookie domain/path settings
 
 ### Cross-Origin Issues
+
 1. Verify CORS origins list
 2. Check `sameSite` setting
 3. Ensure `credentials: true` in CORS config

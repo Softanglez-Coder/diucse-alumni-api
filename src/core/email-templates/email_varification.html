@@ -31,21 +31,29 @@
     <div class="container">
       <h2>Welcome, {{ member_name }}!</h2>
       <p>
-        Please verify your email address to complete your registration with DIU CSE Alumni. Click the link below to verify your email:
+        Please verify your email address to complete your registration with DIU
+        CSE Alumni. Click the link below to verify your email:
       </p>
 
-        <p>
-            <a href="{{ verification_link }}" style="color: #0066cc; text-decoration: none;">Verify Email Address</a>
-        </p>
+      <p>
+        <a
+          href="{{ verification_link }}"
+          style="color: #0066cc; text-decoration: none"
+          >Verify Email Address</a
+        >
+      </p>
 
-        <p>
-            If the link does not work, you can copy and paste the following URL into your browser:
-            <a href="{{ verification_link }}" style="color: #0066cc; text-decoration: none;">{{ verification_link }}</a>
-        </p>
+      <p>
+        If the link does not work, you can copy and paste the following URL into
+        your browser:
+        <a
+          href="{{ verification_link }}"
+          style="color: #0066cc; text-decoration: none"
+          >{{ verification_link }}</a
+        >
+      </p>
 
-        <p>
-            If you did not register with us, please ignore this email.
-        </p>
+      <p>If you did not register with us, please ignore this email.</p>
       <div class="footer">&mdash; DIU CSE Alumni Team</div>
     </div>
   </body>

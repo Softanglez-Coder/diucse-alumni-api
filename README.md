@@ -17,6 +17,7 @@ yarn install
 ```
 
 ## Running the Application
+
 To start the application, run the following command:
 
 ```bash
@@ -26,6 +27,7 @@ yarn start
 This will start the server on the default port (usually `3000`). You can access the API at `http://localhost:3000`.
 
 # Documentation
+
 For detailed documentation how the application works, the user flow, and the API endpoints, please refer to the [documentation folder][docs].
 
 # APIs
@@ -37,6 +39,7 @@ The APIs are designed to be RESTful and follow standard conventions. You can fin
 We welcome contributions to this project! If you have any ideas, bug fixes, or improvements, please feel free to open a pull request. Before contributing, please read our [contributing guidelines][contributing_guideline].
 
 # License
+
 This project is licensed under the MIT License. See the [LICENSE][license] file for details.
 
 # Contact

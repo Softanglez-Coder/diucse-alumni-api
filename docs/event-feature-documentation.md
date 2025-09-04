@@ -17,6 +17,7 @@ The Event feature consists of three main modules:
 ### Event Management
 
 #### Event Creation and Updates
+
 - Create events with title, fee, dates, description, location, capacity
 - Validate event dates (start must be before end, cannot be in the past)
 - Update event details
@@ -24,6 +25,7 @@ The Event feature consists of three main modules:
 - Open/close registration
 
 #### Event Status Management
+
 - **Draft**: Events that are not yet published
 - **Published**: Events visible to users
 - **Open/Closed**: Registration status
@@ -31,12 +33,14 @@ The Event feature consists of three main modules:
 ### Event Registration
 
 #### Registration Process
+
 - Users can register for published and open events
 - Automatic capacity management
 - Waitlist functionality when capacity is reached
 - Coupon code application during registration
 
 #### Registration Status
+
 - **Pending**: Initial status for new registrations
 - **Confirmed**: Approved registrations
 - **Waitlisted**: When event capacity is full
@@ -45,6 +49,7 @@ The Event feature consists of three main modules:
 ### Event Coupons
 
 #### Coupon Management
+
 - Create discount coupons for events
 - Set coupon quantity and discount amount
 - Track coupon usage
@@ -55,6 +60,7 @@ The Event feature consists of three main modules:
 ### Event Endpoints
 
 #### Public Endpoints
+
 ```
 GET /events                    # Get all events (with filters)
 GET /events/published          # Get published events
@@ -64,6 +70,7 @@ GET /events/:id               # Get specific event
 ```
 
 #### Event Manager Endpoints
+
 ```
 POST /events                          # Create new event
 PATCH /events/:id                     # Update event
@@ -76,6 +83,7 @@ PATCH /events/:id/registration/close  # Close registration
 ### Event Registration Endpoints
 
 #### Public Endpoints
+
 ```
 POST /event-registrations                     # Register for event
 PATCH /event-registrations/:id/cancel         # Cancel registration
@@ -83,6 +91,7 @@ GET /event-registrations/user/:userId         # Get user's registrations
 ```
 
 #### Event Manager Endpoints
+
 ```
 PATCH /event-registrations/:id/status         # Update registration status
 PATCH /event-registrations/:id/confirm        # Confirm registration
@@ -93,6 +102,7 @@ GET /event-registrations/event/:eventId       # Get event registrations
 ### Event Coupon Endpoints
 
 #### Event Manager Endpoints
+
 ```
 POST /event-coupons                           # Create coupon
 PATCH /event-coupons/:id                      # Update coupon
@@ -107,6 +117,7 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ### Event DTOs
 
 #### CreateEventDto
+
 ```typescript
 {
   title: string;                    // Event title (required)
@@ -126,18 +137,21 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ```
 
 #### UpdateEventDto
+
 ```typescript
 // Partial version of CreateEventDto
 ```
 
 #### CloseRegistrationDto
+
 ```typescript
 {
-  justification: string;  // Required reason for closing
+  justification: string; // Required reason for closing
 }
 ```
 
 #### UnpublishEventDto
+
 ```typescript
 {
   justification?: string; // Optional reason for unpublishing
@@ -147,15 +161,17 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ### Event Registration DTOs
 
 #### CreateEventRegistrationDto
+
 ```typescript
 {
   event: ObjectId;    // Event ID (required)
-  guest: ObjectId;    // User ID (required)  
+  guest: ObjectId;    // User ID (required)
   coupon?: ObjectId;  // Optional coupon ID
 }
 ```
 
 #### UpdateRegistrationStatusDto
+
 ```typescript
 {
   status: EventRegistrationStatus; // New status
@@ -165,16 +181,18 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ### Event Coupon DTOs
 
 #### CreateEventCouponDto
+
 ```typescript
 {
-  event: ObjectId;  // Event ID (required)
+  event: ObjectId; // Event ID (required)
   quantity: number; // Total coupon quantity
-  amount: number;   // Discount amount
-  code: string;     // Unique coupon code
+  amount: number; // Discount amount
+  code: string; // Unique coupon code
 }
 ```
 
 #### ValidateCouponDto
+
 ```typescript
 {
   code: string; // Coupon code to validate
@@ -184,17 +202,20 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ## Business Logic
 
 ### Event Validation
+
 - Start date must be before end date
 - Start date cannot be in the past
 - Published events can accept registrations if open
 - Event capacity is enforced automatically
 
 ### Registration Logic
+
 - Users cannot register twice for the same event
 - Registrations are automatically waitlisted when capacity is reached
 - Event managers can manually confirm or waitlist registrations
 
 ### Coupon System
+
 - Coupon codes must be unique
 - Coupons track usage count vs. total quantity
 - Invalid or exhausted coupons are rejected
@@ -202,12 +223,14 @@ GET /event-coupons/event/:eventId/available   # Get available coupons
 ## Permissions
 
 ### Role-based Access Control
+
 - **Public**: View published events, register, cancel own registrations
 - **EventManager**: Full event management, registration management, coupon management
 
 ## Error Handling
 
 The API provides comprehensive error handling:
+
 - **400 Bad Request**: Invalid data, business rule violations
 - **404 Not Found**: Resource not found
 - **409 Conflict**: Duplicate resources (e.g., duplicate registration)
@@ -215,6 +238,7 @@ The API provides comprehensive error handling:
 ## Query Parameters
 
 All list endpoints support pagination and filtering:
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10)
 - `search`: Search in name, description, tags
@@ -226,6 +250,7 @@ Additional filters can be passed as query parameters matching the schema fields.
 ## Usage Examples
 
 ### Creating an Event
+
 ```typescript
 POST /events
 {
@@ -241,6 +266,7 @@ POST /events
 ```
 
 ### Registering for an Event
+
 ```typescript
 POST /event-registrations
 {
@@ -251,6 +277,7 @@ POST /event-registrations
 ```
 
 ### Creating a Coupon
+
 ```typescript
 POST /event-coupons
 {
@@ -264,6 +291,7 @@ POST /event-coupons
 ## Integration Points
 
 The Event feature integrates with:
+
 - **User Module**: For user authentication and profile data
 - **Invoice Module**: For payment processing
 - **Mail Module**: For event notifications (registration confirmations, etc.)
@@ -271,6 +299,7 @@ The Event feature integrates with:
 ## Future Enhancements
 
 Potential future features:
+
 - Event categories and tags
 - Recurring events
 - Event templates

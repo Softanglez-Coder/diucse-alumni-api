@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@core": ["./src/core/index"],
-      "@feature": ["./src/feature/index"],
+      "@feature": ["./src/feature/index"]
     }
   }
 }
