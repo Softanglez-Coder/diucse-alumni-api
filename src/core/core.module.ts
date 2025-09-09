@@ -8,6 +8,7 @@ import { AuthGuard, RolesGuard } from './guards';
 import { PaymentGatewayModule } from './payment-gateway';
 import { StorageModule } from './storage';
 import { UserModule } from 'src/feature/user/user.module';
+import { CommitteeDesignationModule } from 'src/feature/committee-designation';
 
 @Module({
   controllers: [],
@@ -44,6 +45,7 @@ import { UserModule } from 'src/feature/user/user.module';
     PaymentGatewayModule,
     StorageModule,
     UserModule,
+    CommitteeDesignationModule,
   ],
   exports: [],
 })

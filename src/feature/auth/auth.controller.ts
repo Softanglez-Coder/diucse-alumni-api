@@ -13,10 +13,14 @@ import { AuthService } from './auth.service';
 import { Public } from 'src/core/decorators';
 import { RequestExtension } from 'src/core/types';
 import { Response } from 'express';
+import { UserService } from '../user';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   private getCookieOptions() {
     const isProduction = process.env.NODE_ENV === 'production';
@@ -60,7 +64,12 @@ export class AuthController {
   }
 
   @Get('me')
-  me(@Req() req: RequestExtension) {
+  async me(@Req() req: RequestExtension) {
+    // Get fresh user data with all roles (static + designation roles)
+    if (req.user?.id) {
+      return await this.userService.findByIdWithAllRoles(req.user.id);
+    }
+    // Fallback to request user if service fails
     return req.user;
   }
 

@@ -12,6 +12,7 @@ import { BatchModule } from './batch/batch.module';
 import { SettingsModule } from './settings/settings.module';
 import { BannerModule } from './banner';
 import { CommitteeModule } from './committee';
+import { CommitteeDesignationModule } from './committee-designation';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CommitteeModule } from './committee';
     SettingsModule,
     BannerModule,
     CommitteeModule,
+    CommitteeDesignationModule,
   ],
   exports: [],
   controllers: [],
