@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { CommitteeService } from './committee.service';
-import { BaseController, Role, Roles } from '@core';
+import { BaseController, Public, Role, Roles } from '@core';
 import { CreateCommitteeDto, UpdateCommitteeDto, PublishCommitteeDto } from './dtos';
 import { CommitteeDocument } from './committee.schema';
 import { Request } from 'express';
@@ -29,33 +29,27 @@ export class CommitteeController extends BaseController<CommitteeDocument> {
     return await this.committeeService.publishCommittee(id, body);
   }
 
+  @Roles(Role.Admin)
   @Get('published')
   async getPublished() {
     return await this.committeeService.getPublishedCommittees();
   }
 
+  @Public()
   @Get('current')
   async getCurrent() {
     return await this.committeeService.getCurrentCommittee();
   }
 
+  @Public()
   @Get('previous')
   async getPrevious() {
     return await this.committeeService.getPreviousCommittees();
   }
 
+  @Public()
   @Get('upcoming')
   async getUpcoming() {
     return await this.committeeService.getUpcomingCommittees();
-  }
-
-  @Get('status')
-  async getByStatus() {
-    return await this.committeeService.getAllPublishedCommitteesByStatus();
-  }
-
-  @Get()
-  async findAll(@Req() req: Request) {
-    return await this.committeeService.findAll({}, req);
   }
 }

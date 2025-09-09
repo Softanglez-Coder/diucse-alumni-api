@@ -113,22 +113,4 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
       sort: 'asc', // Earliest upcoming first
     });
   }
-
-  async getAllPublishedCommitteesByStatus(): Promise<{
-    current: CommitteeDocument | null;
-    previous: CommitteeDocument[];
-    upcoming: CommitteeDocument[];
-  }> {
-    const [current, previous, upcoming] = await Promise.all([
-      this.getCurrentCommittee(),
-      this.getPreviousCommittees(),
-      this.getUpcomingCommittees(),
-    ]);
-
-    return {
-      current,
-      previous,
-      upcoming,
-    };
-  }
 }
