@@ -11,6 +11,7 @@ import { NoticeModule } from './notice/notice.module';
 import { BatchModule } from './batch/batch.module';
 import { SettingsModule } from './settings/settings.module';
 import { BannerModule } from './banner';
+import { CommitteeModule } from './committee';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BannerModule } from './banner';
     BatchModule,
     SettingsModule,
     BannerModule,
+    CommitteeModule,
   ],
   exports: [],
   controllers: [],
