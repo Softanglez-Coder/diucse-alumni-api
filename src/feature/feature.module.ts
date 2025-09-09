@@ -5,7 +5,6 @@ import { UserModule } from './user';
 import { MembershipModule } from './membership/membership.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
-import { CommitteeModule } from './committee/committee.module';
 import { EventModule } from './event/event.module';
 import { BlogModule } from './blog/blog.module';
 import { NoticeModule } from './notice/notice.module';
@@ -21,7 +20,6 @@ import { BannerModule } from './banner';
     MembershipModule,
     InvoiceModule,
     PaymentModule,
-    CommitteeModule,
     EventModule,
     BlogModule,
     NoticeModule,
