@@ -52,4 +52,10 @@ export class CommitteeController extends BaseController<CommitteeDocument> {
   async getUpcoming() {
     return await this.committeeService.getUpcomingCommittees();
   }
+
+  @Public()
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return await this.committeeService.findById(id);
+  }
 }

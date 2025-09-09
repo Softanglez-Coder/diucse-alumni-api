@@ -86,4 +86,10 @@ export class CommitteeDesignationController extends BaseController<CommitteeDesi
   async getUserActiveRoles(@Param('userId') userId: string) {
     return await this.committeeDesignationService.getUserActiveRoles(userId);
   }
+
+  @Public()
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return await this.committeeDesignationService.findById(id);
+  }
 }
