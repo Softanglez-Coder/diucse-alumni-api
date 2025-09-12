@@ -1,56 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  CommitteeDesignation,
-  CommitteeDesignationController,
-  CommitteeDesignationRepository,
-  CommitteeDesignationSchema,
-  CommitteeDesignationService,
-} from './committee-designation';
-import {
-  CommitteeMember,
-  CommitteeMemberController,
-  CommitteeMemberRepository,
-  CommitteeMemberSchema,
-  CommitteeMemberService,
-} from './committee-member';
-import {
-  Committee,
-  CommitteeController,
-  CommitteeRepository,
-  CommitteeSchema,
-  CommitteeService,
-} from './committee';
+import { CommitteeController } from './committee.controller';
+import { CommitteeService } from './committee.service';
+import { CommitteeRepository } from './committee.repository';
+import { Committee, CommitteeSchema } from './committee.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {
-        name: Committee.name,
-        schema: CommitteeSchema,
-      },
-      {
-        name: CommitteeDesignation.name,
-        schema: CommitteeDesignationSchema,
-      },
-      {
-        name: CommitteeMember.name,
-        schema: CommitteeMemberSchema,
-      },
+      { name: Committee.name, schema: CommitteeSchema },
     ]),
   ],
-  providers: [
-    CommitteeService,
-    CommitteeDesignationService,
-    CommitteeMemberService,
-    CommitteeRepository,
-    CommitteeMemberRepository,
-    CommitteeDesignationRepository,
-  ],
-  controllers: [
-    CommitteeController,
-    CommitteeMemberController,
-    CommitteeDesignationController,
-  ],
+  controllers: [CommitteeController],
+  providers: [CommitteeService, CommitteeRepository],
+  exports: [CommitteeService],
 })
 export class CommitteeModule {}

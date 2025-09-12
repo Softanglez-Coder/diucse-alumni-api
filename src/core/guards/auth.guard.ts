@@ -10,6 +10,7 @@ import { IS_PUBLIC_KEY } from '../decorators';
 import * as process from 'node:process';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/feature/user/user.service';
+import { CommitteeDesignationService } from 'src/feature/committee-designation/committee-designation.service';
 
 /**
  * AuthGuard
@@ -29,6 +30,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
+    private committeeDesignationService: CommitteeDesignationService,
     private reflector: Reflector,
     private readonly config: ConfigService,
   ) {}
@@ -65,7 +67,24 @@ export class AuthGuard implements CanActivate {
         secret: this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
       });
       const user = await this.userService.findById(payload.sub);
-      request.user = user;
+      
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      // Get designation roles for the user
+      const designationRoles = await this.committeeDesignationService.getUserActiveRoles(payload.sub);
+      
+      // Combine user's static roles with designation roles
+      const allRoles = [...new Set([...(user.roles || []), ...designationRoles])];
+      
+      // Attach user with all roles to request
+      request.user = {
+        ...user.toObject(),
+        roles: allRoles,
+        designationRoles, // Also include designation roles separately for reference
+      };
+      
       return true;
     } catch (e) {
       throw new UnauthorizedException(e.message ?? 'Invalid token');

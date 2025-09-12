@@ -38,10 +38,22 @@ export class UserController extends BaseController<UserDocument> {
     return await this.userService.findByRole(Role.Member);
   }
 
+  @Roles(Role.Admin)
+  @Get('all/with-roles')
+  async getAllWithRoles() {
+    return await this.userService.findAllWithRoles();
+  }
+
   @Public()
   @Get(':id')
   async findById(@Param('id') id: string) {
     return await this.userService.findById(id);
+  }
+
+  @Public()
+  @Get(':id/with-roles')
+  async findByIdWithRoles(@Param('id') id: string) {
+    return await this.userService.findByIdWithAllRoles(id);
   }
 
   @Roles(Role.Guest)

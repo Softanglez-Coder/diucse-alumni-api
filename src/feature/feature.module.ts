@@ -5,13 +5,14 @@ import { UserModule } from './user';
 import { MembershipModule } from './membership/membership.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
-import { CommitteeModule } from './committee/committee.module';
 import { EventModule } from './event/event.module';
 import { BlogModule } from './blog/blog.module';
 import { NoticeModule } from './notice/notice.module';
 import { BatchModule } from './batch/batch.module';
 import { SettingsModule } from './settings/settings.module';
 import { BannerModule } from './banner';
+import { CommitteeModule } from './committee';
+import { CommitteeDesignationModule } from './committee-designation';
 
 @Module({
   imports: [
@@ -21,13 +22,14 @@ import { BannerModule } from './banner';
     MembershipModule,
     InvoiceModule,
     PaymentModule,
-    CommitteeModule,
     EventModule,
     BlogModule,
     NoticeModule,
     BatchModule,
     SettingsModule,
     BannerModule,
+    CommitteeModule,
+    CommitteeDesignationModule,
   ],
   exports: [],
   controllers: [],

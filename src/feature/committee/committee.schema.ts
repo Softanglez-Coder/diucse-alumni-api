@@ -7,25 +7,29 @@ import { HydratedDocument } from 'mongoose';
 })
 export class Committee {
   @Prop({
-    required: true,
     type: String,
+    required: true,
   })
   name: string;
 
   @Prop({
+    type: Date,
     required: true,
-    type: String,
   })
-  start: string;
+  startDate: Date;
 
   @Prop({
+    type: Date,
     required: true,
-    type: String,
   })
-  end: string;
+  endDate: Date;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isPublished: boolean;
 }
 
 export const CommitteeSchema = SchemaFactory.createForClass(Committee);
-CommitteeSchema.plugin(require('mongoose-autopopulate'));
-
 export type CommitteeDocument = HydratedDocument<Committee>;
