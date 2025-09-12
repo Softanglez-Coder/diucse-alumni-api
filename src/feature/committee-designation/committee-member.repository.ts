@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { BaseRepository } from '@core';
 import { CommitteeMember, CommitteeMemberDocument } from './committee-member.schema';
 
@@ -14,7 +14,7 @@ export class CommitteeMemberRepository extends BaseRepository<CommitteeMemberDoc
   }
 
   async findByCommitteeId(committeeId: string, activeOnly = true): Promise<CommitteeMemberDocument[]> {
-    const filter: any = { committeeId };
+    const filter: any = { committeeId: new Types.ObjectId(committeeId) };
     if (activeOnly) {
       filter.isActive = true;
     }
@@ -27,7 +27,7 @@ export class CommitteeMemberRepository extends BaseRepository<CommitteeMemberDoc
   }
 
   async findByUserId(userId: string, activeOnly = true): Promise<CommitteeMemberDocument[]> {
-    const filter: any = { userId };
+    const filter: any = { userId: new Types.ObjectId(userId) };
     if (activeOnly) {
       filter.isActive = true;
     }
@@ -41,14 +41,22 @@ export class CommitteeMemberRepository extends BaseRepository<CommitteeMemberDoc
 
   async findActiveByUserAndCommittee(userId: string, committeeId: string): Promise<CommitteeMemberDocument | null> {
     return await this.committeeMemberModel
-      .findOne({ userId, committeeId, isActive: true })
+      .findOne({ 
+        userId: new Types.ObjectId(userId), 
+        committeeId: new Types.ObjectId(committeeId), 
+        isActive: true 
+      })
       .populate('designationId')
       .exec();
   }
 
   async findActiveByDesignationAndCommittee(designationId: string, committeeId: string): Promise<CommitteeMemberDocument | null> {
     return await this.committeeMemberModel
-      .findOne({ designationId, committeeId, isActive: true })
+      .findOne({ 
+        designationId: new Types.ObjectId(designationId), 
+        committeeId: new Types.ObjectId(committeeId), 
+        isActive: true 
+      })
       .populate('userId', 'name email avatar')
       .exec();
   }
