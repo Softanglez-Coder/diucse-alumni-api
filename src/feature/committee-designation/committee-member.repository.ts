@@ -22,7 +22,7 @@ export class CommitteeMemberRepository extends BaseRepository<CommitteeMemberDoc
     return await this.committeeMemberModel
       .find(filter)
       .populate('designationId')
-      .populate('userId', 'name email avatar')
+      .populate('userId', 'name email photo')
       .exec();
   }
 
