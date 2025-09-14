@@ -81,6 +81,7 @@ export class AuthGuard implements CanActivate {
       // Attach user with all roles to request
       request.user = {
         ...user.toObject(),
+        id: user.id,
         roles: allRoles,
         designationRoles, // Also include designation roles separately for reference
       };
