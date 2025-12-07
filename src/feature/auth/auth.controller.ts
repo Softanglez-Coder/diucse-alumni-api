@@ -7,6 +7,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginDto, RegisterDto } from './dtos';
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import { Public } from 'src/core/decorators';
 import { RequestExtension } from 'src/core/types';
 import { Response } from 'express';
 import { UserService } from '../user';
+import { Auth0Guard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -125,5 +127,41 @@ export class AuthController {
       accessToken,
       message: 'Use this token in Authorization header as: Bearer <token>',
     };
+  }
+
+  /**
+   * Initiates Auth0 login flow
+   * Redirects to Auth0 login page
+   */
+  @Public()
+  @Get('auth0/login')
+  @UseGuards(Auth0Guard)
+  auth0Login() {
+    // Guard handles redirect to Auth0
+  }
+
+  /**
+   * Auth0 callback endpoint
+   * Handles the callback from Auth0 after successful authentication
+   */
+  @Public()
+  @Get('auth0/callback')
+  @UseGuards(Auth0Guard)
+  async auth0Callback(
+    @Req() req: RequestExtension,
+    @Res() res: Response,
+  ) {
+    // User is attached to request by Auth0Strategy
+    const user = req.user;
+    
+    // Generate JWT token for the user
+    const { accessToken } = await this.authService.generateTokenForUser(user);
+    
+    // Set cookie
+    res.cookie('auth_token', accessToken, this.getCookieOptions());
+    
+    // Redirect to frontend
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    return res.redirect(`${frontendUrl}/auth/callback?success=true`);
   }
 }

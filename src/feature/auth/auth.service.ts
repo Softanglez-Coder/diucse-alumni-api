@@ -350,4 +350,24 @@ export class AuthService {
 
     return { message: 'Verification email resent successfully' };
   }
+
+  async generateTokenForUser(user: any) {
+    const token = this.jwtService.sign(
+      {
+        sub: user.id || user._id,
+        email: user.email,
+        roles: user.roles || [],
+      },
+      {
+        expiresIn: '7d',
+        secret: this.config.get<string>('JWT_SECRET'),
+      },
+    );
+
+    this.logger.log(
+      `JWT token generated for user with email: ${user.email}`,
+    );
+
+    return { accessToken: token };
+  }
 }
