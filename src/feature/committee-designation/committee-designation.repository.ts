@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { BaseRepository } from '@core';
-import { CommitteeDesignation, CommitteeDesignationDocument } from './committee-designation.schema';
+import {
+  CommitteeDesignation,
+  CommitteeDesignationDocument,
+} from './committee-designation.schema';
 
 @Injectable()
 export class CommitteeDesignationRepository extends BaseRepository<CommitteeDesignationDocument> {
@@ -13,7 +16,9 @@ export class CommitteeDesignationRepository extends BaseRepository<CommitteeDesi
     super(committeeDesignationModel);
   }
 
-  async findByCommitteeId(committeeId: string): Promise<CommitteeDesignationDocument[]> {
+  async findByCommitteeId(
+    committeeId: string,
+  ): Promise<CommitteeDesignationDocument[]> {
     return await this.committeeDesignationModel
       .find({ committeeId: new Types.ObjectId(committeeId), isActive: true })
       .sort({ displayOrder: 1, name: 1 })

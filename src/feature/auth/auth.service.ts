@@ -364,9 +364,7 @@ export class AuthService {
       },
     );
 
-    this.logger.log(
-      `JWT token generated for user with email: ${user.email}`,
-    );
+    this.logger.log(`JWT token generated for user with email: ${user.email}`);
 
     return { accessToken: token };
   }

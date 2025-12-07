@@ -1,7 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { CommitteeService } from './committee.service';
 import { BaseController, Public, Role, Roles } from '@core';
-import { CreateCommitteeDto, UpdateCommitteeDto, PublishCommitteeDto } from './dtos';
+import {
+  CreateCommitteeDto,
+  UpdateCommitteeDto,
+  PublishCommitteeDto,
+} from './dtos';
 import { CommitteeDocument } from './committee.schema';
 import { Request } from 'express';
 

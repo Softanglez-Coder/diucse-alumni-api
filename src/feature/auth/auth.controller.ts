@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { LoginDto, RegisterDto } from './dtos';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/core/decorators';
 import { RequestExtension } from 'src/core/types';
@@ -39,32 +28,6 @@ export class AuthController {
     };
   }
 
-  @Public()
-  @Post('register')
-  async register(
-    @Res({ passthrough: true }) res: Response,
-    @Body() payload: RegisterDto,
-  ) {
-    const { accessToken } = await this.authService.register(payload);
-
-    res.cookie('auth_token', accessToken, this.getCookieOptions());
-
-    return { message: 'Registration successful' };
-  }
-
-  @Public()
-  @Post('login')
-  async login(
-    @Res({ passthrough: true }) res: Response,
-    @Body() payload: LoginDto,
-  ) {
-    const { accessToken } = await this.authService.login(payload);
-
-    res.cookie('auth_token', accessToken, this.getCookieOptions());
-
-    return { message: 'Login successful' };
-  }
-
   @Get('me')
   async me(@Req() req: RequestExtension) {
     // Get fresh user data with all roles (static + designation roles)
@@ -75,58 +38,11 @@ export class AuthController {
     return req.user;
   }
 
-  @Public()
-  @Patch('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    return await this.authService.verifyEmail(token);
-  }
-
-  @Public()
-  @Post('forgot-password')
-  async forgotPassword(@Body('email') email: string) {
-    return await this.authService.forgotPassword(email);
-  }
-
-  @Public()
-  @Patch('reset-password')
-  async resetPassword(
-    @Req() req: RequestExtension,
-    @Query('token') token: string,
-    @Body('password') password: string,
-  ) {
-    return await this.authService.resetPassword(req.user?.id, token, password);
-  }
-
-  @Patch('change-password')
-  async changePassword(
-    @Req() req: RequestExtension,
-    @Query('token') token: string,
-    @Body('password') password: string,
-  ) {
-    return await this.authService.resetPassword(req.user?.id, token, password);
-  }
-
-  @Post('resend-verification-email')
-  async resendVerificationEmail(@Req() req: RequestExtension) {
-    return await this.authService.resendVerificationEmail(req.user?.id);
-  }
-
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('auth_token', this.getCookieOptions());
 
     return { message: 'Logout successful' };
-  }
-
-  @Public()
-  @Post('token')
-  async getToken(@Body() payload: LoginDto) {
-    const { accessToken } = await this.authService.login(payload);
-
-    return {
-      accessToken,
-      message: 'Use this token in Authorization header as: Bearer <token>',
-    };
   }
 
   /**
@@ -147,19 +63,16 @@ export class AuthController {
   @Public()
   @Get('auth0/callback')
   @UseGuards(Auth0Guard)
-  async auth0Callback(
-    @Req() req: RequestExtension,
-    @Res() res: Response,
-  ) {
+  async auth0Callback(@Req() req: RequestExtension, @Res() res: Response) {
     // User is attached to request by Auth0Strategy
     const user = req.user;
-    
+
     // Generate JWT token for the user
     const { accessToken } = await this.authService.generateTokenForUser(user);
-    
+
     // Set cookie
     res.cookie('auth_token', accessToken, this.getCookieOptions());
-    
+
     // Redirect to frontend
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
     return res.redirect(`${frontendUrl}/auth/callback?success=true`);

@@ -1,4 +1,12 @@
-import { IsString, IsArray, IsOptional, IsMongoId, IsNumber, IsEnum, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsMongoId,
+  IsNumber,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator';
 import { Role } from '@core';
 
 export class CreateCommitteeDesignationDto {

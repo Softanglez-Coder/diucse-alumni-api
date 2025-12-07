@@ -1,5 +1,11 @@
 import { BaseService, Role } from '@core';
-import { BadRequestException, Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from './user.schema';
 import { UserRepository } from './user.repository';
@@ -81,11 +87,14 @@ export class UserService extends BaseService<UserDocument> {
 
     try {
       // Get designation roles for the user
-      const designationRoles = await this.committeeDesignationService.getUserActiveRoles(userId);
-      
+      const designationRoles =
+        await this.committeeDesignationService.getUserActiveRoles(userId);
+
       // Combine user's static roles with designation roles
-      const allRoles = [...new Set([...(user.roles || []), ...designationRoles])];
-      
+      const allRoles = [
+        ...new Set([...(user.roles || []), ...designationRoles]),
+      ];
+
       return {
         ...user.toObject(),
         roles: allRoles,
@@ -93,7 +102,10 @@ export class UserService extends BaseService<UserDocument> {
         designationRoles,
       };
     } catch (error) {
-      this.logger.error(`Error fetching designation roles for user ${userId}:`, error.message);
+      this.logger.error(
+        `Error fetching designation roles for user ${userId}:`,
+        error.message,
+      );
       // Return user with static roles if designation service fails
       return {
         ...user.toObject(),
@@ -109,9 +121,14 @@ export class UserService extends BaseService<UserDocument> {
       const usersWithRoles = await Promise.all(
         users.map(async (user) => {
           try {
-            const designationRoles = await this.committeeDesignationService.getUserActiveRoles(user._id.toString());
-            const allRoles = [...new Set([...(user.roles || []), ...designationRoles])];
-            
+            const designationRoles =
+              await this.committeeDesignationService.getUserActiveRoles(
+                user._id.toString(),
+              );
+            const allRoles = [
+              ...new Set([...(user.roles || []), ...designationRoles]),
+            ];
+
             return {
               ...user.toObject(),
               roles: allRoles,
@@ -119,22 +136,25 @@ export class UserService extends BaseService<UserDocument> {
               designationRoles,
             };
           } catch (error) {
-            this.logger.error(`Error fetching designation roles for user ${user._id}:`, error.message);
+            this.logger.error(
+              `Error fetching designation roles for user ${user._id}:`,
+              error.message,
+            );
             return {
               ...user.toObject(),
               staticRoles: user.roles || [],
               designationRoles: [],
             };
           }
-        })
+        }),
       );
-      
+
       return usersWithRoles;
     } catch (error) {
       this.logger.error('Error fetching users with roles:', error.message);
       // Fallback to regular users if service fails
       const users = await this.repository.findAll({});
-      return users.map(user => ({
+      return users.map((user) => ({
         ...user.toObject(),
         staticRoles: user.roles || [],
         designationRoles: [],
