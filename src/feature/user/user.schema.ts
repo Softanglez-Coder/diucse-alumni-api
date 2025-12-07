@@ -18,12 +18,6 @@ export class User {
   email: string;
 
   @Prop({
-    required: false,
-    select: false,
-  })
-  password?: string;
-
-  @Prop({
     type: String,
     unique: true,
     sparse: true,

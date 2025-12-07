@@ -46,31 +46,19 @@ export class JwtAuth0Strategy extends PassportStrategy(Strategy, 'jwt-auth0') {
     let user = await this.userService.findByProperty('auth0Id', auth0Id);
 
     if (!user) {
-      // Try to find or create user from token email
-      if (email) {
-        user = await this.userService.findByProperty('email', email);
-
-        if (user) {
-          // Link existing user to Auth0 and update roles if needed
-          user.auth0Id = auth0Id;
-          if (isSystemAdmin && !user.roles?.includes(Role.Admin)) {
-            user.roles = roles;
-          }
-          user = await this.userService.update(user.id, user);
-        } else {
-          // Create new user from token
-          user = await this.userService.create({
-            email,
-            auth0Id,
-            name: payload.name || '',
-            photo: payload.picture || null,
-            emailVerified: payload.email_verified || false,
-            roles,
-          });
-        }
-      } else {
-        throw new UnauthorizedException('User not found');
+      // Create new user from token
+      if (!email) {
+        throw new UnauthorizedException('Email not provided by Auth0');
       }
+
+      user = await this.userService.create({
+        email,
+        auth0Id,
+        name: payload.name || '',
+        photo: payload.picture || null,
+        emailVerified: payload.email_verified || false,
+        roles,
+      });
     } else if (isSystemAdmin && !user.roles?.includes(Role.Admin)) {
       // Update existing Auth0 user to have Admin role if needed
       user.roles = roles;

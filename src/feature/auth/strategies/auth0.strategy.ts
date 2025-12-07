@@ -39,31 +39,19 @@ export class Auth0Strategy extends PassportStrategy(Strategy, 'auth0') {
     const isSystemAdmin = email === 'csediualumni.official@gmail.com';
     const roles = isSystemAdmin ? [Role.Admin] : [Role.Guest];
 
-    // Find or create user
+    // Find user by Auth0 ID
     let user = await this.userService.findByProperty('auth0Id', auth0Id);
 
     if (!user) {
-      // Try to find user by email
-      user = await this.userService.findByProperty('email', email);
-
-      if (user) {
-        // Link existing user to Auth0 and update roles if needed
-        user.auth0Id = auth0Id;
-        if (isSystemAdmin && !user.roles?.includes(Role.Admin)) {
-          user.roles = roles;
-        }
-        user = await this.userService.update(user.id, user);
-      } else {
-        // Create new user
-        user = await this.userService.create({
-          email,
-          auth0Id,
-          name: displayName || '',
-          photo: photos && photos.length > 0 ? photos[0].value : null,
-          emailVerified: true, // Auth0 handles email verification
-          roles,
-        });
-      }
+      // Create new user
+      user = await this.userService.create({
+        email,
+        auth0Id,
+        name: displayName || '',
+        photo: photos && photos.length > 0 ? photos[0].value : null,
+        emailVerified: true, // Auth0 handles email verification
+        roles,
+      });
     } else if (isSystemAdmin && !user.roles?.includes(Role.Admin)) {
       // Update existing Auth0 user to have Admin role if needed
       user.roles = roles;

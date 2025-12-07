@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators';
-import * as process from 'node:process';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/feature/user/user.service';
 import { CommitteeDesignationService } from 'src/feature/committee-designation/committee-designation.service';
@@ -18,18 +17,15 @@ import { Role } from '../role';
 /**
  * AuthGuard
  *
- * This guard checks if the request has a valid JWT token in either:
- * 1. The 'auth_token' cookie (for web applications with local JWT)
- * 2. The Authorization header with Bearer token (supports both local JWT and Auth0 JWT)
+ * This guard validates JWT tokens from either:
+ * 1. The 'auth_token' cookie (for web applications) - validates local JWT from Auth0 callback
+ * 2. The Authorization header with Bearer token (for API clients) - validates Auth0 JWT directly
  *
- * For Auth0 tokens, it validates against Auth0's JWKS endpoint
- * For local tokens, it validates against the local JWT_SECRET
+ * Cookie tokens are local JWTs generated after Auth0 authentication for session management.
+ * Authorization header tokens are Auth0 JWTs validated against Auth0's JWKS endpoint.
  *
- * If the token is valid, it retrieves the user associated with the token and attaches it to the request object.
  * If the token is invalid or expired, it throws an UnauthorizedException.
- *
- * It also checks if the route is public using the IS_PUBLIC_KEY metadata.
- * If the route is public, it allows access without authentication.
+ * Routes marked with @Public() decorator are accessible without authentication.
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -53,16 +49,15 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
-    // Try to get token from cookie first (for web apps with local JWT)
+    // Try to get token from cookie first (for web apps)
     let token = request.cookies?.['auth_token'];
-    let isAuth0Token = false;
+    const isFromCookie = !!token;
 
-    // If no cookie token, try Authorization header (for Postman/API testing and Auth0)
+    // If no cookie token, try Authorization header (for API clients)
     if (!token) {
       const authHeader = request.headers.authorization;
       if (authHeader && authHeader.startsWith('Bearer ')) {
         token = authHeader.substring(7); // Remove 'Bearer ' prefix
-        isAuth0Token = true; // Assume Auth0 token if from Authorization header
       }
     }
 
@@ -74,83 +69,53 @@ export class AuthGuard implements CanActivate {
       let userId: string;
       let user: any;
 
-      if (isAuth0Token) {
-        // Try to verify as Auth0 token
-        try {
-          const auth0Domain = this.config.get<string>('AUTH0_DOMAIN');
-          const auth0Audience = this.config.get<string>('AUTH0_AUDIENCE');
-
-          if (auth0Domain && auth0Audience) {
-            const decoded: any = await this.verifyAuth0Token(
-              token,
-              auth0Domain,
-              auth0Audience,
-            );
-            const auth0Id = decoded.sub;
-            const email = decoded.email;
-
-            // Find or create user from Auth0 token
-            user = await this.userService.findByProperty('auth0Id', auth0Id);
-
-            if (!user && email) {
-              // Try to find by email
-              user = await this.userService.findByProperty('email', email);
-
-              if (user) {
-                // Link existing user to Auth0
-                const isSystemAdmin =
-                  email === 'csediualumni.official@gmail.com';
-                const roles = isSystemAdmin
-                  ? [Role.Admin]
-                  : user.roles || [Role.Guest];
-
-                user.auth0Id = auth0Id;
-                if (isSystemAdmin && !user.roles?.includes(Role.Admin)) {
-                  user.roles = roles;
-                }
-                user = await this.userService.update(user.id, user);
-              } else {
-                // Create new user from Auth0 token
-                const isSystemAdmin =
-                  email === 'csediualumni.official@gmail.com';
-                const roles = isSystemAdmin ? [Role.Admin] : [Role.Guest];
-
-                user = await this.userService.create({
-                  email,
-                  auth0Id,
-                  name: decoded.name || '',
-                  photo: decoded.picture || null,
-                  emailVerified: decoded.email_verified || false,
-                  roles,
-                });
-              }
-            }
-
-            if (!user) {
-              throw new UnauthorizedException('User not found');
-            }
-
-            userId = user.id || user._id;
-          } else {
-            throw new Error('Auth0 not configured');
-          }
-        } catch {
-          // If Auth0 verification fails, try local JWT
-          const payload = this.jwtService.verify(token, {
-            secret:
-              this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
-          });
-          userId = payload.sub;
-          user = await this.userService.findById(userId);
-        }
-      } else {
-        // Verify as local JWT token
+      if (isFromCookie) {
+        // Validate local JWT token from cookie (generated after Auth0 login)
         const payload = this.jwtService.verify(token, {
-          secret:
-            this.config.get<string>('JWT_SECRET') || process.env.JWT_SECRET,
+          secret: this.config.get<string>('JWT_SECRET'),
         });
         userId = payload.sub;
         user = await this.userService.findById(userId);
+      } else {
+        // Validate Auth0 JWT token from Authorization header
+        const auth0Domain = this.config.get<string>('AUTH0_DOMAIN');
+        const auth0Audience = this.config.get<string>('AUTH0_AUDIENCE');
+
+        if (!auth0Domain || !auth0Audience) {
+          throw new UnauthorizedException('Auth0 not configured');
+        }
+
+        const decoded: any = await this.verifyAuth0Token(
+          token,
+          auth0Domain,
+          auth0Audience,
+        );
+        const auth0Id = decoded.sub;
+        const email = decoded.email;
+
+        // Find or create user from Auth0 token
+        user = await this.userService.findByProperty('auth0Id', auth0Id);
+
+        if (!user) {
+          if (!email) {
+            throw new UnauthorizedException('Email not provided by Auth0');
+          }
+
+          // Create new user from Auth0 token
+          const isSystemAdmin = email === 'csediualumni.official@gmail.com';
+          const roles = isSystemAdmin ? [Role.Admin] : [Role.Guest];
+
+          user = await this.userService.create({
+            email,
+            auth0Id,
+            name: decoded.name || '',
+            photo: decoded.picture || null,
+            emailVerified: decoded.email_verified || false,
+            roles,
+          });
+        }
+
+        userId = user.id || user._id;
       }
 
       if (!user) {
@@ -193,12 +158,22 @@ export class AuthGuard implements CanActivate {
         jwksUri: `https://${domain}/.well-known/jwks.json`,
       });
 
-      const decoded = this.jwtService.decode(token, { complete: true }) as any;
-      if (!decoded || !decoded.header) {
-        return reject(new Error('Invalid token'));
+      // Decode token to get header for JWKS lookup
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        return reject(new Error('Invalid token format'));
       }
 
-      getKey(decoded, decoded.header, (err: any, key: any) => {
+      let header: any;
+      try {
+        header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
+      } catch {
+        return reject(new Error('Invalid token header'));
+      }
+
+      const decoded = { header };
+
+      getKey(decoded, header, (err: any, key: any) => {
         if (err) {
           return reject(err);
         }
