@@ -46,5 +46,7 @@ export class CommitteeDesignation {
   isActive: boolean;
 }
 
-export const CommitteeDesignationSchema = SchemaFactory.createForClass(CommitteeDesignation);
-export type CommitteeDesignationDocument = HydratedDocument<CommitteeDesignation>;
+export const CommitteeDesignationSchema =
+  SchemaFactory.createForClass(CommitteeDesignation);
+export type CommitteeDesignationDocument =
+  HydratedDocument<CommitteeDesignation>;

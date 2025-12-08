@@ -6,6 +6,15 @@ To run this application, first fill up the `.env` or `.env.local` file with appr
 
 If the mongodb database is not present in your system, kindly [follow these steps][setup_mongodb_in_local] to setting up and run the mongodb in your local machine via Docker.
 
+## Authentication Setup
+
+This application uses **Auth0** for authentication. You'll need to:
+
+1. Create an Auth0 account at [auth0.com](https://auth0.com)
+2. Set up an Auth0 application (Regular Web Application)
+3. Configure the Auth0 environment variables in your `.env` file
+4. See the [Auth0 Authentication Guide][auth0_guide] for detailed setup instructions
+
 If everything setup, then you are good to go.
 
 ## Install dependencies
@@ -47,6 +56,7 @@ This project is licensed under the MIT License. See the [LICENSE][license] file 
 If you have any questions or need assistance, feel free to reach out to us via the [contact page](./docs/contact.md) or open an issue in the repository.
 
 [setup_mongodb_in_local]: ./docs/setup-local-environment.md
+[auth0_guide]: ./docs/auth0-authentication-guide.md
 [yarn_documentation]: https://yarnpkg.com/getting-started/install
 [docs]: ./docs
 [license]: ./LICENSE

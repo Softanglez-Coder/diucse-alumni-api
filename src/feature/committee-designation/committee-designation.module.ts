@@ -4,8 +4,14 @@ import { CommitteeDesignationController } from './committee-designation.controll
 import { CommitteeDesignationService } from './committee-designation.service';
 import { CommitteeDesignationRepository } from './committee-designation.repository';
 import { CommitteeMemberRepository } from './committee-member.repository';
-import { CommitteeDesignation, CommitteeDesignationSchema } from './committee-designation.schema';
-import { CommitteeMember, CommitteeMemberSchema } from './committee-member.schema';
+import {
+  CommitteeDesignation,
+  CommitteeDesignationSchema,
+} from './committee-designation.schema';
+import {
+  CommitteeMember,
+  CommitteeMemberSchema,
+} from './committee-member.schema';
 import { UserModule } from '../user';
 
 @Module({

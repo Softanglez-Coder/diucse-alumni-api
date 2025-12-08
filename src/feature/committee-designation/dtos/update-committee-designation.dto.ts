@@ -1,4 +1,11 @@
-import { IsString, IsArray, IsOptional, IsNumber, IsEnum, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator';
 import { Role } from '@core';
 
 export class UpdateCommitteeDesignationDto {

@@ -2,7 +2,11 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { BaseService } from '@core';
 import { CommitteeRepository } from './committee.repository';
 import { CommitteeDocument } from './committee.schema';
-import { CreateCommitteeDto, UpdateCommitteeDto, PublishCommitteeDto } from './dtos';
+import {
+  CreateCommitteeDto,
+  UpdateCommitteeDto,
+  PublishCommitteeDto,
+} from './dtos';
 
 @Injectable()
 export class CommitteeService extends BaseService<CommitteeDocument> {
@@ -10,13 +14,17 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
     super(committeeRepository);
   }
 
-  async createCommittee(createCommitteeDto: CreateCommitteeDto): Promise<CommitteeDocument> {
+  async createCommittee(
+    createCommitteeDto: CreateCommitteeDto,
+  ): Promise<CommitteeDocument> {
     const { name, startDate, endDate } = createCommitteeDto;
-    
+
     // Set default period to one year if not provided
-    let start = startDate ? new Date(startDate) : new Date();
-    let end = endDate ? new Date(endDate) : new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
-    
+    const start = startDate ? new Date(startDate) : new Date();
+    const end = endDate
+      ? new Date(endDate)
+      : new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
+
     // Validate dates
     if (end <= start) {
       throw new BadRequestException('End date must be after start date');
@@ -32,9 +40,12 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
     return await this.repository.create(committeeData);
   }
 
-  async updateCommittee(id: string, updateCommitteeDto: UpdateCommitteeDto): Promise<CommitteeDocument> {
+  async updateCommittee(
+    id: string,
+    updateCommitteeDto: UpdateCommitteeDto,
+  ): Promise<CommitteeDocument> {
     const updateData: any = { ...updateCommitteeDto };
-    
+
     // Convert date strings to Date objects if provided
     if (updateCommitteeDto.startDate) {
       updateData.startDate = new Date(updateCommitteeDto.startDate);
@@ -44,7 +55,11 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
     }
 
     // If both dates are being updated, validate them
-    if (updateData.startDate && updateData.endDate && updateData.endDate <= updateData.startDate) {
+    if (
+      updateData.startDate &&
+      updateData.endDate &&
+      updateData.endDate <= updateData.startDate
+    ) {
       throw new BadRequestException('End date must be after start date');
     }
 
@@ -66,8 +81,13 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
     return await this.repository.update(id, updateData);
   }
 
-  async publishCommittee(id: string, publishCommitteeDto: PublishCommitteeDto): Promise<CommitteeDocument> {
-    return await this.repository.update(id, { isPublished: publishCommitteeDto.isPublished });
+  async publishCommittee(
+    id: string,
+    publishCommitteeDto: PublishCommitteeDto,
+  ): Promise<CommitteeDocument> {
+    return await this.repository.update(id, {
+      isPublished: publishCommitteeDto.isPublished,
+    });
   }
 
   async getPublishedCommittees(): Promise<CommitteeDocument[]> {
@@ -86,7 +106,7 @@ export class CommitteeService extends BaseService<CommitteeDocument> {
       sortBy: 'startDate',
       sort: 'desc', // Get the most recent current committee if multiple exist
     });
-    
+
     return committees.length > 0 ? committees[0] : null;
   }
 

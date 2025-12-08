@@ -52,24 +52,25 @@ export class CommitteeMember {
   notes?: string;
 }
 
-export const CommitteeMemberSchema = SchemaFactory.createForClass(CommitteeMember);
+export const CommitteeMemberSchema =
+  SchemaFactory.createForClass(CommitteeMember);
 
 // Ensure a user can only have one active designation per committee
 CommitteeMemberSchema.index(
   { committeeId: 1, userId: 1, isActive: 1 },
-  { 
+  {
     unique: true,
-    partialFilterExpression: { isActive: true }
-  }
+    partialFilterExpression: { isActive: true },
+  },
 );
 
 // Ensure a designation can only have one active member per committee (if needed)
 CommitteeMemberSchema.index(
   { committeeId: 1, designationId: 1, isActive: 1 },
-  { 
+  {
     unique: true,
-    partialFilterExpression: { isActive: true }
-  }
+    partialFilterExpression: { isActive: true },
+  },
 );
 
 export type CommitteeMemberDocument = HydratedDocument<CommitteeMember>;
