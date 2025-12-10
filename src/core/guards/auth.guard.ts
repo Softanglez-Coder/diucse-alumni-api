@@ -10,7 +10,7 @@ import { IS_PUBLIC_KEY } from '../decorators';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/feature/user/user.service';
 import { CommitteeDesignationService } from 'src/feature/committee-designation/committee-designation.service';
-import { passportJwtSecret } from 'jwks-rsa';
+import { JwksClient } from 'jwks-rsa';
 import { verify } from 'jsonwebtoken';
 import { Role } from '../role';
 
@@ -66,15 +66,20 @@ export class AuthGuard implements CanActivate {
       const auth0Domain = this.config.get<string>('AUTH0_DOMAIN');
       const auth0Audience = this.config.get<string>('AUTH0_AUDIENCE');
 
+      this.logger.debug(`Auth0 Config - Domain: ${auth0Domain}, Audience: ${auth0Audience}`);
+
       if (!auth0Domain || !auth0Audience) {
         throw new UnauthorizedException('Auth0 not configured');
       }
 
+      this.logger.debug(`Verifying Auth0 token...`);
       const decoded: any = await this.verifyAuth0Token(
         token,
         auth0Domain,
         auth0Audience,
       );
+      this.logger.debug(`Token decoded successfully:`, JSON.stringify(decoded));
+      
       const auth0Id = decoded.sub;
       const email = decoded.email;
 
@@ -175,6 +180,7 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch (e) {
+      this.logger.error('Authentication failed:', e.message, e.stack);
       throw new UnauthorizedException(e.message ?? 'Invalid token');
     }
   }
@@ -184,37 +190,61 @@ export class AuthGuard implements CanActivate {
     domain: string,
     audience: string,
   ): Promise<any> {
+    this.logger.debug(`Starting token verification for domain: ${domain}`);
+    
     return new Promise((resolve, reject) => {
-      const getKey = passportJwtSecret({
+      // Create JWKS client
+      const client = new JwksClient({
+        jwksUri: `https://${domain}/.well-known/jwks.json`,
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `https://${domain}/.well-known/jwks.json`,
       });
 
       // Decode token to get header for JWKS lookup
       const parts = token.split('.');
       if (parts.length !== 3) {
+        this.logger.error('Invalid token format - does not have 3 parts');
         return reject(new Error('Invalid token format'));
       }
 
       let header: any;
       try {
         header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
-      } catch {
+        this.logger.debug(`Token header decoded:`, JSON.stringify(header));
+      } catch (error) {
+        this.logger.error('Failed to decode token header:', error);
         return reject(new Error('Invalid token header'));
       }
 
-      const decoded = { header };
+      const kid = header.kid;
+      if (!kid) {
+        this.logger.error('No kid found in token header');
+        return reject(new Error('No kid in token header'));
+      }
 
-      getKey(decoded, header, (err: any, key: any) => {
+      // Get signing key from JWKS
+      client.getSigningKey(kid, (err, key) => {
         if (err) {
+          this.logger.error('JWKS key retrieval error:', err);
           return reject(err);
         }
 
+        this.logger.debug('JWKS signing key retrieved successfully');
+
+        // Get the public key from the signing key
+        const publicKey = key.getPublicKey();
+        
+        if (!publicKey) {
+          this.logger.error('Failed to get public key from signing key');
+          return reject(new Error('No public key found'));
+        }
+
+        this.logger.debug('Public key extracted, verifying token...');
+
         verify(
           token,
-          key,
+          publicKey,
           {
             audience: audience,
             issuer: `https://${domain}/`,
@@ -222,8 +252,10 @@ export class AuthGuard implements CanActivate {
           },
           (err, decoded) => {
             if (err) {
+              this.logger.error('Token verification failed:', err.message);
               return reject(err);
             }
+            this.logger.debug('Token verified successfully');
             resolve(decoded);
           },
         );
