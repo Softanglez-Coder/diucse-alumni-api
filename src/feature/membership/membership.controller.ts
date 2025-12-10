@@ -1,14 +1,18 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
-import { Roles } from 'src/core/decorators';
+import { Roles, Public } from 'src/core/decorators';
 import { BaseController, Role } from '@core';
 import { MembershipService } from './membership.service';
 import { MembershipRejectionDto } from './dtos';
 import { MembershipDocument } from './membership.schema';
 import { RequestExtension } from 'src/core/types';
+import { UserService } from '../user/user.service';
 
 @Controller('memberships')
 export class MembershipController extends BaseController<MembershipDocument> {
-  constructor(private readonly membershipService: MembershipService) {
+  constructor(
+    private readonly membershipService: MembershipService,
+    private readonly userService: UserService,
+  ) {
     super(membershipService);
   }
 
@@ -46,6 +50,12 @@ export class MembershipController extends BaseController<MembershipDocument> {
   @Get('me')
   async findMyMembership(@Req() req: RequestExtension) {
     return await this.membershipService.findByProperty('user', req.user?.id);
+  }
+
+  @Public()
+  @Get('code/:membershipId')
+  async findByMembershipCode(@Param('membershipId') membershipId: string) {
+    return await this.userService.findByMembershipId(membershipId);
   }
 
   @Roles(Role.Guest, Role.Reviewer)
