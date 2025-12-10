@@ -144,6 +144,22 @@ export class UserService extends BaseService<UserDocument> {
     return membershipId;
   }
 
+  async findByMembershipId(membershipId: string): Promise<UserDocument | null> {
+    this.logger.log(`Finding user by membership ID: ${membershipId}`);
+    
+    const user = await this.userRepository
+      .getModel()
+      .findOne({ membershipId })
+      .exec();
+
+    if (!user) {
+      this.logger.warn(`No user found with membership ID: ${membershipId}`);
+      return null;
+    }
+
+    return user;
+  }
+
   async assignMembershipId(userId: string): Promise<UserDocument> {
     this.logger.log(`Assigning membership ID to user ${userId}`);
 
