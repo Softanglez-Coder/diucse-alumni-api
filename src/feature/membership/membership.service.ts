@@ -291,6 +291,17 @@ export class MembershipService extends BaseService<MembershipDocument> {
       );
     }
 
+    // Generate and assign membership ID
+    try {
+      await this.userService.assignMembershipId(user.id);
+      this.logger.log(`Membership ID assigned to user ${user.id}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to assign membership ID to user ${user.id}: ${error.message}`,
+      );
+      // Continue with approval even if membership ID assignment fails
+    }
+
     membership.status = MembershipStatus.Approved;
     membership.justification = null; // Clear justification on approval
     const updatedMembership = await this.membershipRepository.update(

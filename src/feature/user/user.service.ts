@@ -116,4 +116,58 @@ export class UserService extends BaseService<UserDocument> {
       }));
     }
   }
+
+  async generateMembershipId(): Promise<string> {
+    this.logger.log('Generating new membership ID');
+
+    // Find the latest user with a membership ID
+    const latestMember = await this.userRepository
+      .getModel()
+      .findOne({ membershipId: { $exists: true, $ne: null } })
+      .sort({ membershipId: -1 })
+      .exec();
+
+    let sequence = 1;
+
+    if (latestMember && latestMember.membershipId) {
+      // Extract the numeric part from the membership ID (e.g., "M000001" -> 1)
+      const match = latestMember.membershipId.match(/^M(\d+)$/);
+      if (match) {
+        sequence = parseInt(match[1], 10) + 1;
+      }
+    }
+
+    // Generate the new membership ID with leading zeros (e.g., "M000001")
+    const membershipId = `M${sequence.toString().padStart(6, '0')}`;
+    this.logger.log(`Generated membership ID: ${membershipId}`);
+
+    return membershipId;
+  }
+
+  async assignMembershipId(userId: string): Promise<UserDocument> {
+    this.logger.log(`Assigning membership ID to user ${userId}`);
+
+    const user = await this.findById(userId);
+    if (!user) {
+      this.logger.error(`User with ID ${userId} not found`);
+      throw new BadRequestException(`User with ID ${userId} not found`);
+    }
+
+    if (user.membershipId) {
+      this.logger.warn(
+        `User ${userId} already has membership ID: ${user.membershipId}`,
+      );
+      return user;
+    }
+
+    const membershipId = await this.generateMembershipId();
+    user.membershipId = membershipId;
+
+    const updatedUser = await this.update(userId, user);
+    this.logger.log(
+      `Membership ID ${membershipId} assigned to user ${userId}`,
+    );
+
+    return updatedUser;
+  }
 }

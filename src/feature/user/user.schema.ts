@@ -80,6 +80,13 @@ export class User {
     default: null,
   })
   company?: string;
+
+  @Prop({
+    type: String,
+    unique: true,
+    sparse: true,
+  })
+  membershipId?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
