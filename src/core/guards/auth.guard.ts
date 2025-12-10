@@ -17,18 +17,18 @@ import { Role } from '../role';
 /**
  * AuthGuard
  *
- * This guard validates JWT tokens from either:
- * 1. The 'auth_token' cookie (for web applications) - validates local JWT from Auth0 callback
- * 2. The Authorization header with Bearer token (for API clients) - validates Auth0 JWT directly
- *
- * Cookie tokens are local JWTs generated after Auth0 authentication for session management.
- * Authorization header tokens are Auth0 JWTs validated against Auth0's JWKS endpoint.
+ * This guard validates JWT tokens from the Authorization header with Bearer token.
+ * It validates Auth0 JWT directly against Auth0's JWKS endpoint.
  *
  * If the token is invalid or expired, it throws an UnauthorizedException.
  * Routes marked with @Public() decorator are accessible without authentication.
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private readonly logger = new (require('@nestjs/common').Logger)(
+    AuthGuard.name,
+  );
+
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
@@ -49,74 +49,108 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
-    // Try to get token from cookie first (for web apps)
-    let token = request.cookies?.['auth_token'];
-    const isFromCookie = !!token;
-
-    // If no cookie token, try Authorization header (for API clients)
-    if (!token) {
-      const authHeader = request.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.substring(7); // Remove 'Bearer ' prefix
-      }
+    // Get token from Authorization header
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('No token provided');
     }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     if (!token) {
       throw new UnauthorizedException('No token provided');
     }
 
     try {
-      let userId: string;
-      let user: any;
+      // Validate Auth0 JWT token
+      const auth0Domain = this.config.get<string>('AUTH0_DOMAIN');
+      const auth0Audience = this.config.get<string>('AUTH0_AUDIENCE');
 
-      if (isFromCookie) {
-        // Validate local JWT token from cookie (generated after Auth0 login)
-        const payload = this.jwtService.verify(token, {
-          secret: this.config.get<string>('JWT_SECRET'),
-        });
-        userId = payload.sub;
-        user = await this.userService.findById(userId);
-      } else {
-        // Validate Auth0 JWT token from Authorization header
-        const auth0Domain = this.config.get<string>('AUTH0_DOMAIN');
-        const auth0Audience = this.config.get<string>('AUTH0_AUDIENCE');
+      if (!auth0Domain || !auth0Audience) {
+        throw new UnauthorizedException('Auth0 not configured');
+      }
 
-        if (!auth0Domain || !auth0Audience) {
-          throw new UnauthorizedException('Auth0 not configured');
+      const decoded: any = await this.verifyAuth0Token(
+        token,
+        auth0Domain,
+        auth0Audience,
+      );
+      const auth0Id = decoded.sub;
+      const email = decoded.email;
+
+      this.logger.log(`Auth0 token decoded - Auth0 ID: ${auth0Id}, Email: ${email}`);
+
+      // Find or create user from Auth0 token
+      let user = await this.userService.findByProperty('auth0Id', auth0Id);
+
+      if (!user) {
+        if (!email) {
+          this.logger.error('Email not provided by Auth0 in token');
+          throw new UnauthorizedException('Email not provided by Auth0');
         }
 
-        const decoded: any = await this.verifyAuth0Token(
-          token,
-          auth0Domain,
-          auth0Audience,
-        );
-        const auth0Id = decoded.sub;
-        const email = decoded.email;
-
-        // Find or create user from Auth0 token
-        user = await this.userService.findByProperty('auth0Id', auth0Id);
-
-        if (!user) {
-          if (!email) {
-            throw new UnauthorizedException('Email not provided by Auth0');
-          }
+        // Check if user exists with this email (without auth0Id)
+        const existingUserByEmail = await this.userService.findByProperty('email', email);
+        
+        if (existingUserByEmail) {
+          this.logger.log(`User exists with email ${email}, updating with auth0Id`);
+          // Update existing user with auth0Id
+          existingUserByEmail.auth0Id = auth0Id;
+          if (decoded.name) existingUserByEmail.name = decoded.name;
+          if (decoded.picture) existingUserByEmail.photo = decoded.picture;
+          existingUserByEmail.emailVerified = decoded.email_verified || false;
+          
+          user = await this.userService.update(
+            existingUserByEmail.id || existingUserByEmail._id.toString(),
+            existingUserByEmail
+          );
+          this.logger.log(`User updated with auth0Id: ${user.id || user._id}`);
+        } else {
+          this.logger.log(`User not found, creating new user with email: ${email}`);
 
           // Create new user from Auth0 token
           const isSystemAdmin = email === 'csediualumni.official@gmail.com';
           const roles = isSystemAdmin ? [Role.Admin] : [Role.Guest];
 
-          user = await this.userService.create({
+          const userData = {
             email,
             auth0Id,
-            name: decoded.name || '',
+            name: decoded.name || email.split('@')[0],
             photo: decoded.picture || null,
             emailVerified: decoded.email_verified || false,
             roles,
-          });
-        }
+            active: true,
+          };
 
-        userId = user.id || user._id;
+          this.logger.log(`Creating user with data:`, JSON.stringify(userData));
+
+          try {
+            user = await this.userService.create(userData);
+            this.logger.log(`User created successfully with ID: ${user.id || user._id}`);
+          } catch (error) {
+            this.logger.error(`Failed to create user: ${error.message}`, error.stack);
+            
+            // If it's a duplicate key error, try to find the user again
+            if (error.code === 11000 || error.message.includes('duplicate')) {
+              this.logger.log(`Duplicate key error, attempting to find existing user`);
+              user = await this.userService.findByProperty('auth0Id', auth0Id) ||
+                     await this.userService.findByProperty('email', email);
+              
+              if (user) {
+                this.logger.log(`Found existing user after duplicate error: ${user.id || user._id}`);
+              } else {
+                throw new UnauthorizedException(`Failed to create or find user: ${error.message}`);
+              }
+            } else {
+              throw new UnauthorizedException(`Failed to create user: ${error.message}`);
+            }
+          }
+        }
+      } else {
+        this.logger.log(`Existing user found with ID: ${user.id || user._id}`);
       }
+
+      const userId = user.id || user._id;
 
       if (!user) {
         throw new UnauthorizedException('User not found');

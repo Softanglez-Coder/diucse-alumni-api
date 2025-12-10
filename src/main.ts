@@ -2,16 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Add security headers
   app.use(helmet());
-
-  // Enable cookie parsing
-  app.use(cookieParser());
 
   // Enable CORS
   app.enableCors({
