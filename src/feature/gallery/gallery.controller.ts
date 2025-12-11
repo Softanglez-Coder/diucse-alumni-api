@@ -89,7 +89,13 @@ export class GalleryController extends BaseController<GalleryDocument> {
   }
 
   @Roles(Role.Admin)
-  @UseInterceptors(FilesInterceptor('files', 20))
+  @UseInterceptors(
+    FilesInterceptor('files', 20, {
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB per file
+      },
+    }),
+  )
   @Post(':id/images/upload')
   async uploadImages(
     @Param('id') id: string,
@@ -111,7 +117,13 @@ export class GalleryController extends BaseController<GalleryDocument> {
   }
 
   @Roles(Role.Admin)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB per file
+      },
+    }),
+  )
   @Post(':id/images/upload-single')
   async uploadSingleImage(
     @Param('id') id: string,
