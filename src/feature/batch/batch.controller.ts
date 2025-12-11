@@ -10,7 +10,7 @@ export class BatchController extends BaseController<BatchDocument> {
     super(batchService);
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.Guest)
   @Post()
   async create(@Body() body: CreateBatchDto) {
     return await this.batchService.create(body);
