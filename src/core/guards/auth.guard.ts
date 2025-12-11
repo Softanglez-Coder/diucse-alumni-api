@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../decorators';
+import { IS_PUBLIC_KEY, Roles } from '../decorators';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/feature/user/user.service';
 import { CommitteeDesignationService } from 'src/feature/committee-designation/committee-designation.service';
@@ -115,7 +115,7 @@ export class AuthGuard implements CanActivate {
 
           // Create new user from Auth0 token
           const isSystemAdmin = email === 'csediualumni.official@gmail.com';
-          const roles = isSystemAdmin ? [Role.Admin] : [Role.Guest];
+          const roles = isSystemAdmin ? Object.values(Role) : [Role.Guest];
 
           const userData = {
             email,
