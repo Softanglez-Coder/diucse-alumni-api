@@ -13,6 +13,7 @@ import { SettingsModule } from './settings/settings.module';
 import { BannerModule } from './banner';
 import { CommitteeModule } from './committee';
 import { CommitteeDesignationModule } from './committee-designation';
+import { GalleryModule } from './gallery';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CommitteeDesignationModule } from './committee-designation';
     BannerModule,
     CommitteeModule,
     CommitteeDesignationModule,
+    GalleryModule,
   ],
   exports: [],
   controllers: [],
